@@ -9,13 +9,11 @@ logo_time = 0.0
 def enter():
     global image
     image = load_image("assets/title/tuk_credit.png")
-    # fill here
     pass
 
 def exit():
     global image
     del image
-    # fill here
     pass
 
 def update():
@@ -23,7 +21,7 @@ def update():
     global logo_time
     delay(0.01)
     logo_time += 0.01
-    if logo_time >= 1.0:
+    if logo_time >= 0.5:
         logo_time = 0.0
         game_framework.change_state(title_state)
     # fill here
@@ -31,13 +29,16 @@ def update():
 
 def draw():
     clear_canvas()
-    image.draw(1280//2,720//2)
+    image.clip_draw(0,0,800,600,1280//2,720//2,1280,720)
     update_canvas()
     # fill here
     pass
 
 def handle_events():
     events = get_events()
+    for event in events:
+        if event.type == SDL_QUIT:
+            game_framework.quit()
 
 
 

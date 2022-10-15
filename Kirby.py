@@ -1,11 +1,10 @@
-import GameObject
 from pico2d import *
 
 class MovementObject:
     def __init__(self):
         self.hp = 100
         self.image
-        self.x, self.y = 0,90
+        self.x, self.y = 0,0
         self.state = 0
         self.frame = 0
 

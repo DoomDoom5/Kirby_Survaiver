@@ -29,7 +29,6 @@ def handle_events():
 
     events = get_events()
     for event in events:
-
         if event.x > 1000 and event.x < 1000 + 228 and 720 - event.y > 80 + 144 * 2 and  720 - event.y < 80 + 144 * 3:
             if event.type == SDL_MOUSEMOTION:
                 start_button = load_image("assets/title/bg_Check_Button.png")
@@ -60,7 +59,6 @@ def handle_events():
 
         elif event.type == SDL_QUIT:
             game_framework.quit()
-    delay(0.01)
     pass
 
 def draw():
