@@ -1,7 +1,10 @@
 from pico2d import *
+import Manager.Item_Manager
+
 # 캐릭터가 가져야 할것
 class Player:
     image = None
+    effect_Image = None
     type = None
     frame = 0
     state = "IDLE"
@@ -23,6 +26,7 @@ class Player:
     Exp = 0
 
     Level = 0
+
     Defence = 0.0  # 방어력
     Recovery = 0.0  # 재생력
 
@@ -38,10 +42,12 @@ class Player:
     Max_invisivleTime = 1.0  # 최대 무적시간
     invers = False # 캐릭터 오른쪽, 왼쪽
 
+    def __init__(self):
+            pass
+
     def check_Enemy_Coll(self, enemy_left, enemy_right, enemy_top, enemy_bottom, enemy_Attack):
         if self.x - self.width//2 < enemy_right and self.y - self.height//2 < enemy_bottom and self.x + self.width//2 > enemy_left and self.y + self.height//2 > enemy_top:
             if self.invisivleTime <= 0:
-                print("hit")
                 self.Hp -= enemy_Attack
                 self.invisivleTime = self.Max_invisivleTime
         pass
@@ -63,11 +69,10 @@ class Player:
                     self.image.clip_draw(114 + self.frame * 33, 616 - 80, 33, 33, self.x, self.y, self.width,self.height)
                 else:
                     self.image.clip_draw(114 + self.frame * 34, 616 - 40, 34, 33, self.x, self.y, self.width,self.height)
-
+        pass
     def handle_events(self, events):
         for event in events:
             if event.type == SDL_KEYDOWN:
-                print(self.x_dir, self.y_dir)
                 self.state = "RUN"
                 if event.key == SDLK_RIGHT:
                     self.x_dir += 1
@@ -93,6 +98,12 @@ class Player:
             if self.x_dir == 0 and self.y_dir == 0:
                 self.state = "IDLE"
             pass
+
+    def Attack_Weapons(self):
+        for Weapon in self.Weapons:
+            Weapon.Attack()
+            pass
+
 
     def ExpMagnet(self):
         pass
@@ -120,7 +131,6 @@ class Player:
 
 
         pass
-
 class Partner:
     image = None
     type = None
@@ -191,8 +201,8 @@ class Enemy:
     y_dir = 0
 
     speed = 0  # 이동속도
-
     MaxHp = 10.0  # 최대 Hp
+    Hp = MaxHp
     power = 0  # 공격력
     invers = False # 캐릭터 오른쪽, 왼쪽
 
@@ -209,12 +219,10 @@ class Enemy:
 
         self.Hp = self.MaxHp
 
-
-
-
     def Move(self, MapEndLeft = 0, MapEndRight = 1280, MapEndBottom = 720, MapEndTop = 0):
         self.x += self.x_dir * self.speed
         self.y += self.y_dir * self.speed
+
     def draw(self, image):
         self.frame = self.frame%4 + 1
         if self.name == "Waddle_dee":
@@ -226,8 +234,6 @@ class Enemy:
             pass
         pass
 
-    def Attack(self, player_left, player_right, player_top, player_bottom, player_Hp):
-        pass
     def chase(self, player_x, player_y):
         if self.x > player_x:
             self.invers = True
