@@ -1,5 +1,6 @@
 from pico2d import *
 import Manager.Item_Manager
+import random
 
 # 캐릭터가 가져야 할것
 class Player:
@@ -207,21 +208,31 @@ class Enemy:
     invers = False # 캐릭터 오른쪽, 왼쪽
 
     def __init__(self):
-        if(self.name == "Waddle_dee"):
+        self.x = random.randint(-10,0)
+        self.y = random.randint(0,720)
+        if self.name == "Waddle_dee":
             self.MaxHp = 10
             self.speed = 0.5
             self.width = 24
             self.height = 24
             self.power = 2
-        elif(self.name == "kinght"):
 
-            pass
+        elif self.name == "kinght":
+            self.MaxHp = 20
+            self.speed = 1
+            self.width = 24
+            self.height = 24
+            self.power = 4
+
 
         self.Hp = self.MaxHp
 
     def Move(self, MapEndLeft = 0, MapEndRight = 1280, MapEndBottom = 720, MapEndTop = 0):
         self.x += self.x_dir * self.speed
         self.y += self.y_dir * self.speed
+
+    def On_damege(self, charater_Attack):
+        self.Hp = self.Hp - charater_Attack
 
     def draw(self, image):
         self.frame = self.frame%4 + 1
@@ -232,6 +243,12 @@ class Enemy:
                 image.clip_draw(40 * self.frame,1190 - 50 , 24, 24,self.x,self.y)
                 pass
             pass
+        elif self.name == "kinght":
+            if not self.invers:
+                image.clip_draw(40 * self.frame,1190 - 58 - 24 , 24, 24,self.x,self.y)
+            else :
+                image.clip_draw(40 * self.frame,1190 - 90 - 24, 24, 24,self.x,self.y)
+                pass
         pass
 
     def chase(self, player_x, player_y):

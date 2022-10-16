@@ -85,11 +85,12 @@ class Missile_manager:
                 pass
         pass
 
-    def Check_Hit_Enemy(self, enemy_left , enemy_right , enemy_top , enemy_bottom, enemy_HP):
+    def Check_Hit_Enemy(self, enemy_left , enemy_right , enemy_top , enemy_bottom):
          for missile in self.missiles:
-             print(missile.x, missile.y, missile.width)
-             if missile.x - missile.width//2 < enemy_right and missile.y - missile.height//2 < enemy_bottom and missile.x + missile.width//2 > enemy_left and missile.y + missile.height//2 > enemy_top:
-                 print("부딫힘")
+             if missile.x - missile.width < enemy_right and missile.y - missile.height < enemy_bottom and missile.x + missile.width > enemy_left and missile.y + missile.height > enemy_top:
+                 self.missiles.remove(missile)
+                 return missile.Attack
+         return 0
 
 
 class Weapon:

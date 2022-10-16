@@ -21,6 +21,8 @@ UI_image = None
 enemy_image = None
 Timer = 0
 
+enemy_responTimer = 0
+
 
 def enter():
     global BG_tile_image, tiles, kirby, Enemys, enemy_image, UI_image, Weapons
@@ -59,19 +61,31 @@ def update():
     for s_Enemy in Enemys :
         s_Enemy.chase(kirby.x , kirby.y)
         s_Enemy.Move()
+        s_Enemy.On_damege( missile_manager.Check_Hit_Enemy(s_Enemy.x - s_Enemy.width // 2,
+                                        s_Enemy.x + s_Enemy.width // 2,
+                                        s_Enemy.y + s_Enemy.height // 2,
+                                        s_Enemy.y - s_Enemy.height // 2))
+        if s_Enemy.Hp <= 0 :
+            Enemys.remove(s_Enemy)
         kirby.check_Enemy_Coll(s_Enemy.x - s_Enemy.width//2,
                                s_Enemy.x + s_Enemy.width//2,
                                s_Enemy.y + s_Enemy.height//2,
                                s_Enemy.y - s_Enemy.height//2,
                                s_Enemy.power)
-        missile_manager.Check_Hit_Enemy(s_Enemy.x - s_Enemy.width // 2,
-                                        s_Enemy.x + s_Enemy.width // 2,
-                                        s_Enemy.y + s_Enemy.height // 2,
-                                        s_Enemy.y - s_Enemy.height // 2,
-                                        s_Enemy.Hp)
     for weapon in Weapons:
         weapon.shot(kirby.x, kirby.y, kirby.invers, missile_manager)
 
+
+    global enemy_responTimer, Timer
+    if Timer > 30.0:
+        if enemy_responTimer >= 3.0:
+            newEnemy = Enemy()
+            newEnemy.name = "kinght"
+            newEnemy.__init__()
+            Enemys.append(newEnemy)
+            enemy_responTimer = 0
+        else:
+            enemy_responTimer += 0.03
     pass
 
 def draw():
@@ -82,16 +96,17 @@ def draw():
             BG_tile_image.clip_draw(205,206,102,102, 102 * col, 102 * row, 110,110)
         pass
 
+    missile_manager.draw()
+
     # 경험치 출력
-    UI_image.clip_draw(374, 512-249 -23, 10,23, 1280//2,700, 1280,40)
+    kirby.draw()
 
     for s_Enemy in Enemys:
         s_Enemy.draw(enemy_image)
         UI_image.clip_draw(280, 512-158 -9, 9,9, s_Enemy.x, s_Enemy.y + 10, 30,4)
-        UI_image.clip_draw(422, 512-158 -9, 9,9, s_Enemy.x, s_Enemy.y + 10, 10/s_Enemy.MaxHp * 30,4)
+        UI_image.clip_draw(422, 512-158 -9, 9,9, s_Enemy.x, s_Enemy.y + 10, s_Enemy.Hp/s_Enemy.MaxHp * 30,4)
         pass
 
-    kirby.draw()
     # 체력 출력
     UI_image.clip_draw(280, 512-158 -9, 9,9, kirby.x, kirby.y - 30, 60,8)
     UI_image.clip_draw(422, 512-158 -9, 9,9, kirby.x, kirby.y - 30, kirby.Hp/kirby.MaxHp * 60,8)
@@ -99,8 +114,8 @@ def draw():
     # 아이템 출력
     UI_image.clip_draw(175,512-98 - 32, 96,32 , 100, 720 - 75, 200, 200//3)
 
-
-    missile_manager.draw()
+    # 경험치 창 출력
+    UI_image.clip_draw(374, 512-249 -23, 10,23, 1280//2,700, 1280,40)
     update_canvas()
 
     Timer += 0.03
