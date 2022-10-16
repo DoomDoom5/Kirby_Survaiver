@@ -224,6 +224,12 @@ class Enemy:
             self.height = 24
             self.power = 4
 
+        elif self.name == "Fighter":
+            self.MaxHp = 40
+            self.speed = 3
+            self.width = 24
+            self.height = 24
+            self.power = 7
 
         self.Hp = self.MaxHp
 
@@ -238,17 +244,23 @@ class Enemy:
         self.frame = self.frame%4 + 1
         if self.name == "Waddle_dee":
             if not self.invers:
-                image.clip_draw(40 * self.frame,1190 - 24 , 24, 24,self.x,self.y)
+                image.clip_draw(40 * self.frame,1190 - 24 , 24, 24,self.x,self.y, self.width, self.height)
             else :
-                image.clip_draw(40 * self.frame,1190 - 50 , 24, 24,self.x,self.y)
+                image.clip_draw(40 * self.frame,1190 - 50 , 24, 24,self.x,self.y, self.width, self.height)
                 pass
             pass
         elif self.name == "kinght":
             if not self.invers:
-                image.clip_draw(40 * self.frame,1190 - 58 - 24 , 24, 24,self.x,self.y)
+                image.clip_draw(40 * self.frame,1190 - 58 - 24 , 24, 24,self.x,self.y, self.width, self.height)
             else :
-                image.clip_draw(40 * self.frame,1190 - 90 - 24, 24, 24,self.x,self.y)
+                image.clip_draw(40 * self.frame,1190 - 90 - 24, 24, 24,self.x,self.y, self.width, self.height)
                 pass
+        elif self.name == "Fighter":
+            if not self.invers:
+                image.clip_draw(40 * self.frame,1190 - 100 - 24 , 24, 24,self.x,self.y, self.width, self.height)
+            else :
+                image.clip_draw(40 * self.frame,1190 - 130 - 24, 24, 24,self.x,self.y, self.width, self.height)
+
         pass
 
     def chase(self, player_x, player_y):
