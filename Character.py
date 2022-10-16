@@ -23,7 +23,6 @@ class Player:
     Exp = 0
 
     Level = 0
-    Power = 0.0  # 공격력
     Defence = 0.0  # 방어력
     Recovery = 0.0  # 재생력
 
@@ -37,8 +36,8 @@ class Player:
 
     invisivleTime = 0.0  # 무적시간
     Max_invisivleTime = 1.0  # 최대 무적시간
-
     invers = False # 캐릭터 오른쪽, 왼쪽
+
     def check_Enemy_Coll(self, enemy_left, enemy_right, enemy_top, enemy_bottom, enemy_Attack):
         if self.x - self.width//2 < enemy_right and self.y - self.height//2 < enemy_bottom and self.x + self.width//2 > enemy_left and self.y + self.height//2 > enemy_top:
             if self.invisivleTime <= 0:
@@ -47,15 +46,19 @@ class Player:
                 self.invisivleTime = self.Max_invisivleTime
         pass
     def draw(self):
+        self.frame = self.frame+1
+        if self.invisivleTime > 0 and self.frame%2 == 0:
+            pass
+        else:
             if self.state == "IDLE":
-                self.frame = self.frame % 2 + 1
+                self.frame = self.frame % 2
                 if not self.invers:
                     self.image.clip_draw(0 + self.frame * 34, 616 - 80, 34, 33, self.x, self.y, self.width,self.height)
                 else :
                     self.image.clip_draw(0 + self.frame * 34, 616 - 40, 34, 33, self.x, self.y, self.width,self.height)
 
             elif self.state == "RUN":
-                self.frame = self.frame % 6 + 1
+                self.frame = self.frame % 6
                 if not self.invers:
                     self.image.clip_draw(114 + self.frame * 33, 616 - 80, 33, 33, self.x, self.y, self.width,self.height)
                 else:
@@ -91,7 +94,6 @@ class Player:
                 self.state = "IDLE"
             pass
 
-
     def ExpMagnet(self):
         pass
     def levelUP(self):
@@ -118,7 +120,6 @@ class Player:
 
 
         pass
-
 
 class Partner:
     image = None
@@ -202,7 +203,7 @@ class Enemy:
             self.width = 24
             self.height = 24
             self.power = 2
-        elif(self.name == "knight"):
+        elif(self.name == "kinght"):
 
             pass
 

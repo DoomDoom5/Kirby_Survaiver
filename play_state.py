@@ -3,16 +3,19 @@ import game_framework
 import random
 from Character import Player
 from Character import Enemy
+from Manager import Enemy_Manager
+
 
 max_col = 40
 max_row = 40
 
 kirby = Player()
 Enemys = [Enemy() for i in range(0,10)]
-enemy_image = None
 BG_tile_image = None
 UI_image = None
+enemy_image = None
 Timer = 0
+
 
 def enter():
     global BG_tile_image, tiles, kirby, Enemys, enemy_image, UI_image
