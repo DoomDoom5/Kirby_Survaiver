@@ -44,6 +44,12 @@ class Player:
     invers = False # 캐릭터 오른쪽, 왼쪽
 
     def __init__(self):
+        if self.type == "ICE":
+            self.image = load_image("assets/img/Kirby/Ice_Kirby_empty.png")
+        elif self.type == "FIRE":
+            self.image = load_image("assets/img/Kirby/Fire_Kirby_empty.png")
+        elif self.type == "PLASMA":
+            self.image = load_image("assets/img/Kirby/PLASMA_Kirby_empty.png")
             pass
 
     def check_Enemy_Coll(self, enemy_left, enemy_right, enemy_top, enemy_bottom, enemy_Attack):
@@ -60,7 +66,7 @@ class Player:
             if self.state == "IDLE":
                 self.frame = self.frame % 2
                 if not self.invers:
-                    self.image.clip_draw(0 + self.frame * 34, 616 - 80, 34, 33, self.x, self.y, self.width,self.height)
+                    self.image.clip_draw(0 + self.frame * 35, 616 - 80, 35, 33, self.x, self.y, self.width,self.height)
                 else :
                     self.image.clip_draw(0 + self.frame * 34, 616 - 40, 34, 33, self.x, self.y, self.width,self.height)
 
@@ -106,8 +112,6 @@ class Player:
             pass
 
 
-    def ExpMagnet(self):
-        pass
     def levelUP(self):
         if self.Exp >= self.MaxExp:
             self.Exp = 0

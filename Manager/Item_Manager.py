@@ -1,6 +1,73 @@
 from pico2d import *
 
 
+class Item:
+    Name = None
+    x = 0
+    y = 0
+    width = 12
+    height = 18
+    pass
+
+class ExpStone(Item):
+    Type = None
+    Exp = None
+    Magnet = None
+    def __init__(self,Enemy_x=0, Enemy_y=0):
+        self.Magnet = False
+        self.x = Enemy_x
+        self.y = Enemy_y
+        self.Name = "EXP_STONE"
+        match self.Type:
+            case "GREEN":
+                self.Exp = 1
+            case "BLUE":
+                self.Exp = 5
+            case "RED":
+                self.Exp = 10
+            case "YEELOW":
+                self.Exp = 20
+
+    def Magnet_Player(self, Player_x, Player_y):
+        if self.Magnet:
+            pass
+
+    def Draw(self, Item_Image):
+        match self.Type:
+            case "GREEN":
+                print("그려짐")
+                Item_Image.clip_draw(51, 624- 96 - 12, 9,12,self.x,self.y,self.width, self.height)
+            case "BLUE":
+                Item_Image.clip_draw(51, 624 - 36 - 12, 9, 12, self.x, self.y,self.width, self.height)
+
+        pass
+
+class Item_manager:
+    Items = []
+    Items_image = None
+    expStone = ExpStone()
+    def Create_EXP_Stone(self, Enemy_name, Enemy_x, Enemy_y):
+        newExpStone = ExpStone()
+        if Enemy_name == "Waddle_dee":
+            newExpStone.Type = "GREEN"
+        elif Enemy_name == "kinght":
+            newExpStone.Type = "BLUE"
+
+        newExpStone.__init__(Enemy_x,Enemy_y)
+        self.Items.append(newExpStone)
+        del newExpStone
+
+    def Draw(self):
+        for item in self.Items:
+            match item.Name:
+                case "EXP_STONE":
+                    self.expStone = item
+                    self.expStone.Draw(self.Items_image)
+
+
+
+
+
 
 class Missile:
     name = "None"
@@ -25,6 +92,7 @@ class Missile:
     pass
 
 class ICE(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
+    A = 4
     def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
         self.x = charater_x
         self.y = charater_y
@@ -32,14 +100,14 @@ class ICE(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
         self.height = 24
         self.BulletRange = 1.0
         self.BulletSpeed = 5.0  # 투사채 속도
+        self.Attack = 10
         if invers:
             self.x_dir = 1
-        else :
+        else:
             self.x_dir = -1
             pass
 
         if level == 1:
-            self.Attack = 3
             self.DurationTime = 4.0
             pass
         elif level == 2:
@@ -54,10 +122,46 @@ class ICE(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
             del self
 
     def draw(self, Image):
-        Image.clip_draw(719, 616-41 - 24, 24,24,self.x,self.y, 24 * self.BulletRange, 24 * self.BulletRange)
+        Image.clip_draw(365, 552-45 - 24, 24,24,self.x,self.y, 24 * self.BulletRange, 24 * self.BulletRange)
         pass
 
 class HAMMER(Missile): # 해머 공격 == 뱀서의 도끼 공격
+    UpTime = None
+    def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
+        self.x = charater_x
+        self.y = charater_y
+        self.width = 24
+        self.height = 24
+        self.BulletRange = 1.0
+        self.BulletSpeed = 5.0  # 투사채 속도
+        self.Attack = 13
+        self.UpTime = 5.0
+        if invers:
+            self.x_dir = 1
+        else:
+            self.x_dir = -1
+            pass
+
+        if level == 1:
+            self.DurationTime = 4.0
+            pass
+        elif level == 2:
+            pass
+        elif level == 3:
+            pass
+
+
+
+def Move(self, MapEndLeft=0, MapEndRight=1280, MapEndBottom=720, MapEndTop=0):
+    if self.UpTime:
+        pass
+
+
+    self.x += self.x_dir
+    if self.x > MapEndRight:
+        del self
+    elif self.x < MapEndLeft:
+        del self
     pass
 
 
@@ -107,6 +211,7 @@ class Weapon:
                 new_missile.name = self.name
                 new_missile.__init__(self.level,charater_invers,charater_x,charater_y)
                 missile_manager.missiles.append(new_missile)
+                del new_missile
             elif self.name == "HAMMER":
                 pass
             self.shotTimer = 0.0
