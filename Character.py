@@ -117,6 +117,8 @@ class Player:
             self.Exp = 0
             self.MaxExp = self.MaxHp * 1.5
             self.Level = self.Level + 1
+            return True
+        return False
         pass
     def Move(self, MapEndLeft = 0, MapEndRight = 1280, MapEndBottom = 720, MapEndTop = 0):
         if self.x > MapEndLeft and self.x < MapEndRight:

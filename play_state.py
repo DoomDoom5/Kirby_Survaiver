@@ -2,6 +2,8 @@ from pico2d import *
 import game_framework
 import random
 import CharaterSelect_state
+import levelUp_state
+
 from Character import Player
 from Character import Enemy
 from Manager.Item_Manager import Missile_manager
@@ -42,9 +44,6 @@ def enter():
         s_Enemy.name = "Waddle_dee"
         s_Enemy.__init__()
         pass
-
-
-
 
 def exit():
     global BG_tile_image
@@ -128,7 +127,6 @@ def draw():
     # fill here
     pass
 
-
 def draw_UI():
     # 체력 출력
     UI_image.clip_draw(280, 512 - 158 - 9, 9, 9, kirby.x, kirby.y - 30, 60, 8)
@@ -138,7 +136,6 @@ def draw_UI():
     # 경험치 창 출력
     UI_image.clip_draw(374, 512 - 249 - 23, 10, 23, 1280 // 2, 700, 1280, 40)
     UI_image.clip_draw(424, 512 - 189 - 4, 4, 4, 0, 700, (kirby.Exp / kirby.MaxExp) * 1280 * 2, 28)
-
 
 def handle_events():
     events = get_events()
@@ -159,3 +156,4 @@ def Kirby_init_Test(Weapons, kirby):
     Weapons.append(newWeapons)
     del CharaterSelect_state.Type
     del newWeapons
+
