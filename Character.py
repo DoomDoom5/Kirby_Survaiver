@@ -44,6 +44,7 @@ class Player:
     invers = False # 캐릭터 오른쪽, 왼쪽
 
     def __init__(self):
+        self.Magent = 100.0
         if self.type == "ICE":
             self.image = load_image("assets/img/Kirby/Ice_Kirby_empty.png")
         elif self.type == "FIRE":
@@ -110,7 +111,6 @@ class Player:
         for Weapon in self.Weapons:
             Weapon.Attack()
             pass
-
 
     def levelUP(self):
         if self.Exp >= self.MaxExp:

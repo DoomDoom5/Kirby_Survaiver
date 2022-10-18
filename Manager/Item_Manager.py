@@ -3,6 +3,7 @@ from pico2d import *
 
 class Item:
     Name = None
+    Gained = None
     x = 0
     y = 0
 
@@ -15,9 +16,11 @@ class ExpStone(Item):
         self.width = 12
         self.height = 18
         self.Magnet = False
+        self.Gained = False
         self.x = Enemy_x
         self.y = Enemy_y
         self.Name = "EXP_STONE"
+        self.t = 0.0
         match self.Type:
             case "GREEN":
                 self.Exp = 1
@@ -28,9 +31,24 @@ class ExpStone(Item):
             case "YEELOW":
                 self.Exp = 20
 
-    def Magnet_Player(self, Player_x, Player_y):
+    def Magnet_Player(self, Player_x=0, Player_y=0, Player_Magnet_Range=0):
         if self.Magnet:
-            pass
+            self.t += 0.01
+            self.x = (1-self.t) * self.x+ self.t * Player_x
+            self.y = (1-self.t) * self.y+ self.t * Player_y
+            if self.x - self.width//2 < Player_x - 5 \
+                    and self.y - self.height//2 < Player_y - 5 \
+                    and self.x + self.width//2 > Player_x + 5 \
+                    and self.y + self.height//2 > Player_y + 5:
+                self.Gained = True
+            
+        else:
+            if self.x  > Player_x - Player_Magnet_Range \
+                    and self.y > Player_y - Player_Magnet_Range \
+                    and self.x < Player_x + Player_Magnet_Range \
+                    and self.y < Player_y + Player_Magnet_Range : # 마그넷 충돌 검사
+                self.Magnet = True
+
 
     def Draw(self, Item_Image):
         match self.Type:
@@ -39,7 +57,6 @@ class ExpStone(Item):
                 Item_Image.clip_draw(51, 624- 96 - 12, 9,12,self.x,self.y,self.width, self.height)
             case "BLUE":
                 Item_Image.clip_draw(51, 624 - 36 - 12, 9, 12, self.x, self.y,self.width, self.height)
-
         pass
 
 class Item_manager:
@@ -65,11 +82,31 @@ class Item_manager:
                     self.expStone.Draw(self.Items_image)
 
 
+    def GainExp(self, Player_x, Player_y, Player_Magnet_Range, Player_Exp):
+        for item in self.Items:
+            if item.Gained:
+                self.Items.remove(item)
+            else:
+                match item.Name :
+                    case "EXP_STONE":
+                        self.expStone = item
+                        self.expStone.Magnet_Player(Player_x, Player_y, Player_Magnet_Range)
+                        if item.Gained:
+                            Player_Exp = self.expStone.Exp
+                            self.Items.remove(item)
+                            return Player_Exp
+
+
+
+        return 0
+
+
 
 
 
 
 class Missile:
+    # ICE, FIRE, HAMMER 등등등
     name = "None"
     # state = 0 : 발사중, 1 : 파괴, 2 : 소멸
     state = None
@@ -79,8 +116,8 @@ class Missile:
 
     level = 1 # 레벨
 
-    width = 0
-    height = 0
+    width = 0 # 너비
+    height = 0 # 크기
 
     Attack = 0 # 공격력
     BulletSpeed = 1.0  # 투사채 속도
@@ -88,13 +125,10 @@ class Missile:
     BulletNum = 1  # 추가 투사체 수
 
     DurationTime = 0
-    def draw(self,effect_Image):
-        pass
 
     pass
 
 class ICE(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
-    A = 4
     def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
         self.frame = 0
         self.state = 0

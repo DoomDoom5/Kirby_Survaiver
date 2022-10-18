@@ -75,12 +75,9 @@ def pop_state():
     if (len(stack) > 0):
         stack[-1].resume()
 
-
-
 def quit():
     global running
     running = False
-
 
 def run(start_state):
     global running, stack
