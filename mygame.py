@@ -6,7 +6,7 @@ import play_state
 import CharaterSelect_state
 
 pico2d.open_canvas(1280,720)
-game_framework.run(CharaterSelect_state)
+game_framework.run(logo_state)
 pico2d.clear_canvas()
 
 # fill here
