@@ -5,15 +5,15 @@ class Item:
     Name = None
     x = 0
     y = 0
-    width = 12
-    height = 18
-    pass
+
 
 class ExpStone(Item):
     Type = None
     Exp = None
     Magnet = None
     def __init__(self,Enemy_x=0, Enemy_y=0):
+        self.width = 12
+        self.height = 18
         self.Magnet = False
         self.x = Enemy_x
         self.y = Enemy_y
@@ -71,6 +71,8 @@ class Item_manager:
 
 class Missile:
     name = "None"
+    # state = 0 : 발사중, 1 : 파괴, 2 : 소멸
+    state = None
     x = 0
     y = 0
     x_dir = 0
@@ -94,6 +96,8 @@ class Missile:
 class ICE(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
     A = 4
     def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
+        self.frame = 0
+        self.state = 0
         self.x = charater_x
         self.y = charater_y
         self.width = 24
@@ -115,14 +119,138 @@ class ICE(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
         elif level == 3:
             pass
     def Move(self, MapEndLeft=0, MapEndRight=1280, MapEndBottom=720, MapEndTop=0):
-        self.x += self.x_dir * self.BulletSpeed
-        if self.x > MapEndRight:
-            del self
-        elif self.x < MapEndLeft:
-            del self
+        if self.state == 0:
+            self.x += self.x_dir * self.BulletSpeed
+            if self.x > MapEndRight:
+                del self
+            elif self.x < MapEndLeft:
+                del self
+        elif self.state == 1:
+            if self.state >= 8:
+                self.state = 2
 
     def draw(self, Image):
-        Image.clip_draw(365, 552-45 - 24, 24,24,self.x,self.y, 24 * self.BulletRange, 24 * self.BulletRange)
+        if self.state == 0:
+            Image.clip_draw(365, 552-45 - 24, 24,24,self.x,self.y, self.width * self.BulletRange, self.height * self.BulletRange)
+        elif self.state == 1:
+            self.frame = self.frame+1
+            match self.frame//2:
+                case 0 :
+                    Image.clip_draw(245, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                case 1 :
+                    Image.clip_draw(265, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                case 2 :
+                    Image.clip_draw(291, 552-19 - 10, 30,30,self.x,self.y,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
+                case 3 :
+                    Image.clip_draw(335, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                case 4 :
+                    Image.clip_draw(373, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+        pass
+class FIRE(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
+    A = 4
+    def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
+        self.frame = 0
+        self.state = 0
+        self.x = charater_x
+        self.y = charater_y
+        self.width = 24
+        self.height = 24
+        self.BulletRange = 1.0
+        self.BulletSpeed = 5.0  # 투사채 속도
+        self.Attack = 10
+        if invers:
+            self.x_dir = 1
+        else:
+            self.x_dir = -1
+            pass
+
+        if level == 1:
+            self.DurationTime = 4.0
+            pass
+        elif level == 2:
+            pass
+        elif level == 3:
+            pass
+    def Move(self, MapEndLeft=0, MapEndRight=1280, MapEndBottom=720, MapEndTop=0):
+        if self.state == 0:
+            self.x += self.x_dir * self.BulletSpeed
+            if self.x > MapEndRight:
+                del self
+            elif self.x < MapEndLeft:
+                del self
+        elif self.state == 1:
+            if self.state >= 8:
+                self.state = 2
+
+    def draw(self, Image):
+        if self.state == 0:
+            Image.clip_draw(365, 552-45 - 24, 24,24,self.x,self.y, self.width * self.BulletRange, self.height * self.BulletRange)
+        elif self.state == 1:
+            self.frame = self.frame+1
+            match self.frame//2:
+                case 0 :
+                    Image.clip_draw(245, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                case 1 :
+                    Image.clip_draw(265, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                case 2 :
+                    Image.clip_draw(291, 552-19 - 10, 30,30,self.x,self.y,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
+                case 3 :
+                    Image.clip_draw(335, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                case 4 :
+                    Image.clip_draw(373, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+        pass
+class PLASMA(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
+    A = 4
+    def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
+        self.frame = 0
+        self.state = 0
+        self.x = charater_x
+        self.y = charater_y
+        self.width = 24
+        self.height = 24
+        self.BulletRange = 1.0
+        self.BulletSpeed = 5.0  # 투사채 속도
+        self.Attack = 10
+        if invers:
+            self.x_dir = 1
+        else:
+            self.x_dir = -1
+            pass
+
+        if level == 1:
+            self.DurationTime = 4.0
+            pass
+        elif level == 2:
+            pass
+        elif level == 3:
+            pass
+    def Move(self, MapEndLeft=0, MapEndRight=1280, MapEndBottom=720, MapEndTop=0):
+        if self.state == 0:
+            self.x += self.x_dir * self.BulletSpeed
+            if self.x > MapEndRight:
+                del self
+            elif self.x < MapEndLeft:
+                del self
+        elif self.state == 1:
+            if self.state >= 8:
+                self.state = 2
+
+    def draw(self, Image):
+        if self.state == 0:
+            Image.clip_draw(365, 552-45 - 24, 24,24,self.x,self.y, self.width * self.BulletRange, self.height * self.BulletRange)
+        elif self.state == 1:
+            self.frame = self.frame+1
+            match self.frame//2:
+                case 0 :
+                    Image.clip_draw(245, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                case 1 :
+                    Image.clip_draw(265, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                case 2 :
+                    Image.clip_draw(291, 552-19 - 10, 30,30,self.x,self.y,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
+                case 3 :
+                    Image.clip_draw(335, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                case 4 :
+                    Image.clip_draw(373, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
         pass
 
 class HAMMER(Missile): # 해머 공격 == 뱀서의 도끼 공격
@@ -150,24 +278,23 @@ class HAMMER(Missile): # 해머 공격 == 뱀서의 도끼 공격
         elif level == 3:
             pass
 
+    def Move(self, MapEndLeft=0, MapEndRight=1280, MapEndBottom=720, MapEndTop=0):
+        if self.UpTime:
+            pass
 
-
-def Move(self, MapEndLeft=0, MapEndRight=1280, MapEndBottom=720, MapEndTop=0):
-    if self.UpTime:
+        self.x += self.x_dir
+        if self.x > MapEndRight:
+            del self
+        elif self.x < MapEndLeft:
+            del self
         pass
-
-
-    self.x += self.x_dir
-    if self.x > MapEndRight:
-        del self
-    elif self.x < MapEndLeft:
-        del self
-    pass
 
 
 class Missile_manager:
     missiles = []
     ice = ICE()
+    fire = FIRE()
+    plasma = PLASMA()
     hammer = HAMMER()
     missiles_image = None
     def draw(self):
@@ -181,7 +308,9 @@ class Missile_manager:
 
     def Move(self):
         for missile in self.missiles:
-            if missile.name == "ICE":
+            if missile.state == 2:
+                self.missiles.remove(missile)
+            elif missile.name == "ICE":
                 self.ice = missile
                 self.ice.Move()
             elif missile.name == "HAMMER":
@@ -191,9 +320,11 @@ class Missile_manager:
 
     def Check_Hit_Enemy(self, enemy_left , enemy_right , enemy_top , enemy_bottom):
          for missile in self.missiles:
-             if missile.x - missile.width < enemy_right and missile.y - missile.height < enemy_bottom and missile.x + missile.width > enemy_left and missile.y + missile.height > enemy_top:
-                 self.missiles.remove(missile)
-                 return missile.Attack
+             if missile.state == 0:
+                 if missile.x - missile.width < enemy_right and missile.y - missile.height < enemy_bottom and missile.x + missile.width > enemy_left and missile.y + missile.height > enemy_top:
+                     missile.x = (enemy_left + enemy_right)//2
+                     missile.state = 1
+                     return missile.Attack
          return 0
 
 

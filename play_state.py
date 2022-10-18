@@ -34,13 +34,13 @@ def enter():
     missile_manager.missiles_image = load_image("assets/img/Effect/vfx.png")
     item_manager.Items_image = load_image("assets/Ui/items.png")
 
-    kirby.type = CharaterSelect_state.Type
-    kirby.__init__()
-    del CharaterSelect_state.Type
-
     newWeapons = Weapon()
-    newWeapons.name = "ICE"
+    kirby.type = CharaterSelect_state.Type
+    newWeapons.name = CharaterSelect_state.Type
+    kirby.__init__()
+    newWeapons.__init__()
     Weapons.append(newWeapons)
+    del CharaterSelect_state.Type
     del newWeapons
 
     for s_Enemy in Enemys :
@@ -97,10 +97,6 @@ def draw():
             BG_tile_image.clip_draw(205,206,102,102, 102 * col, 102 * row, 110,110)
         pass
 
-    missile_manager.draw()
-    item_manager.Draw()
-
-
     for s_Enemy in Enemys:
         s_Enemy.draw(enemy_image)
         UI_image.clip_draw(280, 512-158 -9, 9,9, s_Enemy.x, s_Enemy.y + 10, 30,4)
@@ -108,6 +104,8 @@ def draw():
         pass
 
     kirby.draw()
+    missile_manager.draw()
+    item_manager.Draw()
 
     draw_UI()
     update_canvas()
