@@ -41,8 +41,13 @@ def enter():
     Kirby_init_Test(Weapons, kirby)
 
     for s_Enemy in Enemys :
+        r = random.randint(0,2)
         s_Enemy.name = "Waddle_dee"
         s_Enemy.__init__()
+        if r == 0:
+            s_Enemy.x = random.randint(1280,1290)
+        elif r ==1 :
+            s_Enemy.x = random.randint(-10, 0)
         pass
 
 def exit():
@@ -77,19 +82,22 @@ def update():
         weapon.shot(kirby.x, kirby.y, kirby.invers, missile_manager)
 
 
-    if enemy_responTimer >= 3.0:
-        if Timer > 30.0:
-            newEnemy = Enemy()
+    if enemy_responTimer >= 2.0:
+        newEnemy = Enemy()
+        r = random.randint(0,2)
+        if Timer > 5.0:
             newEnemy.name = "kinght"
             newEnemy.__init__()
-            Enemys.append(newEnemy)
-            enemy_responTimer = 0
         else:
-            newEnemy = Enemy()
             newEnemy.name = "Waddle_dee"
             newEnemy.__init__()
-            Enemys.append(newEnemy)
-            enemy_responTimer = 0
+        if r == 0:
+            newEnemy.x = random.randint(1280,1290)
+        elif r ==1 :
+            newEnemy.x = random.randint(-10, 0)
+        Enemys.append(newEnemy)
+        del newEnemy
+        enemy_responTimer = 0
     else:
         enemy_responTimer += fps
     pass
@@ -97,7 +105,8 @@ def update():
 
 def Kriby_Update():
     kirby.Move()
-    kirby.levelUP()
+    if(kirby.levelUP()):
+        pass
     kirby.Exp += item_manager.GainExp(kirby.x, kirby.y, kirby.Magent, kirby.Exp)
 
 
@@ -156,4 +165,8 @@ def Kirby_init_Test(Weapons, kirby):
     Weapons.append(newWeapons)
     del CharaterSelect_state.Type
     del newWeapons
+
+def MapMovement():
+    pass
+
 
