@@ -1,6 +1,8 @@
-# layer 0: Background Objects
-# layer 1: Foreground Objects
-objects = [[], []]
+# layer 0: Background Objects 배경
+# layer 1: Foreground Objects 캐릭터, 에너미
+# layer 2: Effect Objects 이펙트, 투사채
+# layer 3: UI Objects UI 이미지
+objects = [[], [], [], []]
 
 
 def add_object(o, depth):

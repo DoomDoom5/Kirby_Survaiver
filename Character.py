@@ -1,6 +1,31 @@
 from pico2d import *
 import Manager.Item_Manager
 import random
+import cmath
+
+# Kriby Run Speed
+PIXEL_PER_METER = (10.0/0.3)
+RUN_SPEED_KMPH = 20.0
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000/60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+# Kriby Action Speed
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 8
+
+#1 : 이벤트 정의
+RD, LD, RU, LU, TIMER, SPACE = range(6)
+event_name = ['RD', 'LD', 'RU', 'LU', 'TIMER', 'SPACE']
+
+key_event_table = {
+    (SDL_KEYDOWN, SDLK_SPACE): SPACE,
+    (SDL_KEYDOWN, SDLK_RIGHT): RD,
+    (SDL_KEYDOWN, SDLK_LEFT): LD,
+    (SDL_KEYUP, SDLK_RIGHT): RU,
+    (SDL_KEYUP, SDLK_LEFT): LU
+}
 
 # 캐릭터가 가져야 할것
 class Player:
@@ -121,6 +146,10 @@ class Player:
         return False
         pass
     def Move(self, MapEndLeft = 0, MapEndRight = 1280, MapEndBottom = 720, MapEndTop = 0):
+        if self.y_dir > 0 and self.x_dir > 1:
+            pass
+
+
         if self.x > MapEndLeft and self.x < MapEndRight:
             self.x += self.x_dir * self.speed
         elif self.x < MapEndRight - 20:
