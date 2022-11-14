@@ -1,7 +1,7 @@
 from pico2d import *
 import Manager.Item_Manager
 import random
-import cmath
+import math
 
 # Kriby Run Speed
 PIXEL_PER_METER = (10.0/0.3)
@@ -146,26 +146,48 @@ class Player:
         return False
         pass
     def Move(self, MapEndLeft = 0, MapEndRight = 1280, MapEndBottom = 720, MapEndTop = 0):
-        if self.y_dir > 0 and self.x_dir > 1:
+        dgree = 0.0
+        if self.x_dir == 0 and self.y_dir == 0:
+            return
+
+
+        if self.x_dir > 0:
+            if self.y_dir > 0: # 둘다 dir이 1 -> 45도
+                dgree = 45.0
+            elif self.y_dir < 0:
+                dgree = 315.0
+            else:
+                dgree = 0.0
             pass
+        elif self.x_dir < 0:
+            if self.y_dir > 0:
+                dgree = 135.0
+            elif self.y_dir < 0:
+                dgree = 225.0
+            else:
+                dgree = 180.0
+            pass
+        elif self.x_dir == 0:
+            if self.y_dir > 0:
+                dgree = 90.0
+            elif self.y_dir < 0:
+                dgree = 270.0
 
 
         if self.x > MapEndLeft and self.x < MapEndRight:
-            self.x += self.x_dir * self.speed
+            self.x += math.cos(math.radians(dgree)) * self.speed
         elif self.x < MapEndRight - 20:
             self.x = 20
-        elif self.x > MapEndLeft + 20:
+        elif self.x > MapEndLeft* math.sin(dgree)  + 20:
             self.x = 1260
 
 
         if self.y < MapEndBottom and self.y > MapEndTop:
-            self.y += self.y_dir * self.speed
+            self.y += math.sin(math.radians(dgree))  * self.speed
         elif self.y < MapEndBottom - 20:
             self.y = 20
         elif self.y > MapEndTop + 20:
             self.y = 700
-
-
         pass
 class Partner:
     image = None

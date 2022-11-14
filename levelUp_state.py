@@ -21,9 +21,13 @@ def handle_events():
     pass
 
 def draw():
+    clear_canvas()
+    play_state.draw_world()
+    update_canvas()
     pass
 
 def update():
+    play_state.update()
     pass
 
 def pause():
