@@ -30,7 +30,6 @@ def enter():
     UI_button_image = load_image("assets/Ui/UI.png")
     kirbys.c_kirby_UI_image = load_image("assets/Ui/Kirby_UI.png")
 
-
     # fill here
     pass
 

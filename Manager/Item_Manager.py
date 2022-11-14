@@ -1,3 +1,5 @@
+import random
+
 from pico2d import *
 
 
@@ -128,7 +130,7 @@ class Missile:
 
     pass
 
-class ICE(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
+class ICE(Missile): # 가로로 일직선 공격
     def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
         self.frame = 0
         self.state = 0
@@ -180,13 +182,15 @@ class ICE(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
                 case 4 :
                     Image.clip_draw(373, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
         pass
-class FIRE(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
-    A = 4
+class FIRE(Missile): # 무작위 위치에 불덩이 낙하
+
     def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
         self.frame = 0
         self.state = 0
-        self.x = charater_x
-        self.y = charater_y
+
+        self.x = random.randint(0,200)
+        self.y = random.randint(charater_y,200)
+
         self.width = 24
         self.height = 24
         self.BulletRange = 1.0

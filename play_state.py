@@ -105,9 +105,9 @@ def update():
 
 def Kriby_Update():
     kirby.Move()
+    kirby.Exp += item_manager.GainExp(kirby.x, kirby.y, kirby.Magent, kirby.Exp)
     if(kirby.levelUP()):
         pass
-    kirby.Exp += item_manager.GainExp(kirby.x, kirby.y, kirby.Magent, kirby.Exp)
 
 
 def draw():
