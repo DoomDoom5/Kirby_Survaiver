@@ -1,6 +1,6 @@
 from pico2d import *
 import game_framework
-import play_state
+import mapSelect_state
 class Kirby_UI:
     kirby_type = None
     c_kirby_UI_image = None
@@ -81,7 +81,7 @@ def handle_events():
                         Type = "HAMMER"
                     case 4:
                         Type = "SWORD"
-                game_framework.change_state(play_state)
+                game_framework.change_state(mapSelect_state)
 
                 pass
             else:

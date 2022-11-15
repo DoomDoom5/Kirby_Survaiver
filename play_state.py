@@ -2,15 +2,19 @@ from pico2d import *
 import game_framework
 import random
 import CharaterSelect_state
+import mapSelect_state
 import levelUp_state
 
+from map import Map
 from Character import Player
-from Character import Enemy
+from enemy import  Enemy
 from Manager.Item_Manager import Missile_manager
 from Manager.Item_Manager import Weapon
 from Manager.Item_Manager import Item_manager
 from Manager.Ui_Manager import Item_UI_Manager
 
+
+filld = None
 
 missile_manager = Missile_manager()
 item_manager = Item_manager()
@@ -22,23 +26,26 @@ max_row = 40
 
 kirby = Player()
 Enemys = [Enemy() for i in range(0,10)]
-BG_tile_image = None
 UI_image = None
 enemy_image = None
 Timer = 0
 fps = 0.01
 enemy_responTimer = 0
-
+gameMap = None
 
 def enter():
-    global BG_tile_image, tiles, kirby, Enemys, enemy_image, UI_image, Weapons,item_manager
-    BG_tile_image = load_image("assets/img/tilesets/ForestTexturePacked.png")
+    global tiles, kirby, Enemys, enemy_image, UI_image, Weapons,item_manager,gameMap
+
     UI_image = load_image("assets/Ui/UI.png")
     enemy_image= load_image("assets/img/Enemy/Normal_Enemy.png")
     missile_manager.missiles_image = load_image("assets/img/Effect/vfx.png")
     item_manager.Items_image = load_image("assets/Ui/items.png")
 
     Kirby_init_Test(Weapons, kirby)
+
+    gameMap = Map(mapSelect_state.Type)
+
+
 
     for s_Enemy in Enemys :
         r = random.randint(0,2)
@@ -113,11 +120,10 @@ def Kriby_Update():
 def draw():
     global Timer
     clear_canvas()
-    for col in range(0, max_col):
-        for row in range(0, max_row):
-            BG_tile_image.clip_draw(205,206,102,102, 102 * col, 102 * row, 110,110)
-        pass
 
+
+    if gameMap.image != None:
+        gameMap.draw()
     for s_Enemy in Enemys:
         s_Enemy.draw(enemy_image)
         UI_image.clip_draw(280, 512-158 -9, 9,9, s_Enemy.x, s_Enemy.y + 10, 30,4)
