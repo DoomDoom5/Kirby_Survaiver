@@ -19,9 +19,10 @@ class Map:
 
 
     def draw(self, player_x = 1280//2, player_y = 720//2):
-        self.image.clip_draw(player_x - 1280 // 2 + 1, player_y - 720 // 2 + 1, 1280 ,720 ,1280//2, 720//2, self.x, self.y)
-        # 280, 512-158 -9, 9,9, s_Enemy.x, s_Enemy.y + 10, 30,4)
-        # if player_x > 1280//2 and player_x < self.x - 1280//2 and player_y > 720//2 and player_x < self.x - 720//2:
-        #  self.image.clip_draw(player_x - 1280//2, player_y - 720//2, self.x, self.y, 102, 102)
+        dx = int(player_x)
+        dy = int(player_y)
+
+        self.image.clip_draw(dx - self.x // 2, dy - self.y // 2, 1280, 720, 1280 // 2, 720 // 2)
+       # if dx > 1280//2 and dx < self.x - 1280//2 and dy > 720//2 and dy < self.x - 720//2:
 
 

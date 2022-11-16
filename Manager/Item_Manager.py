@@ -103,15 +103,12 @@ class Item_manager:
         return 0
 
 
-
-
-
-
 class Missile:
     # ICE, FIRE, HAMMER 등등등
     name = "None"
     # state = 0 : 발사중, 1 : 파괴, 2 : 소멸
     state = None
+    image = None
     x = 0
     y = 0
     x_dir = 0
@@ -127,6 +124,10 @@ class Missile:
     BulletNum = 1  # 추가 투사체 수
 
     DurationTime = 0
+    ice = None
+    Fire = None
+
+
 
     pass
 
@@ -165,42 +166,38 @@ class ICE(Missile): # 가로로 일직선 공격
             if self.state >= 8:
                 self.state = 2
 
-    def draw(self, Image):
+    def draw(self, image):
         if self.state == 0:
-            Image.clip_draw(365, 552-45 - 24, 24,24,self.x,self.y, self.width * self.BulletRange, self.height * self.BulletRange)
+            image.clip_draw(365, 552-45 - 24, 24,24,self.x,self.y, self.width * self.BulletRange, self.height * self.BulletRange)
         elif self.state == 1:
             self.frame = self.frame+1
             match self.frame//2:
                 case 0 :
-                    Image.clip_draw(245, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(245, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 1 :
-                    Image.clip_draw(265, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(265, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 2 :
-                    Image.clip_draw(291, 552-19 - 10, 30,30,self.x,self.y,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(291, 552-19 - 10, 30,30,self.x,self.y,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
                 case 3 :
-                    Image.clip_draw(335, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(335, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 4 :
-                    Image.clip_draw(373, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(373, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
         pass
 class FIRE(Missile): # 무작위 위치에 불덩이 낙하
-
     def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
         self.frame = 0
         self.state = 0
 
         self.x = random.randint(0,200)
-        self.y = random.randint(charater_y,200)
+        self.impacty = random.randint(charater_y - 200,charater_y + 200)
+        self.y = self.impacty + 720
+
 
         self.width = 24
         self.height = 24
         self.BulletRange = 1.0
         self.BulletSpeed = 5.0  # 투사채 속도
-        self.Attack = 10
-        if invers:
-            self.x_dir = 1
-        else:
-            self.x_dir = -1
-            pass
+        self.Attack = 20
 
         if level == 1:
             self.DurationTime = 4.0
@@ -211,31 +208,17 @@ class FIRE(Missile): # 무작위 위치에 불덩이 낙하
             pass
     def Move(self, MapEndLeft=0, MapEndRight=1280, MapEndBottom=720, MapEndTop=0):
         if self.state == 0:
-            self.x += self.x_dir * self.BulletSpeed
-            if self.x > MapEndRight:
+            self.y += self.y_dir * self.BulletSpeed
+            if self.y > MapEndRight:
                 del self
-            elif self.x < MapEndLeft:
+            elif self.y < MapEndLeft:
                 del self
         elif self.state == 1:
             if self.state >= 8:
                 self.state = 2
 
     def draw(self, Image):
-        if self.state == 0:
-            Image.clip_draw(365, 552-45 - 24, 24,24,self.x,self.y, self.width * self.BulletRange, self.height * self.BulletRange)
-        elif self.state == 1:
-            self.frame = self.frame+1
-            match self.frame//2:
-                case 0 :
-                    Image.clip_draw(245, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
-                case 1 :
-                    Image.clip_draw(265, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
-                case 2 :
-                    Image.clip_draw(291, 552-19 - 10, 30,30,self.x,self.y,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
-                case 3 :
-                    Image.clip_draw(335, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
-                case 4 :
-                    Image.clip_draw(373, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+
         pass
 class PLASMA(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
     A = 4
@@ -334,14 +317,19 @@ class Missile_manager:
     fire = FIRE()
     plasma = PLASMA()
     hammer = HAMMER()
-    missiles_image = None
+    image = None
+
+    def __init__(self):
+        if Missile_manager.image == None:
+            Missile_manager.image = load_image("assets/img/Effect/vfx.png")
+
     def draw(self):
         for missile in self.missiles:
             if missile.name == "ICE":
                 self.ice = missile
-                self.ice.draw(self.missiles_image)
+                self.ice.draw(self.image)
             elif missile.name == "HAMMER":
-                self.hammer.draw(self.missiles_image)
+                self.hammer.draw(self.image)
                 pass
 
     def Move(self):

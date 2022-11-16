@@ -1,5 +1,3 @@
-
-import math
 import random
 from pico2d import *
 
@@ -8,6 +6,7 @@ class Enemy:
     state = None
     name = None
     image = None
+    Hpimage = None
     x = 0
     y = 0
     width = 0
@@ -23,6 +22,13 @@ class Enemy:
     invers = False # 캐릭터 오른쪽, 왼쪽
 
     def __init__(self):
+        if Enemy.image == None:
+            Enemy.image = load_image("assets/img/Enemy/Normal_Enemy.png")
+            pass
+        if Enemy.Hpimage == None:
+            Enemy.Hpimage = load_image("assets/Ui/UI.png")
+            pass
+
         self.x = random.randint(-10,0)
         self.y = random.randint(0,720)
         if self.name == "Waddle_dee":
@@ -55,26 +61,28 @@ class Enemy:
     def On_damege(self, charater_Attack):
         self.Hp = self.Hp - charater_Attack
 
-    def draw(self, image):
+    def draw(self):
         self.frame = self.frame%4 + 1
+        self.Hpimage.clip_draw(280, 512-158 -9, 9,9, self.x, self.y + 10, 30,4)
+        self.Hpimage.clip_draw(422, 512-158 -9, 9,9, self.x, self.y + 10, self.Hp/self.MaxHp * 30,4)
         if self.name == "Waddle_dee":
             if not self.invers:
-                image.clip_draw(40 * self.frame,1190 - 24 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 * self.frame,1190 - 24 , 24, 24,self.x,self.y, self.width, self.height)
             else :
-                image.clip_draw(40 * self.frame,1190 - 50 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 * self.frame,1190 - 50 , 24, 24,self.x,self.y, self.width, self.height)
                 pass
             pass
         elif self.name == "kinght":
             if not self.invers:
-                image.clip_draw(40 * self.frame,1190 - 58 - 24 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 * self.frame,1190 - 58 - 24 , 24, 24,self.x,self.y, self.width, self.height)
             else :
-                image.clip_draw(40 * self.frame,1190 - 90 - 24, 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 * self.frame,1190 - 90 - 24, 24, 24,self.x,self.y, self.width, self.height)
                 pass
         elif self.name == "Fighter":
             if not self.invers:
-                image.clip_draw(40 * self.frame,1190 - 100 - 24 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 * self.frame,1190 - 100 - 24 , 24, 24,self.x,self.y, self.width, self.height)
             else :
-                image.clip_draw(40 * self.frame,1190 - 130 - 24, 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 * self.frame,1190 - 130 - 24, 24, 24,self.x,self.y, self.width, self.height)
 
         pass
 

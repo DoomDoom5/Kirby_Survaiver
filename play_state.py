@@ -16,7 +16,7 @@ from Manager.Ui_Manager import Item_UI_Manager
 
 filld = None
 
-missile_manager = Missile_manager()
+missile_manager = None
 item_manager = Item_manager()
 item_UI_Manager = Item_UI_Manager()
 Weapons = []
@@ -25,27 +25,25 @@ max_col = 40
 max_row = 40
 
 kirby = Player()
-Enemys = [Enemy() for i in range(0,10)]
 UI_image = None
-enemy_image = None
+Enemys = None
 Timer = 0
 fps = 0.01
 enemy_responTimer = 0
 gameMap = None
 
 def enter():
-    global tiles, kirby, Enemys, enemy_image, UI_image, Weapons,item_manager,gameMap
+    global tiles, kirby, Enemys, UI_image, Weapons,item_manager,gameMap, Enemys, missile_manager
+    missile_manager = Missile_manager()
 
     UI_image = load_image("assets/Ui/UI.png")
-    enemy_image= load_image("assets/img/Enemy/Normal_Enemy.png")
-    missile_manager.missiles_image = load_image("assets/img/Effect/vfx.png")
+
     item_manager.Items_image = load_image("assets/Ui/items.png")
 
+    Enemys = [Enemy() for i in range(0, 10)]
     Kirby_init_Test(Weapons, kirby)
 
     gameMap = Map(mapSelect_state.Type)
-
-
 
     for s_Enemy in Enemys :
         r = random.randint(0,2)
@@ -53,7 +51,7 @@ def enter():
         s_Enemy.__init__()
         if r == 0:
             s_Enemy.x = random.randint(1280,1290)
-        elif r ==1 :
+        elif r == 1 :
             s_Enemy.x = random.randint(-10, 0)
         pass
 
@@ -114,6 +112,7 @@ def Kriby_Update():
     kirby.Move()
     kirby.Exp += item_manager.GainExp(kirby.x, kirby.y, kirby.Magent, kirby.Exp)
     if(kirby.levelUP()):
+        game_framework.push_state(levelUp_state)
         pass
 
 
@@ -121,13 +120,10 @@ def draw():
     global Timer
     clear_canvas()
 
-
     if gameMap.image != None:
-        gameMap.draw()
+        gameMap.draw(kirby.x, kirby.y)
     for s_Enemy in Enemys:
-        s_Enemy.draw(enemy_image)
-        UI_image.clip_draw(280, 512-158 -9, 9,9, s_Enemy.x, s_Enemy.y + 10, 30,4)
-        UI_image.clip_draw(422, 512-158 -9, 9,9, s_Enemy.x, s_Enemy.y + 10, s_Enemy.Hp/s_Enemy.MaxHp * 30,4)
+        s_Enemy.draw()
         pass
 
     missile_manager.draw()
