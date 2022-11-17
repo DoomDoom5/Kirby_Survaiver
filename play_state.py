@@ -2,6 +2,7 @@ from pico2d import *
 import game_framework
 import random
 import CharaterSelect_state
+import game_world
 import mapSelect_state
 import levelUp_state
 
@@ -11,21 +12,20 @@ from enemy import  Enemy
 from Manager.Item_Manager import Missile_manager
 from Manager.Item_Manager import Weapon
 from Manager.Item_Manager import Item_manager
-from Manager.Ui_Manager import Item_UI_Manager
+from Manager.Ui_Manager import UI_Manager
 
 
 filld = None
 
 missile_manager = None
-item_manager = Item_manager()
-item_UI_Manager = Item_UI_Manager()
+item_manager = None
+ui_Manager = None
 Weapons = []
 
 max_col = 40
 max_row = 40
 
-kirby = Player()
-UI_image = None
+kirby = None
 Enemys = None
 Timer = 0
 fps = 0.01
@@ -33,17 +33,26 @@ enemy_responTimer = 0
 gameMap = None
 
 def enter():
-    global tiles, kirby, Enemys, UI_image, Weapons,item_manager,gameMap, Enemys, missile_manager
+    global tiles, kirby, Enemys, Weapons,item_manager,gameMap, Enemys, missile_manager, ui_Manager,kirby
+
     missile_manager = Missile_manager()
 
-    UI_image = load_image("assets/Ui/UI.png")
+    ui_Manager = UI_Manager()
+    item_manager = Item_manager()
 
-    item_manager.Items_image = load_image("assets/Ui/items.png")
+    game_world.add_object(ui_Manager, 2)
+    game_world.add_object(item_manager, 2)
+
 
     Enemys = [Enemy() for i in range(0, 10)]
+    ui_Manager.Weapons.append("ICE")
+
+    kirby = Player()
     Kirby_init_Test(Weapons, kirby)
+    game_world.add_object(kirby,1)
 
     gameMap = Map(mapSelect_state.Type)
+    game_world.add_object(gameMap,0)
 
     for s_Enemy in Enemys :
         r = random.randint(0,2)
@@ -53,11 +62,10 @@ def enter():
             s_Enemy.x = random.randint(1280,1290)
         elif r == 1 :
             s_Enemy.x = random.randint(-10, 0)
+        game_world.add_object(s_Enemy, 1)
         pass
 
 def exit():
-    global BG_tile_image
-    del BG_tile_image
     pass
 
 def update():
@@ -65,8 +73,6 @@ def update():
     if kirby.invisivleTime > 0 :
         kirby.invisivleTime -= fps
     missile_manager.Move()
-
-    Kriby_Update()
 
     for s_Enemy in Enemys :
         s_Enemy.chase(kirby.x , kirby.y)
@@ -100,6 +106,7 @@ def update():
             newEnemy.x = random.randint(1280,1290)
         elif r ==1 :
             newEnemy.x = random.randint(-10, 0)
+        game_world.add_object(newEnemy, 1)
         Enemys.append(newEnemy)
         del newEnemy
         enemy_responTimer = 0
@@ -107,46 +114,39 @@ def update():
         enemy_responTimer += fps
     pass
 
+    for game_object in game_world.all_objects():
+        game_object.update() # game_world에서 제너레이터 하였기 때문에
+
+    Kriby_Update()
 
 def Kriby_Update():
     kirby.Move()
     kirby.Exp += item_manager.GainExp(kirby.x, kirby.y, kirby.Magent, kirby.Exp)
+    ui_Manager.player_UI_update(kirby.x, kirby.y, kirby.Hp, kirby.MaxHp, kirby.Exp, kirby.MaxExp)
+
     if(kirby.levelUP()):
         game_framework.push_state(levelUp_state)
         pass
 
 
+
 def draw():
     global Timer
     clear_canvas()
-
-    if gameMap.image != None:
-        gameMap.draw(kirby.x, kirby.y)
-    for s_Enemy in Enemys:
-        s_Enemy.draw()
-        pass
+    draw_world()
 
     missile_manager.draw()
-    item_manager.Draw()
 
-    kirby.draw()
-    draw_UI()
     update_canvas()
-
     Timer += fps
     delay(fps)
     # fill here
     pass
 
-def draw_UI():
-    # 체력 출력
-    UI_image.clip_draw(280, 512 - 158 - 9, 9, 9, kirby.x, kirby.y - 30, 60, 8)
-    UI_image.clip_draw(422, 512 - 158 - 9, 9, 9, kirby.x, kirby.y - 30, kirby.Hp / kirby.MaxHp * 60, 8)
-    # 아이템 출력
-    UI_image.clip_draw(175, 512 - 98 - 32, 96, 32, 100, 720 - 75, 200, 200 // 3)
-    # 경험치 창 출력
-    UI_image.clip_draw(374, 512 - 249 - 23, 10, 23, 1280 // 2, 700, 1280, 40)
-    UI_image.clip_draw(424, 512 - 189 - 4, 4, 4, 0, 700, (kirby.Exp / kirby.MaxExp) * 1280 * 2, 28)
+def draw_world():
+    for game_object in game_world.all_objects():
+        game_object.draw() # game_world에서 제너레이터 하였기 때문에
+    pass
 
 def handle_events():
     events = get_events()

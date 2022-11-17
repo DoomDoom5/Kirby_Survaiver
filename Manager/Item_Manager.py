@@ -8,8 +8,6 @@ class Item:
     Gained = None
     x = 0
     y = 0
-
-
 class ExpStone(Item):
     Type = None
     Exp = None
@@ -25,7 +23,7 @@ class ExpStone(Item):
         self.t = 0.0
         match self.Type:
             case "GREEN":
-                self.Exp = 1
+                self.Exp = 2
             case "BLUE":
                 self.Exp = 5
             case "RED":
@@ -65,24 +63,29 @@ class Item_manager:
     Items = []
     Items_image = None
     expStone = ExpStone()
+    def __init__(self):
+        if Item_manager.Items_image == None:
+            Item_manager.Items_image = load_image("assets/Ui/items.png")
+
     def Create_EXP_Stone(self, Enemy_name, Enemy_x, Enemy_y):
         newExpStone = ExpStone()
         if Enemy_name == "Waddle_dee":
             newExpStone.Type = "GREEN"
         elif Enemy_name == "kinght":
             newExpStone.Type = "BLUE"
-
         newExpStone.__init__(Enemy_x,Enemy_y)
         self.Items.append(newExpStone)
         del newExpStone
 
-    def Draw(self):
+    def draw(self):
         for item in self.Items:
             match item.Name:
                 case "EXP_STONE":
                     self.expStone = item
                     self.expStone.Draw(self.Items_image)
 
+    def update(self):
+        pass
 
     def GainExp(self, Player_x, Player_y, Player_Magnet_Range, Player_Exp):
         for item in self.Items:
@@ -97,8 +100,6 @@ class Item_manager:
                             Player_Exp = self.expStone.Exp
                             self.Items.remove(item)
                             return Player_Exp
-
-
 
         return 0
 

@@ -189,3 +189,6 @@ class Player:
         elif self.y > MapEndTop + 20:
             self.y = 700
         pass
+
+    def update(self):
+        pass

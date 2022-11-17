@@ -1,5 +1,6 @@
 import random
 from pico2d import *
+import game_world
 
 class Enemy:
     frame = 0
@@ -54,9 +55,6 @@ class Enemy:
 
         self.Hp = self.MaxHp
 
-    def Move(self, MapEndLeft = 0, MapEndRight = 1280, MapEndBottom = 720, MapEndTop = 0):
-        self.x += self.x_dir * self.speed
-        self.y += self.y_dir * self.speed
 
     def On_damege(self, charater_Attack):
         self.Hp = self.Hp - charater_Attack
@@ -98,3 +96,13 @@ class Enemy:
             self.y_dir = -1
         else:
             self.y_dir = 1
+    def Move(self):
+        self.x += self.x_dir * self.speed
+        self.y += self.y_dir * self.speed
+
+
+    def update(self):
+        if self.Hp <= 0:
+            game_world.remove_object(self)
+
+        pass
