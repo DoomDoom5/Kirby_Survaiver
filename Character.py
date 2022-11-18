@@ -43,6 +43,7 @@ class Player:
     x_dir = 0
     y_dir = 0
 
+    Attack = 0
     speed = 2  # 이동속도
 
     MaxHp = 100.0  # 최대 Hp
@@ -117,6 +118,8 @@ class Player:
                     self.y_dir += 1
                 elif event.key == SDLK_DOWN:
                     self.y_dir -= 1
+                elif event.key == SDLK_1:
+                    self.Exp = self.MaxExp
 
             elif event.type == SDL_KEYUP:
                 if event.key == SDLK_RIGHT:
@@ -140,17 +143,15 @@ class Player:
     def levelUP(self):
         if self.Exp >= self.MaxExp:
             self.Exp = 0
-            self.MaxExp = self.MaxExp * 1.4
+            self.MaxExp = self.MaxExp * 1.6
             self.Level = self.Level + 1
             return True
         return False
-        pass
+
     def Move(self, MapEndLeft = 0, MapEndRight = 1280, MapEndBottom = 720, MapEndTop = 0):
         dgree = 0.0
         if self.x_dir == 0 and self.y_dir == 0:
             return
-
-
         if self.x_dir > 0:
             if self.y_dir > 0: # 둘다 dir이 1 -> 45도
                 dgree = 45.0
@@ -194,3 +195,20 @@ class Player:
         if self.Hp < self.MaxHp:
             self.Hp += 0.05
         pass
+
+    def select_Ability(self, selectMenu):
+        if selectMenu == 0:
+            # 채력 업
+            self.MaxHp += 10
+            pass
+        elif selectMenu == 1:
+            self.Attack += 5
+
+        elif selectMenu == 2:
+            self.speed += 0.5
+
+        elif selectMenu == 3:
+            pass
+
+
+

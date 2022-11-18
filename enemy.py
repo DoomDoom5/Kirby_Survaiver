@@ -104,5 +104,4 @@ class Enemy:
     def update(self):
         if self.Hp <= 0:
             game_world.remove_object(self)
-
         pass

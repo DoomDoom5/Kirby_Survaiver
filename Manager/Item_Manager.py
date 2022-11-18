@@ -1,5 +1,5 @@
 import random
-
+import game_world
 from pico2d import *
 
 
@@ -53,7 +53,6 @@ class ExpStone(Item):
     def Draw(self, Item_Image):
         match self.Type:
             case "GREEN":
-                print("그려짐")
                 Item_Image.clip_draw(51, 624- 96 - 12, 9,12,self.x,self.y,self.width, self.height)
             case "BLUE":
                 Item_Image.clip_draw(51, 624 - 36 - 12, 9, 12, self.x, self.y,self.width, self.height)
@@ -129,20 +128,18 @@ class Missile:
     Fire = None
 
 
-
-    pass
-
 class ICE(Missile): # 가로로 일직선 공격
-    def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
+    def __init__(self, level=0, invers=False,charater_x = 0,charater_y = 0,charater_Attack = 0):
         self.frame = 0
         self.state = 0
-        self.x = charater_x
-        self.y = charater_y
         self.width = 24
         self.height = 24
         self.BulletRange = 1.0
         self.BulletSpeed = 5.0  # 투사채 속도
-        self.Attack = 10
+        self.Attack = 10 + charater_Attack
+        self.x = charater_x
+        self.y = charater_y
+
         if invers:
             self.x_dir = 1
         else:
@@ -185,13 +182,11 @@ class ICE(Missile): # 가로로 일직선 공격
                    image.clip_draw(373, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
         pass
 class FIRE(Missile): # 무작위 위치에 불덩이 낙하
-    def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
+    def __init__(self, level=0, invers=False):
         self.frame = 0
         self.state = 0
 
         self.x = random.randint(0,200)
-        self.impacty = random.randint(charater_y - 200,charater_y + 200)
-        self.y = self.impacty + 720
 
 
         self.width = 24
@@ -223,16 +218,13 @@ class FIRE(Missile): # 무작위 위치에 불덩이 낙하
         pass
 class PLASMA(Missile): # 가까운적 찾고 그냥 가로로 일직선 공격
     A = 4
-    def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
+    def __init__(self, level=0, invers=False):
         self.frame = 0
         self.state = 0
-        self.x = charater_x
-        self.y = charater_y
         self.width = 24
         self.height = 24
         self.BulletRange = 1.0
         self.BulletSpeed = 5.0  # 투사채 속도
-        self.Attack = 10
         if invers:
             self.x_dir = 1
         else:
@@ -333,10 +325,11 @@ class Missile_manager:
                 self.hammer.draw(self.image)
                 pass
 
-    def Move(self):
+    def update(self):
         for missile in self.missiles:
             if missile.state == 2:
                 self.missiles.remove(missile)
+                game_world.remove_object(self)
             elif missile.name == "ICE":
                 self.ice = missile
                 self.ice.Move()
@@ -362,12 +355,12 @@ class Weapon:
 
     level = 1
 
-    def shot(self, charater_x, charater_y, charater_invers, missile_manager, Timer = 0.03):
+    def shot(self, charater_x, charater_y,charater_Attack  ,charater_invers, missile_manager, Timer = 0.03):
         if self.shotTimer >= self.coolTime:
             if self.name == "ICE":
                 new_missile = ICE()
                 new_missile.name = self.name
-                new_missile.__init__(self.level,charater_invers,charater_x,charater_y)
+                new_missile.__init__(self.level,charater_invers,charater_x,charater_y,charater_Attack)
                 missile_manager.missiles.append(new_missile)
                 del new_missile
             elif self.name == "HAMMER":

@@ -33,18 +33,16 @@ enemy_responTimer = 0
 gameMap = None
 
 def enter():
-    global tiles, kirby, Enemys, Weapons,item_manager,gameMap, Enemys, missile_manager, ui_Manager,kirby
+    global  kirby, Enemys, Weapons,item_manager,gameMap, Enemys, missile_manager, ui_Manager,kirby
 
     missile_manager = Missile_manager()
-
     ui_Manager = UI_Manager()
     item_manager = Item_manager()
 
+    game_world.add_object(missile_manager,1)
     game_world.add_object(ui_Manager, 2)
     game_world.add_object(item_manager, 2)
 
-
-    Enemys = [Enemy() for i in range(0, 10)]
     ui_Manager.Weapons.append("ICE")
 
     kirby = Player()
@@ -54,6 +52,7 @@ def enter():
     gameMap = Map(mapSelect_state.Type)
     game_world.add_object(gameMap,0)
 
+    Enemys = [Enemy() for i in range(0, 10)]
     for s_Enemy in Enemys :
         r = random.randint(0,2)
         s_Enemy.name = "Waddle_dee"
@@ -70,9 +69,10 @@ def exit():
 
 def update():
     global enemy_responTimer, Timer
+
+    ui_Manager.elapsed_time += fps
     if kirby.invisivleTime > 0 :
         kirby.invisivleTime -= fps
-    missile_manager.Move()
 
     for s_Enemy in Enemys :
         s_Enemy.chase(kirby.x , kirby.y)
@@ -84,14 +84,14 @@ def update():
         if s_Enemy.Hp <= 0 :
             item_manager.Create_EXP_Stone(s_Enemy.name, s_Enemy.x, s_Enemy.y)
             Enemys.remove(s_Enemy)
+            ui_Manager.kill_Enemy += 1
         kirby.check_Enemy_Coll(s_Enemy.x - s_Enemy.width//2,
                                s_Enemy.x + s_Enemy.width//2,
                                s_Enemy.y + s_Enemy.height//2,
                                s_Enemy.y - s_Enemy.height//2,
                                s_Enemy.power)
     for weapon in Weapons:
-        weapon.shot(kirby.x, kirby.y, kirby.invers, missile_manager)
-
+        weapon.shot(kirby.x, kirby.y, kirby.Attack,kirby.invers, missile_manager)
 
     if enemy_responTimer >= 2.0:
         newEnemy = Enemy()
@@ -122,9 +122,10 @@ def update():
 def Kriby_Update():
     kirby.Move()
     kirby.Exp += item_manager.GainExp(kirby.x, kirby.y, kirby.Magent, kirby.Exp)
-    ui_Manager.player_UI_update(kirby.x, kirby.y, kirby.Hp, kirby.MaxHp, kirby.Exp, kirby.MaxExp)
+    ui_Manager.player_UI_update(kirby)
 
     if(kirby.levelUP()):
+        ui_Manager.player_level = kirby.Level
         game_framework.push_state(levelUp_state)
         pass
 
@@ -172,3 +173,13 @@ def MapMovement():
     pass
 
 
+def collide(a,b):
+    left_a , bottom_a , right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
+
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return False
+
+    return True
