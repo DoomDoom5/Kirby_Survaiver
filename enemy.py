@@ -21,6 +21,7 @@ class Enemy:
     Hp = MaxHp
     power = 0  # 공격력
     invers = False # 캐릭터 오른쪽, 왼쪽
+    crystal = None
 
     def __init__(self):
         if Enemy.image == None:
@@ -30,14 +31,32 @@ class Enemy:
             Enemy.Hpimage = load_image("assets/Ui/UI.png")
             pass
 
-        self.x = random.randint(-10,0)
-        self.y = random.randint(0,720)
+        randp = random.randint(0,4)
+
+        if randp == 0:
+            self.x = random.randint(-10,0)
+            self.y = random.randint(0,720)
+        elif randp == 1:
+            self.x = random.randint(1280,1290)
+            self.y = random.randint(0,720)
+        elif randp == 2:
+            self.x = random.randint(0,1280)
+            self.y = random.randint(-10,0)
+        else:
+            self.x = random.randint(0,1280)
+            self.y = random.randint(720,730)
+
+
+
+
         if self.name == "Waddle_dee":
             self.MaxHp = 10
             self.speed = 0.5
             self.width = 24
             self.height = 24
             self.power = 2
+            self.crystal = "GREEN"
+
 
         elif self.name == "kinght":
             self.MaxHp = 20
@@ -45,16 +64,17 @@ class Enemy:
             self.width = 24
             self.height = 24
             self.power = 4
+            self.crystal = "BLUE"
 
         elif self.name == "Fighter":
             self.MaxHp = 40
             self.speed = 3
-            self.width = 24
-            self.height = 24
-            self.power = 7
+            self.width = 33
+            self.height = 30
+            self.power = 6
+            self.crystal = "RED"
 
         self.Hp = self.MaxHp
-
 
     def On_damege(self, charater_Attack):
         self.Hp = self.Hp - charater_Attack
@@ -78,9 +98,9 @@ class Enemy:
                 pass
         elif self.name == "Fighter":
             if not self.invers:
-                self.image.clip_draw(40 * self.frame,1190 - 100 - 24 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 * self.frame,1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
             else :
-                self.image.clip_draw(40 * self.frame,1190 - 130 - 24, 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 * self.frame,1190 - 162 - 29, 33, 29,self.x,self.y, self.width, self.height)
 
         pass
 
@@ -97,9 +117,33 @@ class Enemy:
         else:
             self.y_dir = 1
     def Move(self):
-        self.x += self.x_dir * self.speed
-        self.y += self.y_dir * self.speed
+        if self.x_dir > 0:
+            if self.y_dir > 0:  # 둘다 dir이 1 -> 45도
+                dgree = 45.0
+            elif self.y_dir < 0:
+                dgree = 315.0
+            else:
+                dgree = 0.0
+            pass
+        elif self.x_dir < 0:
+            if self.y_dir > 0:
+                dgree = 135.0
+            elif self.y_dir < 0:
+                dgree = 225.0
+            else:
+                dgree = 180.0
+            pass
+        elif self.x_dir == 0:
+            if self.y_dir > 0:
+                dgree = 90.0
+            elif self.y_dir < 0:
+                dgree = 270.0
 
+        self.x += math.cos(math.radians(dgree)) * self.speed
+        self.y += math.sin(math.radians(dgree)) * self.speed
+
+    def get_bb(self):
+        return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
 
     def update(self):
         if self.Hp <= 0:

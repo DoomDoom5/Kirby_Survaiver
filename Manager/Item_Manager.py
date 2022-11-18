@@ -53,9 +53,11 @@ class ExpStone(Item):
     def Draw(self, Item_Image):
         match self.Type:
             case "GREEN":
-                Item_Image.clip_draw(51, 624- 96 - 12, 9,12,self.x,self.y,self.width, self.height)
+                Item_Image.clip_draw(51, 624 - 96 - 12, 9,12,self.x,self.y,self.width, self.height)
             case "BLUE":
                 Item_Image.clip_draw(51, 624 - 36 - 12, 9, 12, self.x, self.y,self.width, self.height)
+            case "RED":
+                Item_Image.clip_draw(51, 624 - 526 - 12, 9, 12, self.x, self.y,self.width, self.height)
         pass
 
 class Item_manager:
@@ -66,12 +68,9 @@ class Item_manager:
         if Item_manager.Items_image == None:
             Item_manager.Items_image = load_image("assets/Ui/items.png")
 
-    def Create_EXP_Stone(self, Enemy_name, Enemy_x, Enemy_y):
+    def Create_EXP_Stone(self, Enemy_crystal, Enemy_x, Enemy_y):
         newExpStone = ExpStone()
-        if Enemy_name == "Waddle_dee":
-            newExpStone.Type = "GREEN"
-        elif Enemy_name == "kinght":
-            newExpStone.Type = "BLUE"
+        newExpStone.Type = Enemy_crystal
         newExpStone.__init__(Enemy_x,Enemy_y)
         self.Items.append(newExpStone)
         del newExpStone
@@ -338,6 +337,10 @@ class Missile_manager:
                 pass
         pass
 
+    def get_bb(self):
+        for missile in self.missiles:
+            if missile.state == 0:
+                return missile.x - missile.width // 2, missile.y - missile.height // 2, missile.x + missile.width // 2, missile.y + missile.height // 2
     def Check_Hit_Enemy(self, enemy_left , enemy_right , enemy_top , enemy_bottom):
          for missile in self.missiles:
              if missile.state == 0:

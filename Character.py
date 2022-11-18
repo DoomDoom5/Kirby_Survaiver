@@ -34,39 +34,30 @@ class Player:
     type = None
     frame = 0
     state = "IDLE"
-
     x = 1280//2
     y = 720//2
     width = 40
     height = 40
-
     x_dir = 0
     y_dir = 0
-
     Attack = 0
     speed = 2  # 이동속도
-
     MaxHp = 100.0  # 최대 Hp
     Hp = MaxHp  # 현재 HP
-
     MaxExp = 5
     Exp = 0
-
     Level = 0
-
     Defence = 0.0  # 방어력
-    Recovery = 0.0  # 재생력
-
+    Recovery = 0.05  # 재생력
     BulletSpeed = 1.0  # 투사채 속도
     BulletRange = 1.0  # 투사채 크기
     BulletNum = 1  # 추가 투사체 수
-
     Luck = 0.0  # 운에 따라 선택지 4개
     Magent = 0.0  # 경험치 흡수 범위
     Revival = 0  # 부활 횟수
 
     invisivleTime = 0.0  # 무적시간
-    Max_invisivleTime = 1.0  # 최대 무적시간
+    Max_invisivleTime = 0.4  # 최대 무적시간
     invers = False # 캐릭터 오른쪽, 왼쪽
 
     def __init__(self):
@@ -79,11 +70,13 @@ class Player:
             self.image = load_image("assets/img/Kirby/PLASMA_Kirby_empty.png")
             pass
 
-    def check_Enemy_Coll(self, enemy_left, enemy_right, enemy_top, enemy_bottom, enemy_Attack):
-        if self.x - self.width//2 < enemy_right and self.y - self.height//2 < enemy_bottom and self.x + self.width//2 > enemy_left and self.y + self.height//2 > enemy_top:
-            if self.invisivleTime <= 0:
-                self.Hp -= enemy_Attack
-                self.invisivleTime = self.Max_invisivleTime
+    def get_bb(self):
+        return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
+
+    def check_Enemy_Coll(self, enemy_Attack):
+        if self.invisivleTime <= 0:
+            self.Hp -= enemy_Attack
+            self.invisivleTime = self.Max_invisivleTime
         pass
     def draw(self):
         self.frame = self.frame+1
@@ -174,7 +167,6 @@ class Player:
             elif self.y_dir < 0:
                 dgree = 270.0
 
-
         if self.x > MapEndLeft and self.x < MapEndRight:
             self.x += math.cos(math.radians(dgree)) * self.speed
         elif self.x < MapEndRight - 20:
@@ -193,7 +185,7 @@ class Player:
 
     def update(self):
         if self.Hp < self.MaxHp:
-            self.Hp += 0.05
+            self.Hp += self.Recovery
         pass
 
     def select_Ability(self, selectMenu):

@@ -8,11 +8,13 @@ Item_image = None
 select_Number = 0
 Type = None
 box_bg_image = None
-a = random.sample(range(1,101),10) # 1부터 100까지의 범위중에 10개를 중복없이 뽑겠다.
+anim_height = None
+
+
+a = random.sample(range(0,100),10) # 1부터 100까지의 범위중에 10개를 중복없이 뽑겠다.
 def enter():
-    global box_bg_image
-
-
+    global box_bg_image,anim_height
+    anim_height = 600
     play_state.kirby.x_dir = 0
     play_state.kirby.y_dir = 0
     box_bg_image = load_image("assets/Ui/UI.png")
@@ -50,24 +52,29 @@ def handle_events():
 def draw():
     clear_canvas()
     play_state.draw_world()
-    box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2,720//2,800,720)
+
+    box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2, anim_height + 720//2,800,720)
 
 
     for i in range(0,3):
-        box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2 ,720//2 + 200,550,100)
-        play_state.ui_Manager.UI_font.draw(550, 570, '최대체력을 %d 얻습니다' %10, (255, 255, 255))
+        box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2 , anim_height +720//2 + 200 - 120* i,550,100)
+        play_state.ui_Manager.UI_font.draw(550,  anim_height +570, '최대체력을 %d 얻습니다' %10, (255, 255, 255))
 
-        box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2 ,720//2 + 80,550,100)
-        play_state.ui_Manager.UI_font.draw(550, 450, '공격력을 %d 얻습니다' %5, (255, 255, 255))
+        box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2 , anim_height +720//2 + 80,550,100)
+        play_state.ui_Manager.UI_font.draw(550,  anim_height +450, '공격력을 %d 얻습니다' %5, (255, 255, 255))
 
-        box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2,720//2  - 40 ,550,100)
-        play_state.ui_Manager.UI_font.draw(550, 330, '스피드를 %3.1f 얻습니다' %0.1, (255, 255, 255))
+        box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2, anim_height +720//2  - 40 ,550,100)
+        play_state.ui_Manager.UI_font.draw(550,  anim_height +330, '스피드를 %3.1f 얻습니다' %0.1, (255, 255, 255))
 
 
     update_canvas()
     pass
 
 def update():
+    global anim_height
+    if anim_height > 1:
+        anim_height -= 100
+    delay(0.02)
     pass
 
 def pause():

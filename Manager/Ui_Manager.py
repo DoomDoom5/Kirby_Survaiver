@@ -5,6 +5,7 @@ class UI_Manager:
     Weapons = []
     Accessories = []
     UI_Image = None
+    kriby_UI_Image = None
     UI_font = None
     Draw_x = None
     Draw_y = None
@@ -15,25 +16,24 @@ class UI_Manager:
     Enemy_x = 0
     Enemy_y = 0
     kill_Enemy = 0
-
     player_Hp = 0
     player_MaxHp = 0
-
     player_Exp = 0
     player_MaxExp = 0
-
     player_level = 0
-
     elapsed_time = 0
-
-
 
     def __init__(self):
         if UI_Manager.UI_Image == None:
             UI_Manager.UI_Image = load_image("assets/Ui/UI.png")
 
+        if UI_Manager.kriby_UI_Image == None:
+            UI_Manager.kriby_UI_Image = load_image("assets/Ui/Kirby_UI.png")
+
         if UI_Manager.UI_font == None:
             UI_Manager.UI_font = load_font("assets/Ui/NEXONFootballGothicL.ttf", 20)
+
+
 
         pass
     def draw(self):
@@ -59,7 +59,7 @@ class UI_Manager:
                 print(weapon)
                 pass
             if weapon == "ICE":
-                self.UI_Image.clip_draw(365, 552 - 45 - 24, 24, 24, 10, 600, 20, 20)
+                self.kriby_UI_Image.clip_draw(0,160 - 32 * 1, 32, 32, 18, 720 - 56,26,26)
                 pass
             elif weapon == "FIRE":
                 pass
@@ -71,5 +71,14 @@ class UI_Manager:
         self.player_Hp , self.player_MaxHp  = int(player.Hp), int(player.MaxHp)
         self.player_Exp, self.player_MaxExp = int(player.Exp), int(player.MaxExp)
         pass
+
     def update(self):
         pass
+
+
+    def drawRandomAbility(self, number):
+        pass
+
+
+
+
