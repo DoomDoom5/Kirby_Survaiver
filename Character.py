@@ -42,8 +42,13 @@ class Player:
     y_dir = 0
     Attack = 0
     speed = 2  # 이동속도
+
     MaxHp = 100.0  # 최대 Hp
     Hp = MaxHp  # 현재 HP
+
+    Maxgauge = 100
+    gauge = 0
+
     MaxExp = 5
     Exp = 0
     Level = 0
@@ -59,6 +64,9 @@ class Player:
     invisivleTime = 0.0  # 무적시간
     Max_invisivleTime = 0.4  # 최대 무적시간
     invers = False # 캐릭터 오른쪽, 왼쪽
+
+
+
 
     def __init__(self):
         self.Magent = 100.0
@@ -186,6 +194,8 @@ class Player:
     def update(self):
         if self.Hp < self.MaxHp:
             self.Hp += self.Recovery
+        if self.gauge < self.Maxgauge:
+            self.gauge += 1
         pass
 
     def select_Ability(self, selectMenu):
@@ -201,6 +211,9 @@ class Player:
 
         elif selectMenu == 3:
             pass
+
+    def superAttack(self):
+        pass
 
 
 

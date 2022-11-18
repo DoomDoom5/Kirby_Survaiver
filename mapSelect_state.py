@@ -10,16 +10,16 @@ UI_button_image = None
 start_Button = None
 select_Button = None
 
-
+font = None
 Type = "Test"
 select_Number = -1
 
 def enter():
-    global bg_image, box_bg_image, UI_button_image
-    global kirbys
+    global bg_image, box_bg_image, UI_button_image,font
     bg_image = load_image("assets/Ui/introBG.png")
     box_bg_image = load_image("assets/Ui/UI.png")
     UI_button_image = load_image("assets/Ui/UI.png")
+    font  = load_font("assets/Ui/NEXONFootballGothicL.ttf", 20)
 
     # fill here
     pass
@@ -40,8 +40,10 @@ def draw():
     global Type
     bg_image.clip_draw(0,0,400,300,1280//2,720//2,1280,720)
     box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2,720//2,800,720)
+
     UI_button_image.clip_draw(0 , 512 - 97 , 158 , 97  , 1280//2 - 150, 720//2 + 150, 300,200)
     UI_button_image.clip_draw(314 , 512 - 97 , 158 , 97  , 1280//2 - 150 , 720//2 -100, 300,200)
+    font.draw(1280//2 + 100, 720 - 120, "맵을 선택해 주세요", (255, 255, 255))
 
     if select_Number != -1:
         match select_Number:
@@ -53,6 +55,7 @@ def draw():
                 UI_button_image.clip_draw(314, 512 - 97, 158, 97, 1280 // 2 + 200, 720 // 2, 350, 230)
 
         UI_button_image.clip_draw(176, 512 - 181 - 33, 48, 33, 850, 150, 100, 60)
+        font.draw(830, 720 - 570, "시작", (255, 255, 255))
         pass
 
     update_canvas()
