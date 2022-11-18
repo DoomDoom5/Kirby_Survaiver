@@ -52,8 +52,8 @@ class Enemy:
         if self.name == "Waddle_dee":
             self.MaxHp = 10
             self.speed = 0.5
-            self.width = 24
-            self.height = 24
+            self.width = 26
+            self.height = 26
             self.power = 2
             self.crystal = "GREEN"
 
@@ -61,18 +61,42 @@ class Enemy:
         elif self.name == "kinght":
             self.MaxHp = 20
             self.speed = 1
-            self.width = 24
-            self.height = 24
+            self.width = 30
+            self.height = 30
             self.power = 4
             self.crystal = "BLUE"
 
         elif self.name == "Fighter":
             self.MaxHp = 40
             self.speed = 3
-            self.width = 33
-            self.height = 30
+            self.width = 35
+            self.height = 35
             self.power = 6
             self.crystal = "RED"
+
+        elif self.name == "Mike":
+            self.MaxHp = 100
+            self.speed = 1
+            self.width = 40
+            self.height = 40
+            self.power = 10
+            self.crystal = "RED"
+
+        elif self.name == "NinjaCat":
+            self.MaxHp = 80
+            self.speed = 3
+            self.width = 33
+            self.height = 30
+            self.power = 8
+            self.crystal = "RED"
+
+        elif self.name == "KingDedede":
+            self.MaxHp = 500
+            self.speed = 4
+            self.width = 100
+            self.height = 100
+            self.power = 20
+            self.crystal = "GOLD"
 
         self.Hp = self.MaxHp
 
