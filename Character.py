@@ -140,7 +140,7 @@ class Player:
     def levelUP(self):
         if self.Exp >= self.MaxExp:
             self.Exp = 0
-            self.MaxExp = self.MaxHp * 1.5
+            self.MaxExp = self.MaxExp * 1.4
             self.Level = self.Level + 1
             return True
         return False
@@ -191,4 +191,6 @@ class Player:
         pass
 
     def update(self):
+        if self.Hp < self.MaxHp:
+            self.Hp += 0.05
         pass

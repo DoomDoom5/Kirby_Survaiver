@@ -4,6 +4,7 @@ class UI_Manager:
     Weapons = []
     Accessories = []
     UI_Image = None
+    UI_font = None
     Draw_x = None
     Draw_y = None
 
@@ -19,15 +20,19 @@ class UI_Manager:
     def __init__(self):
         if UI_Manager.UI_Image == None:
             UI_Manager.UI_Image = load_image("assets/Ui/UI.png")
+
+        if UI_Manager.UI_font == None:
+            UI_Manager.UI_font = load_font("assets/Ui/ENCR10B.TTF", 20)
+
         pass
     def draw(self):
         self.UI_Image.clip_draw(280, 512 - 158 - 9, 9, 9, self.player_x, self.player_y - 30, 60, 8)
-        self.UI_Image.clip_draw(422, 512 - 158 - 9, 9, 9, self.player_x, self.player_y - 30, self.player_Hp /self.player_MaxHp * 60, 8)
+        self.UI_Image.clip_draw(422, 512 - 158 - 9, 9, 9, self.player_x, self.player_y - 30,  round(self.player_Hp / self.player_MaxHp, 3) * 60, 8)
     # 아이템 출력
         self.UI_Image.clip_draw(175, 512 - 98 - 32, 96, 32, 100, 720 - 75, 200, 200 // 3)
     # 경험치 창 출력
         self.UI_Image.clip_draw(374, 512 - 249 - 23, 10, 23, 1280 // 2, 700, 1280, 40)
-        self.UI_Image.clip_draw(424, 512 - 189 - 4, 4, 4, 0, 700, (self.player_Exp / self.player_MaxExp) * 1280 * 2, 28)
+        self.UI_Image.clip_draw(424, 512 - 189 - 4, 4, 4, 0, 700, round((self.player_Exp / self.player_MaxExp ),3) * 1280 * 2, 28)
 
         for weapon in self.Weapons:
             if self.UI_Image == None:
@@ -42,9 +47,9 @@ class UI_Manager:
                 pass
 
     def player_UI_update(self, player_x, player_y, player_Hp, player_MaxHp, player_Exp, player_MaxExp) :
-        self.player_x , self.player_y  = player_x, player_y
-        self.player_Hp , self.player_MaxHp  = player_Hp, player_MaxHp
-        self.player_Exp, self.player_MaxExp = player_Exp, player_MaxExp
+        self.player_x , self.player_y  = int(player_x), int(player_y)
+        self.player_Hp , self.player_MaxHp  = int(player_Hp), int(player_MaxHp)
+        self.player_Exp, self.player_MaxExp = int(player_Exp), int(player_MaxExp)
         pass
     def update(self):
         pass
