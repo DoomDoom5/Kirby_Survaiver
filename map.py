@@ -21,10 +21,12 @@ class Map:
 
 
     def draw(self):
-        self.image.clip_draw(0,0, 1280, 720, 1280 // 2, 720 // 2,self.x,self.y)
+       # self.image.clip_draw(self.dx - 1280//2,self.dy - 720//2, self.x + 1280//2, self.y + 720//2, 1280 // 2, 720 // 2,1280,720)
+       self.image.clip_draw(0, 0, self.x, self.y, 1280 // 2, 720 // 2, 1280, 720)
        # if dx > 1280//2 and dx < self.x - 1280//2 and dy > 720//2 and dy < self.x - 720//2:
 
     def update(self, player_x = 1500, player_y = 1000):
+        print(player_x, player_y)
         self.dx = int(player_x)
         self.dy = int(player_y)
 

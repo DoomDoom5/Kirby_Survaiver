@@ -119,6 +119,7 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update() # game_world에서 제너레이터 하였기 때문에
 
+    gameMap.update(kirby.x, kirby.y)
     Kriby_Update()
 
     delay(fps)
