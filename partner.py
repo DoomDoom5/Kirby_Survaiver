@@ -10,26 +10,13 @@ RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 # Kriby Action Speed
-TIME_PER_ACTION = 0.5
+TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
 #1 : 이벤트 정의
-RD, LD, TD, BD ,RU, LU, TU, BU,TIMER, SPACE = range(10)
-event_name = ['RD', 'LD','TD','BD' ,'RU', 'LU', 'TU' , 'BU' ,'TIMER', 'SPACE']
-
-key_event_table = {
-    (SDL_KEYDOWN, SDLK_SPACE): SPACE,
-    (SDL_KEYDOWN, SDLK_RIGHT): RD,
-    (SDL_KEYDOWN, SDLK_LEFT): LD,
-    (SDL_KEYDOWN, SDLK_UP): TD,
-    (SDL_KEYDOWN, SDLK_DOWN): BD,
-
-    (SDL_KEYUP, SDLK_RIGHT): RU,
-    (SDL_KEYUP, SDLK_LEFT): LU,
-    (SDL_KEYUP, SDLK_UP): TU,
-    (SDL_KEYUP, SDLK_DOWN): BU,
-}
+RD, LD, TD, BD ,RU, LU, TU, BU, RTD, RTU ,TIMER, SPACE = range(12)
+event_name = ['RD', 'LD','TD','BD' ,'RU', 'LU', 'TU' , 'BU', 'RTD' , 'RTU' ,'TIMER', 'SPACE']
 
 #2 : 상태의 정의
 class IDLE:
@@ -42,32 +29,22 @@ class IDLE:
         print('EXIT IDLE')
 
     def do(self):
-        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
     def draw(self):
+        print("IDLE그림")
         if self.invers == False:
-            self.image.clip_draw(0 + int(self.frame) * 35, 616 - 80, 35, 33, self.x, self.y, self.width, self.height)
+            self.image.clip_composite_draw(int(self.frame) * 34, 616 - 80, 33, 37,
+                                           0, '', self.x, self.y ,self.width, self.height)
         else:
-            self.image.clip_draw(0 + int(self.frame) * 34, 616 - 40, 34, 33, self.x, self.y, self.width, self.height)
+            self.image.clip_composite_draw(int(self.frame) * 34, 616 - 80, 33, 37,
+                                           0, 'h', self.x, self.y ,self.width, self.height)
 class RUN:
-    def enter(self, event):
+    def enter(self, ):
         print('ENTER RUN')
-        if event == RD:
-            self.x_dir += 1
-        elif event == LD:
-            self.x_dir -= 1
-        elif event == TD:
-            self.y_dir += 1
-        elif event == BD:
-            self.y_dir -= 1
 
-        elif event == RU:
-            self.x_dir -= 1
-        elif event == LU:
-            self.x_dir += 1
-        elif event == TU:
-            self.y_dir -= 1
-        elif event == BU:
-            self.y_dir += 1
+
+
+
 
     def exit(self, event):
         print('EXIT RUN')
@@ -98,7 +75,7 @@ class RUN:
             elif self.y_dir < 0:
                 dgree = 270.0
 
-        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) %8
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) %7
         self.x += math.cos(math.radians(dgree)) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
         self.x = clamp(0, self.x, 1280)
         self.y += math.sin(math.radians(dgree)) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
@@ -109,17 +86,22 @@ class RUN:
         # self.x = clamp(0, self.x, 1600)
 
     def draw(self):
-        if self.invers == False:
-            self.image.clip_draw(114 + int(self.frame) * 33, 616 - 80, 33, 33, self.x, self.y, self.width,self.height)
-        elif self.invers == True:
-            self.image.clip_draw(114 + int(self.frame) * 34, 616 - 40, 34, 33, self.x, self.y, self.width,self.height)
+        if self.invisivleTime > 0.0 and int(self.frame)%2 == 0:
+            pass
+        else:
+            if self.invers == False:
+                self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 80, 33, 34,
+                                               0, '', self.x, self.y, self.width, self.height)
+            elif self.invers == True:
+                self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 80, 33, 34,
+                                               0, 'h', self.x, self.y, self.width, self.height)
 
 
 #3. 상태 변환 구현
 
 next_state = {
-    IDLE:  {RU: RUN,  LU: RUN,  TU: RUN , BU : RUN, RD: RUN,  LD: RUN,  TD: RUN , BD : RUN},
-    RUN:   {RU: IDLE,  LU: IDLE,  TU: IDLE , BU : IDLE, RD: IDLE,  LD: IDLE,  TD: IDLE , BD : IDLE}
+    IDLE:  {RU: RUN,  LU: RUN,  TU: RUN , BU : RUN, RD: RUN,  LD: RUN,  TD: RUN , BD : RUN, RTD : RUN, RTU : RUN},
+    RUN:   {RU: IDLE,  LU: IDLE,  TU: IDLE , BU : IDLE, RD: IDLE,  LD: IDLE,  TD: IDLE , BD : IDLE, RTD : IDLE, RTU : IDLE}
 }
 
 
@@ -127,9 +109,8 @@ next_state = {
 class Player:
     image = None
     effect_Image = None
+    weapons = set()
     type = None
-    frame = 0
-    state = "IDLE"
     width = 40
     height = 40
     Attack = 0
@@ -151,9 +132,6 @@ class Player:
     Luck = 0.0  # 운에 따라 선택지 4개
     Magent = 0.0  # 경험치 흡수 범위
     Revival = 0  # 부활 횟수
-
-    invisivleTime = 0.0  # 무적시간
-    Max_invisivleTime = 0.4  # 최대 무적시간
 
     def __init__(self):
         self.Magent = 100.0
@@ -178,6 +156,7 @@ class Player:
         return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
 
     def check_Enemy_Coll(self, enemy_Attack):
+        print("충돌!")
         if self.invisivleTime <= 0:
             self.Hp -= enemy_Attack
             self.invisivleTime = self.Max_invisivleTime
@@ -188,35 +167,14 @@ class Player:
 
     def add_event(self, event):
         self.event_que.insert(0, event)
+
     def Attack_Weapons(self):
-        for Weapon in self.Weapons:
-            Weapon.Attack()
+        for weapons in self.weapons:
+            weapons.Attack()
             pass
 
     def update(self):
-        self.cur_state.do(self)
-
-        if self.event_que:
-            event = self.event_que.pop()
-            self.cur_state.exit(self, event)
-            try:
-                self.cur_state = next_state[self.cur_state][event]
-            except KeyError:
-                print(f'ERROR: State {self.cur_state.__name__}    Event {event_name[event]}')
-            self.cur_state.enter(self, event)
-
-        if self.Hp < self.MaxHp:
-            self.Hp += self.Recovery
-        if self.gauge < self.Maxgauge:
-            self.gauge += 1
 
         pass
-
-    def select_Ability(self, selectMenu):
-            pass
-
-    def superAttack(self):
-        pass
-
 
 

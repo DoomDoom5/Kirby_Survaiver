@@ -47,17 +47,21 @@ class UI_Manager:
 
     # 타이머 출력
         self.UI_font.draw(1280//2 - 60, 720 - 60, '(Time: %3.1f)' % self.elapsed_time, (255, 255, 255))
+        i = 0
         for weapon in self.Weapons:
             if self.UI_Image == None:
                 print(weapon)
                 pass
             if weapon == "ICE":
-                self.kriby_UI_Image.clip_draw(0,160 - 32 * 1, 32, 32, 18, 720 - 56,26,26)
+                self.kriby_UI_Image.clip_draw(0,160 - 32 * 1, 32 , 32, 18+ i * 35, 720 - 56,26,26)
                 pass
             elif weapon == "FIRE":
+                self.kriby_UI_Image.clip_draw(0, 192 - 32 * 1, 32, 32, 18 + i * 35, 720 - 56, 26, 26)
                 pass
             elif weapon == "PLASMA":
                 pass
+            i +=1
+
 
     def player_UI_update(self, player) :
         self.player_x , self.player_y  = int(player.x), int(player.y)
@@ -65,11 +69,26 @@ class UI_Manager:
         self.player_Exp, self.player_MaxExp = int(player.Exp), int(player.MaxExp)
         pass
 
-    def update(self):
+    def update(self, player_x, player_y):
         pass
 
 
     def drawRandomAbility(self, number):
+
+        if number == 0:
+            pass
+        elif number == 1:
+            pass
+        elif number == 2:
+            pass
+        elif number == 3:
+            pass
+        elif number == 4:
+            pass
+        elif number == 5:
+            pass
+        elif number == 6:
+            pass
         pass
 
 

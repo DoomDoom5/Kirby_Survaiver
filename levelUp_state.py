@@ -11,6 +11,9 @@ box_bg_image = None
 anim_height = None
 
 
+def MenuBar(number, ):
+    pass
+
 a = random.sample(range(0,100),4) # 1부터 100까지의 범위중에 4개를 중복없이 뽑겠다.
 def enter():
     global box_bg_image,anim_height
@@ -38,6 +41,10 @@ def handle_events():
                     play_state.kirby.select_Ability(1)
                     game_framework.pop_state()
                 elif event.y < 450 and  event.y > 350:
+                    newWeapons = play_state.Weapon("FIRE")
+                    play_state.ui_Manager.Weapons.append("FIRE")
+                    play_state.kirby.weapons.add(newWeapons)
+                    del newWeapons
                     play_state.kirby.select_Ability(2)
                     game_framework.pop_state()
 

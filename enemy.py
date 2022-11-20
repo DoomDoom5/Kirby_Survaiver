@@ -140,7 +140,15 @@ class Enemy:
             self.y_dir = -1
         else:
             self.y_dir = 1
-    def Move(self):
+
+    def get_bb(self):
+        return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
+
+    def update(self,player_x, player_y):
+        dgree = 0
+        if self.Hp <= 0:
+            game_world.remove_object(self)
+        self.chase(player_x, player_y)
         if self.x_dir > 0:
             if self.y_dir > 0:  # 둘다 dir이 1 -> 45도
                 dgree = 45.0
@@ -165,11 +173,4 @@ class Enemy:
 
         self.x += math.cos(math.radians(dgree)) * self.speed
         self.y += math.sin(math.radians(dgree)) * self.speed
-
-    def get_bb(self):
-        return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
-
-    def update(self):
-        if self.Hp <= 0:
-            game_world.remove_object(self)
         pass

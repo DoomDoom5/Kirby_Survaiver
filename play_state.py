@@ -19,7 +19,6 @@ filld = None
 missile_manager = None
 item_manager = None
 ui_Manager = None
-Weapons = []
 
 max_col = 40
 max_row = 40
@@ -45,7 +44,7 @@ def enter():
 
 
     kirby = Player()
-    Kirby_init_Test(Weapons, kirby)
+    Kirby_init_Test(kirby)
     game_world.add_object(kirby,1)
 
     gameMap = Map(mapSelect_state.Type)
@@ -59,8 +58,8 @@ def enter():
         pass
 
 def exit():
-    global kirby, Enemys, Weapons, item_manager, gameMap, Enemys, missile_manager, ui_Manager
-    del kirby, Enemys, Weapons, item_manager, gameMap, Enemys, missile_manager, ui_Manager
+    global kirby, Enemys, item_manager, gameMap, Enemys, missile_manager, ui_Manager
+    del kirby, Enemys, item_manager, gameMap, Enemys, missile_manager, ui_Manager
 
     pass
 
@@ -72,8 +71,6 @@ def update():
         kirby.invisivleTime -= fps
 
     for s_Enemy in Enemys :
-        s_Enemy.chase(kirby.x , kirby.y)
-        s_Enemy.Move()
         if collide(kirby, s_Enemy):
             kirby.check_Enemy_Coll(s_Enemy.power)
 
@@ -87,7 +84,7 @@ def update():
             ui_Manager.kill_Enemy += 1
 
 
-    for weapon in Weapons:
+    for weapon in kirby.weapons:
         weapon.shot(kirby.x, kirby.y, kirby.Attack,kirby.invers, missile_manager)
 
     if enemy_responTimer >= 1.0:
@@ -116,7 +113,7 @@ def update():
     pass
 
     for game_object in game_world.all_objects():
-        game_object.update() # game_world에서 제너레이터 하였기 때문에
+        game_object.update(kirby.x, kirby.y) # game_world에서 제너레이터 하였기 때문에
 
     gameMap.update(kirby.x, kirby.y)
     Kriby_Update()
@@ -147,19 +144,20 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
-        else:
-            kirby.handle_events(event)
+        elif event == SDLK_1:
+            kirby.Exp += 100
+
+        kirby.handle_events(event)
+
 def pause():
     pass
 def resume():
     pass
-def Kirby_init_Test(Weapons, kirby):
-    newWeapons = Weapon()
+def Kirby_init_Test(kirby):
+    newWeapons = Weapon(CharaterSelect_state.Type)
     kirby.type = CharaterSelect_state.Type
-    newWeapons.name = CharaterSelect_state.Type
     kirby.__init__()
-    newWeapons.__init__()
-    Weapons.append(newWeapons)
+    kirby.weapons.add(newWeapons)
     del CharaterSelect_state.Type
     del newWeapons
 
