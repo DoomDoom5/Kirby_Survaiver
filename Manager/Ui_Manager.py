@@ -26,15 +26,10 @@ class UI_Manager:
     def __init__(self):
         if UI_Manager.UI_Image == None:
             UI_Manager.UI_Image = load_image("assets/Ui/UI.png")
-
         if UI_Manager.kriby_UI_Image == None:
             UI_Manager.kriby_UI_Image = load_image("assets/Ui/Kirby_UI.png")
-
         if UI_Manager.UI_font == None:
             UI_Manager.UI_font = load_font("assets/Ui/NEXONFootballGothicL.ttf", 20)
-
-
-
         pass
     def draw(self):
         self.UI_Image.clip_draw(280, 512 - 158 - 9, 9, 9, self.player_x, self.player_y - 30, 60, 8)
@@ -47,13 +42,11 @@ class UI_Manager:
     # 레벨 출력
         self.UI_font.draw(1280 - 100, 720 - 20, '(LEVEL: %d)' % self.player_level, (255, 255, 255))
 
-        
     # 킬수 출력
         self.UI_font.draw(1280 - 300, 720 - 50, '(KILL: %d)' % self.kill_Enemy, (255, 255, 255))
 
-    
     # 타이머 출력
-        self.UI_font.draw(1280//2, 720 - 100, '(Time: %3.1f)' % self.elapsed_time, (255, 255, 255))
+        self.UI_font.draw(1280//2 - 60, 720 - 60, '(Time: %3.1f)' % self.elapsed_time, (255, 255, 255))
         for weapon in self.Weapons:
             if self.UI_Image == None:
                 print(weapon)

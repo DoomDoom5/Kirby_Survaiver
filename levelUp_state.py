@@ -11,12 +11,10 @@ box_bg_image = None
 anim_height = None
 
 
-a = random.sample(range(0,100),10) # 1부터 100까지의 범위중에 10개를 중복없이 뽑겠다.
+a = random.sample(range(0,100),4) # 1부터 100까지의 범위중에 4개를 중복없이 뽑겠다.
 def enter():
     global box_bg_image,anim_height
     anim_height = 600
-    play_state.kirby.x_dir = 0
-    play_state.kirby.y_dir = 0
     box_bg_image = load_image("assets/Ui/UI.png")
     pass
 

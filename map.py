@@ -26,7 +26,6 @@ class Map:
        # if dx > 1280//2 and dx < self.x - 1280//2 and dy > 720//2 and dy < self.x - 720//2:
 
     def update(self, player_x = 1500, player_y = 1000):
-        print(player_x, player_y)
         self.dx = int(player_x)
         self.dy = int(player_y)
 

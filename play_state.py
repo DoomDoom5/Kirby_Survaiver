@@ -14,7 +14,6 @@ from Manager.Item_Manager import Weapon
 from Manager.Item_Manager import Item_manager
 from Manager.Ui_Manager import UI_Manager
 
-
 filld = None
 
 missile_manager = None
@@ -124,7 +123,6 @@ def update():
 
     delay(fps)
 def Kriby_Update():
-    kirby.Move()
     kirby.Exp += item_manager.GainExp(kirby.x, kirby.y, kirby.Magent, kirby.Exp)
     ui_Manager.player_UI_update(kirby)
 
@@ -146,10 +144,11 @@ def draw_world():
 
 def handle_events():
     events = get_events()
-    kirby.handle_events(events)
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
+        else:
+            kirby.handle_events(event)
 def pause():
     pass
 def resume():
