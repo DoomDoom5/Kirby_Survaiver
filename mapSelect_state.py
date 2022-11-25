@@ -48,10 +48,10 @@ def draw():
     if select_Number != -1:
         match select_Number:
             case 0:
-                Type  ="Forest"
+                Type  = 0
                 UI_button_image.clip_draw(0, 512 - 97, 158, 97, 1280 // 2 + 200, 720 // 2, 350, 230)
             case 1:
-                Type  ="Library"
+                Type  = 1
                 UI_button_image.clip_draw(314, 512 - 97, 158, 97, 1280 // 2 + 200, 720 // 2, 350, 230)
 
         UI_button_image.clip_draw(176, 512 - 181 - 33, 48, 33, 850, 150, 100, 60)

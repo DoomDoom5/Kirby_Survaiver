@@ -1,6 +1,5 @@
 from pico2d import *
 import game_framework
-import random
 import CharaterSelect_state
 import game_world
 import mapSelect_state
@@ -8,121 +7,100 @@ import levelUp_state
 
 from map import Map
 from Character import Player
-from enemy import  Enemy
+from enemy import Enemy
+from partner import Partner
 from Manager.Item_Manager import Missile_manager
 from Manager.Item_Manager import Weapon
 from Manager.Item_Manager import Item_manager
 from Manager.Ui_Manager import UI_Manager
 
 filld = None
-
 missile_manager = None
 item_manager = None
 ui_Manager = None
 
-max_col = 40
-max_row = 40
-
 kirby = None
+kirby_partner = None
+
 Enemys = None
 Timer = 0
-fps = 0.01
 enemy_responTimer = 0
 gameMap = None
 
 def enter():
-    global  kirby, Enemys, Weapons,item_manager,gameMap, Enemys, missile_manager, ui_Manager
+    global  kirby, Enemys, Weapons,item_manager,gameMap, Enemys, missile_manager, ui_Manager, kirby_partner
 
     missile_manager = Missile_manager()
     ui_Manager = UI_Manager()
     ui_Manager.Weapons.append(CharaterSelect_state.Type)
     item_manager = Item_manager()
 
-    game_world.add_object(missile_manager,1)
+    game_world.add_object(missile_manager,2)
     game_world.add_object(ui_Manager, 2)
     game_world.add_object(item_manager, 2)
 
-
-    kirby = Player()
+    kirby = Player(CharaterSelect_state.Type)
+    kirby_partner = Partner("FIRE")
     Kirby_init_Test(kirby)
     game_world.add_object(kirby,1)
+    game_world.add_object(kirby_partner,1)
 
     gameMap = Map(mapSelect_state.Type)
     game_world.add_object(gameMap,0)
 
-    Enemys = [Enemy() for i in range(0, 10)]
+    Enemys = [Enemy("Waddle_dee") for i in range(0, 10)]
     for s_Enemy in Enemys :
-        s_Enemy.name = "Waddle_dee"
-        s_Enemy.__init__()
         game_world.add_object(s_Enemy, 1)
         pass
+
+    game_world.add_collision_pairs(kirby, s_Enemy, 'kirby:s_Enemy')
 
 def exit():
     global kirby, Enemys, item_manager, gameMap, Enemys, missile_manager, ui_Manager
     del kirby, Enemys, item_manager, gameMap, Enemys, missile_manager, ui_Manager
-
     pass
 
 def update():
-    global enemy_responTimer, Timer
-    Timer += fps
+    global Timer,enemy_responTimer,s_Enemy
+    Timer += game_framework.frame_time
+
     ui_Manager.elapsed_time = Timer
     if kirby.invisivleTime > 0 :
-        kirby.invisivleTime -= fps
+        kirby.invisivleTime -= game_framework.frame_time
 
     for s_Enemy in Enemys :
-        if collide(kirby, s_Enemy):
-            kirby.check_Enemy_Coll(s_Enemy.power)
-
-        s_Enemy.On_damege( missile_manager.Check_Hit_Enemy(s_Enemy.x - s_Enemy.width // 2,
-                                        s_Enemy.x + s_Enemy.width // 2,
-                                        s_Enemy.y + s_Enemy.height // 2,
-                                        s_Enemy.y - s_Enemy.height // 2))
+        s_Enemy.On_damege( missile_manager.Check_Hit_Enemy(*s_Enemy.get_bb()))
         if s_Enemy.Hp <= 0 :
             item_manager.Create_EXP_Stone(s_Enemy.crystal, s_Enemy.x, s_Enemy.y)
             Enemys.remove(s_Enemy)
             ui_Manager.kill_Enemy += 1
 
+        if abs(kirby.x - s_Enemy.x) < 80 and abs(kirby.y - s_Enemy.y) < 80:
+            if collide(kirby, s_Enemy):
+                kirby.check_Enemy_Coll(s_Enemy.power)
+
 
     for weapon in kirby.weapons:
         weapon.shot(kirby.x, kirby.y, kirby.Attack,kirby.invers, missile_manager)
 
-    if enemy_responTimer >= 1.0:
-        newEnemy = Enemy()
-        newEnemy.name = "Waddle_dee"
-        newEnemy.__init__()
-        game_world.add_object(newEnemy, 1)
-        Enemys.append(newEnemy)
-        if Timer > 5.0:
-            newEnemy = Enemy()
-            newEnemy.name = "kinght"
-            newEnemy.__init__()
-            game_world.add_object(newEnemy, 1)
-            Enemys.append(newEnemy)
-        if Timer > 12.0:
-            newEnemy = Enemy()
-            newEnemy.name = "Fighter"
-            newEnemy.__init__()
-            game_world.add_object(newEnemy, 1)
-            Enemys.append(newEnemy)
-        del newEnemy
-
+    if enemy_responTimer > 1:
         enemy_responTimer = 0
-    else:
-        enemy_responTimer += fps
-    pass
+        Enemy.spawnEnemy(Timer, Enemys)
+    else :
+        enemy_responTimer += game_framework.frame_time
 
     for game_object in game_world.all_objects():
         game_object.update(kirby.x, kirby.y) # game_world에서 제너레이터 하였기 때문에
 
-    gameMap.update(kirby.x, kirby.y)
     Kriby_Update()
 
-    delay(fps)
+
+
+
+
 def Kriby_Update():
     kirby.Exp += item_manager.GainExp(kirby.x, kirby.y, kirby.Magent, kirby.Exp)
     ui_Manager.player_UI_update(kirby)
-
     if(kirby.levelUP()):
         ui_Manager.player_level = kirby.Level
         game_framework.push_state(levelUp_state)
@@ -155,14 +133,13 @@ def resume():
     pass
 def Kirby_init_Test(kirby):
     newWeapons = Weapon(CharaterSelect_state.Type)
-    kirby.type = CharaterSelect_state.Type
-    kirby.__init__()
     kirby.weapons.add(newWeapons)
     del CharaterSelect_state.Type
     del newWeapons
 
 
 def collide(a,b):
+
     left_a , bottom_a , right_a, top_a = a.get_bb()
     left_b, bottom_b, right_b, top_b = b.get_bb()
 

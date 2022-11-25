@@ -1,29 +1,32 @@
 import random
 from pico2d import *
 import game_world
+import game_framework
+
+# Kriby Run Speed
+PIXEL_PER_METER = (10.0/0.3)
+RUN_SPEED_KMPH = 20.0
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000/60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+# Kriby Action Speed
+TIME_PER_ACTION = 1.0
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 8
+
 
 class Enemy:
-    frame = 0
-    state = None
     name = None
     image = None
     Hpimage = None
-    x = 0
-    y = 0
-    width = 0
-    height = 0
-
-    x_dir = 0
-    y_dir = 0
-
-    speed = 0  # 이동속도
-    MaxHp = 10.0  # 최대 Hp
-    Hp = MaxHp
+    MaxHp = 0
     power = 0  # 공격력
-    invers = False # 캐릭터 오른쪽, 왼쪽
     crystal = None
 
-    def __init__(self):
+    def __init__(self, name):
+        self.frame = 0
+        self.invers = False # 캐릭터 오른쪽, 왼쪽
         if Enemy.image == None:
             Enemy.image = load_image("assets/img/Enemy/Normal_Enemy.png")
             pass
@@ -46,9 +49,9 @@ class Enemy:
             self.x = random.randint(0,1280)
             self.y = random.randint(720,730)
 
+        self.name = name
 
-
-
+        # 적 타입을 인덱스화 시켜서 하자 => 나중에 수정
         if self.name == "Waddle_dee":
             self.MaxHp = 10
             self.speed = 0.5
@@ -104,28 +107,27 @@ class Enemy:
         self.Hp = self.Hp - charater_Attack
 
     def draw(self):
-        self.frame = self.frame%4 + 1
-        self.Hpimage.clip_draw(280, 512-158 -9, 9,9, self.x, self.y + 10, 30,4)
-        self.Hpimage.clip_draw(422, 512-158 -9, 9,9, self.x, self.y + 10, self.Hp/self.MaxHp * 30,4)
         if self.name == "Waddle_dee":
             if not self.invers:
-                self.image.clip_draw(40 * self.frame,1190 - 24 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 * int(self.frame),1190 - 24 , 24, 24,self.x,self.y, self.width, self.height)
             else :
-                self.image.clip_draw(40 * self.frame,1190 - 50 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 50 , 24, 24,self.x,self.y, self.width, self.height)
                 pass
             pass
         elif self.name == "kinght":
             if not self.invers:
-                self.image.clip_draw(40 * self.frame,1190 - 58 - 24 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 58 - 24 , 24, 24,self.x,self.y, self.width, self.height)
             else :
-                self.image.clip_draw(40 * self.frame,1190 - 90 - 24, 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 90 - 24, 24, 24,self.x,self.y, self.width, self.height)
                 pass
         elif self.name == "Fighter":
             if not self.invers:
-                self.image.clip_draw(40 * self.frame,1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
             else :
-                self.image.clip_draw(40 * self.frame,1190 - 162 - 29, 33, 29,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,self.x,self.y, self.width, self.height)
 
+        self.Hpimage.clip_draw(280, 512-158 -9, 9,9, self.x, self.y + 10, 30,4)
+        self.Hpimage.clip_draw(422, 512-158 -9, 9,9, self.x, self.y + 10, self.Hp/self.MaxHp * 30,4)
         pass
 
     def chase(self, player_x, player_y):
@@ -145,6 +147,7 @@ class Enemy:
         return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
 
     def update(self,player_x, player_y):
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) %6
         dgree = 0
         if self.Hp <= 0:
             game_world.remove_object(self)
@@ -174,3 +177,24 @@ class Enemy:
         self.x += math.cos(math.radians(dgree)) * self.speed
         self.y += math.sin(math.radians(dgree)) * self.speed
         pass
+
+    def handle_collision(self, other, group):
+        pass
+
+    @staticmethod
+    def spawnEnemy(Timer, Enemys):
+        newEnemy = Enemy("Waddle_dee")
+        game_world.add_object(newEnemy, 1)
+        Enemys.append(newEnemy)
+        if Timer > 5.0:
+            newEnemy = Enemy("kinght")
+            game_world.add_object(newEnemy, 1)
+            Enemys.append(newEnemy)
+        if Timer > 12.0:
+            newEnemy = Enemy("Fighter")
+            game_world.add_object(newEnemy, 1)
+            Enemys.append(newEnemy)
+        del newEnemy
+
+        pass
+

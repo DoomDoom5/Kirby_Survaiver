@@ -1,5 +1,4 @@
 from pico2d import *
-from Character import Player
 
 class UI_Manager:
     Weapons = []

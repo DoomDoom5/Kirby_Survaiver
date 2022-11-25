@@ -11,7 +11,41 @@ box_bg_image = None
 anim_height = None
 
 
-def MenuBar(number, ):
+def Menu_Ability(menu_number, AbilityNumber ,level = 0):
+    Text = None
+    if AbilityNumber == 0 :
+        play_state.kirby.select_Ability(0)
+
+    elif AbilityNumber == 1:
+        play_state.kirby.select_Ability(1)
+        pass
+    elif AbilityNumber == 2:
+        play_state.kirby.select_Ability(2)
+        pass
+
+    elif AbilityNumber == 3:
+        newWeapons = play_state.Weapon("ICE")
+        play_state.ui_Manager.Weapons.append("ICE")
+        play_state.kirby.weapons.add(newWeapons)
+        del newWeapons
+        pass
+
+    elif AbilityNumber == 4:
+        newWeapons = play_state.Weapon("FIRE")
+        play_state.ui_Manager.Weapons.append("FIRE")
+        play_state.kirby.weapons.add(newWeapons)
+        del newWeapons
+        pass
+
+    elif AbilityNumber == 5:
+        newWeapons = play_state.Weapon("PLASMA")
+        play_state.ui_Manager.Weapons.append("PLASMA")
+        play_state.kirby.weapons.add(newWeapons)
+        del newWeapons
+        pass
+
+    play_state.ui_Manager.UI_font.draw(550,  anim_height +570, '최대체력을 %d 얻습니다' %10, (255, 255, 255))
+
     pass
 
 a = random.sample(range(0,100),4) # 1부터 100까지의 범위중에 4개를 중복없이 뽑겠다.
@@ -19,6 +53,7 @@ def enter():
     global box_bg_image,anim_height
     anim_height = 600
     box_bg_image = load_image("assets/Ui/UI.png")
+    play_state.kirby.x_dir,play_state.kirby.y_dir = 0 , 0
     pass
 
 def exit():
@@ -41,14 +76,8 @@ def handle_events():
                     play_state.kirby.select_Ability(1)
                     game_framework.pop_state()
                 elif event.y < 450 and  event.y > 350:
-                    newWeapons = play_state.Weapon("FIRE")
-                    play_state.ui_Manager.Weapons.append("FIRE")
-                    play_state.kirby.weapons.add(newWeapons)
-                    del newWeapons
                     play_state.kirby.select_Ability(2)
                     game_framework.pop_state()
-
-
 
         if event.type == SDL_QUIT:
             game_framework.quit()
@@ -63,14 +92,12 @@ def draw():
 
     for i in range(0,3):
         box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2 , anim_height +720//2 + 200 - 120* i,550,100)
-        play_state.ui_Manager.UI_font.draw(550,  anim_height +570, '최대체력을 %d 얻습니다' %10, (255, 255, 255))
 
         box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2 , anim_height +720//2 + 80,550,100)
         play_state.ui_Manager.UI_font.draw(550,  anim_height +450, '공격력을 %d 얻습니다' %5, (255, 255, 255))
 
         box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2, anim_height +720//2  - 40 ,550,100)
         play_state.ui_Manager.UI_font.draw(550,  anim_height +330, '스피드를 %3.1f 얻습니다' %0.1, (255, 255, 255))
-
 
     update_canvas()
     pass

@@ -127,6 +127,11 @@ class Missile:
 
     DurationTime = 0
 
+    def get_bb(self):
+        return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
+
+
+
 
 class ICE(Missile): # 가로로 일직선 공격
     coolTimer = 1.4
@@ -356,7 +361,7 @@ class Missile_manager:
             if missile.state == 0:
                 return missile.x - missile.width * missile.BulletRange // 2, missile.y - missile.height* missile.BulletRange // 2, \
                        missile.x + missile.width * missile.BulletRange// 2, missile.y + missile.height // 2* missile.BulletRange
-    def Check_Hit_Enemy(self, enemy_left , enemy_right , enemy_top , enemy_bottom):
+    def Check_Hit_Enemy(self, enemy_left , enemy_bottom , enemy_right , enemy_top):
          for missile in self.missiles:
              if missile.state == 0 :
                  if missile.x - missile.width < enemy_right and missile.y - missile.height < enemy_bottom and missile.x + missile.width > enemy_left and missile.y + missile.height > enemy_top:
@@ -366,8 +371,6 @@ class Missile_manager:
                      return missile.Attack
 
          return 0
-
-
 
 class Weapon:
     name= "None"
