@@ -28,7 +28,7 @@ enemy_responTimer = 0
 gameMap = None
 
 def enter():
-    global  kirby, Enemys, Weapons,item_manager,gameMap, Enemys, missile_manager, ui_Manager, kirby_partner
+    global  kirby, Enemys,item_manager,gameMap, missile_manager, ui_Manager, kirby_partner
 
     missile_manager = Missile_manager()
     ui_Manager = UI_Manager()
@@ -41,9 +41,9 @@ def enter():
 
     kirby = Player(CharaterSelect_state.Type)
     kirby_partner = Partner("FIRE")
+    game_world.add_object(kirby_partner,1)
     Kirby_init_Test(kirby)
     game_world.add_object(kirby,1)
-    game_world.add_object(kirby_partner,1)
 
     gameMap = Map(mapSelect_state.Type)
     game_world.add_object(gameMap,0)
@@ -63,13 +63,12 @@ def exit():
 def update():
     global Timer,enemy_responTimer,s_Enemy
     Timer += game_framework.frame_time
-
     ui_Manager.elapsed_time = Timer
-    if kirby.invisivleTime > 0 :
-        kirby.invisivleTime -= game_framework.frame_time
+
+    Kriby_Update()
 
     for s_Enemy in Enemys :
-        s_Enemy.On_damege( missile_manager.Check_Hit_Enemy(*s_Enemy.get_bb()))
+        s_Enemy.On_damege(missile_manager.Check_Hit_Enemy(*s_Enemy.get_bb()))
         if s_Enemy.Hp <= 0 :
             item_manager.Create_EXP_Stone(s_Enemy.crystal, s_Enemy.x, s_Enemy.y)
             Enemys.remove(s_Enemy)
@@ -78,10 +77,6 @@ def update():
         if abs(kirby.x - s_Enemy.x) < 80 and abs(kirby.y - s_Enemy.y) < 80:
             if collide(kirby, s_Enemy):
                 kirby.check_Enemy_Coll(s_Enemy.power)
-
-
-    for weapon in kirby.weapons:
-        weapon.shot(kirby.x, kirby.y, kirby.Attack,kirby.invers, missile_manager)
 
     if enemy_responTimer > 1:
         enemy_responTimer = 0
@@ -92,13 +87,16 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update(kirby.x, kirby.y) # game_world에서 제너레이터 하였기 때문에
 
-    Kriby_Update()
 
 
 
 
 
 def Kriby_Update():
+    if kirby.invisivleTime > 0 :
+        kirby.invisivleTime -= game_framework.frame_time
+    for weapon in kirby.weapons:
+        weapon.shot(kirby.x, kirby.y, kirby.Attack,kirby.invers, missile_manager)
     kirby.Exp += item_manager.GainExp(kirby.x, kirby.y, kirby.Magent, kirby.Exp)
     ui_Manager.player_UI_update(kirby)
     if(kirby.levelUP()):

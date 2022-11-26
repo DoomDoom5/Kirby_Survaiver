@@ -21,8 +21,6 @@ class Partner:
     height = 40
     Attack = 0
     weapons = ()
-    MaxHp = 100.0  # 최대 Hp
-    Hp = MaxHp  # 현재 HP
 
     Defence = 0.0  # 방어력
     Recovery = 0.05  # 재생력
@@ -31,7 +29,6 @@ class Partner:
     BulletNum = 1  # 추가 투사체 수
 
     def __init__(self, element):
-        self.Magent = 100.0
         if element == "ICE":
             self.image = load_image("assets/img/Kirby/Ice_Kirby_empty.png")
         elif element == "FIRE":
@@ -39,12 +36,11 @@ class Partner:
         elif element == "PLASMA":
             self.image = load_image("assets/img/Kirby/PLASMA_Kirby_empty.png")
 
-        self.speed = 1
+        self.speed = 0.3
         self.x, self.y = 1280//2, 720//2
         self.frame = 0
         self.x_dir, self.y_dir, self.invers = 0, 0,True
         self.dgree = 0
-        self.state = "IDLE"
         pass
 
     def get_bb(self):
@@ -52,19 +48,21 @@ class Partner:
 
     def draw(self):
         if self.x_dir == 0 and self.y_dir == 0:
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
             if self.invers == False:
-                self.image.clip_composite_draw(int(self.frame) * 34, 616 - 80, 33, 37,
+                self.image.clip_composite_draw(int(self.frame) * 34, 616 - 79, 33, 37,
                                                0, '', self.x, self.y, self.width, self.height)
             else:
-                self.image.clip_composite_draw(int(self.frame) * 34, 616 - 80, 33, 37,
+                self.image.clip_composite_draw(int(self.frame) * 34, 616 - 79, 33, 37,
                                                0, 'h', self.x, self.y, self.width, self.height)
             pass
-        elif self.x_dir == 0 and self.y_dir == 0:
+        else:
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 7
             if self.invers == False:
-                self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 80, 33, 34,
+                self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 79, 33, 34,
                                                0, '', self.x, self.y, self.width, self.height)
             elif self.invers == True:
-                self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 80, 33, 34,
+                self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 79, 33, 34,
                                                0, 'h', self.x, self.y, self.width, self.height)
 
         pass
@@ -72,20 +70,14 @@ class Partner:
 
     def update(self, player_x , player_y):
         if self.x > player_x:
-            self.invers = True
-            self.x_dir = -1
-        else :
             self.invers = False
-            self.x_dir = +1
-
-        if self.y > player_y:
-            self.y_dir = -1
         else:
-            self.y_dir = 1
-        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 7
-        self.x += math.cos(math.radians(self.dgree)) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
+            self.invers = True
+
+        direction = math.atan2(player_y - self.y, player_x - self.x)
+        self.x += math.cos(direction) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
         self.x = clamp(0, self.x, 1280)
-        self.y += math.sin(math.radians(self.dgree)) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
+        self.y += math.sin(direction) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
         self.y = clamp(0, self.y, 720)
         pass
 

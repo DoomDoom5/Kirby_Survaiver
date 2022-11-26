@@ -1,8 +1,8 @@
 from pico2d import *
 import game_framework
 import math
-from enemy import Enemy
-
+import play_state
+from Manager.Item_Manager import Weapon
 # Kriby Run Speed
 PIXEL_PER_METER = (10.0/0.3)
 RUN_SPEED_KMPH = 20.0
@@ -17,7 +17,7 @@ FRAMES_PER_ACTION = 8
 
 #1 : 이벤트 정의
 RD, LD, TD, BD ,RU, LU, TU, BU, SPACE = range(9)
-event_name = ['RD', 'LD','TD','BD' ,'RU', 'LU', 'TU' , 'BU', 'SPACE']
+event_name = ['RD', 'LD', 'TD', 'BD', 'RU', 'LU', 'TU', 'BU', 'SPACE']
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_SPACE): SPACE,
@@ -31,19 +31,6 @@ key_event_table = {
     (SDL_KEYUP, SDLK_UP): TU,
     (SDL_KEYUP, SDLK_DOWN): BU,
 }
-#
-# key_event_table = {
-#     SDLK_SPACE: SPACE,
-#     SDLK_RIGHT: RD,
-#     SDLK_LEFT: LD,
-#     (SDLK_UP): TD,
-#     (SDLK_DOWN): BD,
-#
-#     (SDLK_RIGHT): RU,
-#     (SDLK_LEFT): LU,
-#     (SDLK_UP): TU,
-#     (SDLK_DOWN): BU,
-# }
 
 
 #2 : 상태의 정의
@@ -103,9 +90,9 @@ class RUN:
             elif Player.y_dir < 0:
                 dgree = 270.0
 
-        Player.x += math.cos(math.radians(dgree)) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
+        Player.x += math.cos(math.radians(dgree)) * RUN_SPEED_PPS * game_framework.frame_time * Player.speed
         Player.x = clamp(0, Player.x, 1280)
-        Player.y += math.sin(math.radians(dgree)) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
+        Player.y += math.sin(math.radians(dgree)) * RUN_SPEED_PPS * game_framework.frame_time * Player.speed
         Player.y = clamp(0, Player.y, 720)
 
         pass
@@ -243,26 +230,47 @@ class Player:
 
         pass
 
-    def select_Ability(self, selectMenu):
-        if selectMenu == 0:
-            # 채력 업
-            self.MaxHp += 10
-            pass
-        elif selectMenu == 1:
-            self.Attack += 5
-
-        elif selectMenu == 2:
-            self.speed += 0.5
-
-        elif selectMenu == 3:
-            pass
 
 
     def handle_collision(self, other, group):
         if 'kirby:s_Enemy' == group:
             self.hp -= other.power
+
     def superAttack(self):
         pass
+
+    @staticmethod
+    def select_Ability(AbilityNumber):
+        if AbilityNumber == 0:
+            play_state.kirby.MaxHp += 10
+            pass
+        elif AbilityNumber == 1:
+            play_state.kirby.Attack += 5
+            pass
+
+        elif AbilityNumber == 2:
+            play_state.kirby.speed += 0.05
+            pass
+
+        elif AbilityNumber == 3:
+            newWeapons = Weapon("ICE")
+            play_state.kirby.weapons.add(newWeapons)
+            play_state.ui_Manager.Weapons.append("ICE")
+            del newWeapons
+            pass
+        elif AbilityNumber == 4:
+            newWeapons = Weapon("FIRE")
+            play_state.kirby.weapons.add(newWeapons)
+            play_state.ui_Manager.Weapons.append("FIRE")
+            del newWeapons
+            pass
+
+        elif AbilityNumber == 5:
+            newWeapons = Weapon("PLASMA")
+            play_state.kirby.weapons.add(newWeapons)
+            play_state.ui_Manager.Weapons.append("PLASMA")
+            del newWeapons
+            pass
 
 
 

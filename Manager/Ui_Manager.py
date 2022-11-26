@@ -58,6 +58,7 @@ class UI_Manager:
                 self.kriby_UI_Image.clip_draw(0, 192 - 32 * 1, 32, 32, 18 + i * 35, 720 - 56, 26, 26)
                 pass
             elif weapon == "PLASMA":
+                self.kriby_UI_Image.clip_draw(0, 192 - 32 * 2, 32, 32, 18 + i * 35, 720 - 56, 26, 26)
                 pass
             i +=1
 
