@@ -14,12 +14,17 @@ class UI_Manager:
 
     Enemy_x = 0
     Enemy_y = 0
+
     kill_Enemy = 0
+
     player_Hp = 0
     player_MaxHp = 0
     player_Exp = 0
     player_MaxExp = 0
     player_level = 0
+
+    player_super_gaze = 0
+    player_super_MAX = 0
     elapsed_time = 0
 
     def __init__(self):
@@ -37,7 +42,14 @@ class UI_Manager:
         self.UI_Image.clip_draw(175, 512 - 98 - 32, 96, 32, 100, 720 - 75, 200, 200 // 3)
     # 경험치 창 출력
         self.UI_Image.clip_draw(374, 512 - 249 - 23, 10, 23, 1280 // 2, 700, 1280, 40)
-        self.UI_Image.clip_draw(424, 512 - 189 - 4, 4, 4, 0, 700, round((self.player_Exp / self.player_MaxExp ),3) * 1280 * 2, 28)
+        self.UI_Image.clip_draw(424, 512 - 189 - 4, 4, 4, 0, 700, round((self.player_Exp / self.player_MaxExp ),4) * 1280 * 2, 28)
+
+    # 필살기 창 출력
+        self.UI_Image.clip_draw(374, 512 - 249 - 23, 10, 23, 0 , 500, 100, 40)
+        self.UI_Image.clip_draw(424, 512 - 189 - 4 ,  4,  4,  50, 500, round((self.player_super_gaze /100 ),4) * 100* 2, 28)
+
+
+
     # 레벨 출력
         self.UI_font.draw(1280 - 100, 720 - 20, '(LEVEL: %d)' % self.player_level, (255, 255, 255))
 
@@ -51,14 +63,14 @@ class UI_Manager:
             if self.UI_Image == None:
                 print(weapon)
                 pass
-            if weapon == "ICE":
-                self.kriby_UI_Image.clip_draw(0,160 - 32 * 1, 32 , 32, 18+ i * 35, 720 - 56,26,26)
+            if weapon == "FIRE":
+                self.kriby_UI_Image.clip_draw(0,160 - 32 * 0, 32 , 32, 18+ i * 35, 720 - 56,26,26)
                 pass
-            elif weapon == "FIRE":
-                self.kriby_UI_Image.clip_draw(0, 192 - 32 * 1, 32, 32, 18 + i * 35, 720 - 56, 26, 26)
+            elif weapon == "ICE":
+                self.kriby_UI_Image.clip_draw(0, 160 - 32 * 1, 32, 32, 18 + i * 35, 720 - 56, 26, 26)
                 pass
             elif weapon == "PLASMA":
-                self.kriby_UI_Image.clip_draw(0, 192 - 32 * 2, 32, 32, 18 + i * 35, 720 - 56, 26, 26)
+                self.kriby_UI_Image.clip_draw(0, 160 - 32 * 2, 32, 32, 18 + i * 35, 720 - 56, 26, 26)
                 pass
             i +=1
 
@@ -67,6 +79,7 @@ class UI_Manager:
         self.player_x , self.player_y  = int(player.x), int(player.y)
         self.player_Hp , self.player_MaxHp  = int(player.Hp), int(player.MaxHp)
         self.player_Exp, self.player_MaxExp = int(player.Exp), int(player.MaxExp)
+        self.player_super_gaze = player.gauge
         pass
 
     def update(self, player_x, player_y):

@@ -49,7 +49,7 @@ def draw():
 
     bg_image.clip_draw(0,0,400,300,1280//2,720//2,1280,720)
     box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2,720//2,800,720)
-    for i in range(0,5):
+    for i in range(0,3):
         if select_Number == -1 or select_Number != i:
             box_bg_image.clip_draw(175,512 - 131 - 48, 48, 48, 1280//2 - 250 + i * 125, 720 - 200,100,100)
         else :
@@ -64,7 +64,7 @@ def draw():
     pass
 
 def handle_events():
-    global select_Number, Type
+    global select_Number, Type, subType_1 ,subType_2
     events = get_events()
     for event in events:
         if event.type == SDL_MOUSEBUTTONDOWN:
@@ -73,14 +73,16 @@ def handle_events():
                 match select_Number:
                     case 0:
                         Type = "FIRE"
+                        subType_1 = "ICE"
+                        subType_2 = "PLASMA"
                     case 1:
                         Type = "ICE"
+                        subType_1 = "FIRE"
+                        subType_2 = "PLASMA"
                     case 2:
                         Type = "PLASMA"
-                    case 3:
-                        Type = "HAMMER"
-                    case 4:
-                        Type = "SWORD"
+                        subType_1 = "ICE"
+                        subType_2 = "FIRE"
                 game_framework.change_state(mapSelect_state)
 
                 pass

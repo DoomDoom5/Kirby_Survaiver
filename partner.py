@@ -1,6 +1,10 @@
 from pico2d import *
 import game_framework
 import math
+import play_state
+from enemy import Enemy
+
+import game_world
 
 # Kriby Run Speed
 PIXEL_PER_METER = (10.0/0.3)
@@ -20,7 +24,7 @@ class Partner:
     width = 40
     height = 40
     Attack = 0
-    weapons = ()
+    weapons = set()
 
     Defence = 0.0  # 방어력
     Recovery = 0.05  # 재생력
@@ -28,7 +32,7 @@ class Partner:
     BulletRange = 1.0  # 투사채 크기
     BulletNum = 1  # 추가 투사체 수
 
-    def __init__(self, element):
+    def __init__(self, element, helper_num):
         if element == "ICE":
             self.image = load_image("assets/img/Kirby/Ice_Kirby_empty.png")
         elif element == "FIRE":
@@ -39,15 +43,17 @@ class Partner:
         self.speed = 0.3
         self.x, self.y = 1280//2, 720//2
         self.frame = 0
-        self.x_dir, self.y_dir, self.invers = 0, 0,True
+        self.dir, self.invers = 0,True
         self.dgree = 0
+        self.target_enemy = None
+        self.helper_num = helper_num
         pass
 
     def get_bb(self):
         return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
 
     def draw(self):
-        if self.x_dir == 0 and self.y_dir == 0:
+        if self.dir == 0:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
             if self.invers == False:
                 self.image.clip_composite_draw(int(self.frame) * 34, 616 - 79, 33, 37,
@@ -67,18 +73,57 @@ class Partner:
 
         pass
 
+    def Attack_Weapons(self):
+        for weapon in self.weapons:
+            weapon.shot(self.x, self.y, self.Attack,self.invers, play_state.missile_manager)
+            pass
+
 
     def update(self, player_x , player_y):
-        if self.x > player_x:
-            self.invers = False
-        else:
-            self.invers = True
+        self.Attack_Weapons()
+        self.find_enemy_location()
+        if self.target_enemy == None:
+            if self.x > player_x:
+                self.invers = False
+            else:
+                self.invers = True
 
-        direction = math.atan2(player_y - self.y, player_x - self.x)
-        self.x += math.cos(direction) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
-        self.x = clamp(0, self.x, 1280)
-        self.y += math.sin(direction) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
-        self.y = clamp(0, self.y, 720)
+            if abs(player_y - self.y) < 80 and abs(player_x - self.x) < 80:
+                return
+            self.dir = math.atan2(player_y - self.y, player_x - self.x)
+            self.x += math.cos(self.dir) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
+            self.x = clamp(0, self.x, 1280)
+            self.y += math.sin(self.dir) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
+            self.y = clamp(0, self.y, 720)
+
+        else:
+            if self.x > self.target_enemy.x:
+                self.invers = False
+            else:
+                self.invers = True
+
+            if abs(self.target_enemy.y - self.y) < 30 and abs(self.target_enemy.x - self.x) < 30:
+                return
+            self.dir = math.atan2(self.target_enemy.y - self.y, self.target_enemy.x - self.x)
+            self.x += math.cos(self.dir) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
+            self.x = clamp(0, self.x, 1280)
+            self.y += math.sin(self.dir) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
+            self.y = clamp(0, self.y, 720)
+
+            pass
         pass
 
+    def find_enemy_location(self):
+        self.target_enemy = None
+        shortest_distance = 1280**2
+        for o in game_world.all_objects():
+            if type(o) is Enemy:
+                enemy = o
+                distance = (enemy.x - self.x) ** 2 + (enemy.y - self.y) ** 2
+                if distance < (PIXEL_PER_METER * 10) ** 2 and distance < shortest_distance:
+                    self.target_enemy = enemy
+                    shortest_distance = distance
+                    print("find Target")
+                pass
+        pass
 

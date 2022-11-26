@@ -188,6 +188,7 @@ class Player:
 
     def add_event(self, event):
         self.event_que.insert(0, event)
+
     def handle_events(self, event):
         if (event.type, event.key) in key_event_table:
             key_event = key_event_table[(event.type, event.key)]
@@ -195,14 +196,15 @@ class Player:
 
 
     def Attack_Weapons(self):
-        for weapons in self.weapons:
-            weapons.Attack()
+        for weapon in self.weapons:
+            weapon.shot(self.x, self.y, self.Attack,self.invers, play_state.missile_manager, 0)
             pass
+
 
     def levelUP(self):
         if self.Exp >= self.MaxExp:
             self.Exp = self.Exp - self.MaxExp
-            self.MaxExp = self.MaxExp * 1.4
+            self.MaxExp = self.MaxExp * 2
             self.Level +=1
             self.cur_state = RUN
             self.cur_state.enter(self, None)
@@ -210,7 +212,9 @@ class Player:
         return False
 
     def update(self, x = 0,y = 0):
+        self.Attack_Weapons()
         self.cur_state.do(self)
+
 
         if self.event_que:
             event = self.event_que.pop()
@@ -221,12 +225,18 @@ class Player:
                 print(f'ERROR: State {self.cur_state.__name__}    Event {event_name[event]}')
             self.cur_state.enter(self, event)
 
+        self.Exp += play_state.item_manager.GainExp(self.x, self.y, self.Magent, self.Exp)
+        play_state.ui_Manager.player_UI_update(self)
+        if (self.levelUP()):
+            play_state.ui_Manager.player_level = self.Level
+            game_framework.push_state(play_state.levelUp_state)
+
         if self.invisivleTime > 0:
-            self.invisivleTime -=  game_framework.frame_time
+            self.invisivleTime -= game_framework.frame_time
         if self.Hp < self.MaxHp:
             self.Hp += self.Recovery
         if self.gauge < self.Maxgauge:
-            self.gauge += 1
+            self.gauge += 1/4
 
         pass
 
@@ -236,7 +246,10 @@ class Player:
         if 'kirby:s_Enemy' == group:
             self.hp -= other.power
 
-    def superAttack(self):
+    @staticmethod
+    def superAttack(player):
+        if player.gauge >= 100:
+            pass
         pass
 
     @staticmethod
@@ -264,7 +277,6 @@ class Player:
             play_state.ui_Manager.Weapons.append("FIRE")
             del newWeapons
             pass
-
         elif AbilityNumber == 5:
             newWeapons = Weapon("PLASMA")
             play_state.kirby.weapons.add(newWeapons)

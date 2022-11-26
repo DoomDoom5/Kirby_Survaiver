@@ -12,7 +12,7 @@ anim_height = None
 
 Abilitys = ["체력을 10 얻습니다" ,"공격을 5 얻습니다", "속도를 0.05 얻습니다", "얼음 능력을 얻습니다", "불 능력을 얻습니다", "번개 능력을 얻습니다"]
 def Menu_Ability(menu_number, AbilityNumber ,level = 0):
-    play_state.ui_Manager.UI_font.draw(300 ,550 - menu_number * 120, Abilitys[AbilityNumber], (255, 255, 255))
+    play_state.ui_Manager.UI_font.draw(550 ,550 - menu_number * 120, Abilitys[AbilityNumber], (255, 255, 255))
     pass
 
 a = None

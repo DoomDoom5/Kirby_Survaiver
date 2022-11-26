@@ -5,7 +5,7 @@ import game_framework
 
 # Kriby Run Speed
 PIXEL_PER_METER = (10.0/0.3)
-RUN_SPEED_KMPH = 20.0
+RUN_SPEED_KMPH = 8.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000/60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -15,6 +15,8 @@ TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
+createBoss = False
+MAP_one_Enemy = ["Waddle_dee" ,"kinght","Fighter",   "Mike" ,"NinjaCat", "KingDedede" ]
 
 class Enemy:
     name = None
@@ -52,50 +54,50 @@ class Enemy:
         self.name = name
 
         # 적 타입을 인덱스화 시켜서 하자 => 나중에 수정
-        if self.name == "Waddle_dee":
+        if self.name == MAP_one_Enemy[0]:
             self.MaxHp = 10
-            self.speed = 0.5
+            self.speed = 0.1
             self.width = 26
             self.height = 26
             self.power = 2
             self.crystal = "GREEN"
 
 
-        elif self.name == "kinght":
+        elif self.name == MAP_one_Enemy[1]:
             self.MaxHp = 20
-            self.speed = 1
+            self.speed = 0.3
             self.width = 30
             self.height = 30
-            self.power = 4
+            self.power = 3
             self.crystal = "BLUE"
 
-        elif self.name == "Fighter":
-            self.MaxHp = 40
-            self.speed = 3
+        elif self.name == MAP_one_Enemy[2]:
+            self.MaxHp = 30
+            self.speed = 0.5
             self.width = 35
             self.height = 35
-            self.power = 6
+            self.power = 4
             self.crystal = "RED"
 
-        elif self.name == "Mike":
-            self.MaxHp = 100
-            self.speed = 1
+        elif self.name ==MAP_one_Enemy[3]:
+            self.MaxHp = 40
+            self.speed = 0.5
             self.width = 40
             self.height = 40
             self.power = 10
             self.crystal = "RED"
 
-        elif self.name == "NinjaCat":
+        elif self.name == MAP_one_Enemy[4]:
             self.MaxHp = 80
-            self.speed = 3
+            self.speed = 0.7
             self.width = 33
             self.height = 30
             self.power = 8
             self.crystal = "RED"
 
-        elif self.name == "KingDedede":
+        elif self.name == MAP_one_Enemy[5]:
             self.MaxHp = 500
-            self.speed = 4
+            self.speed = 0.8
             self.width = 100
             self.height = 100
             self.power = 20
@@ -107,20 +109,35 @@ class Enemy:
         self.Hp = self.Hp - charater_Attack
 
     def draw(self):
-        if self.name == "Waddle_dee":
+        if self.name == MAP_one_Enemy[0]:
             if not self.invers:
                 self.image.clip_draw(40 * int(self.frame),1190 - 24 , 24, 24,self.x,self.y, self.width, self.height)
             else :
                 self.image.clip_draw(40 *  int(self.frame),1190 - 50 , 24, 24,self.x,self.y, self.width, self.height)
                 pass
             pass
-        elif self.name == "kinght":
+        elif self.name == MAP_one_Enemy[1]:
             if not self.invers:
                 self.image.clip_draw(40 *  int(self.frame),1190 - 58 - 24 , 24, 24,self.x,self.y, self.width, self.height)
             else :
                 self.image.clip_draw(40 *  int(self.frame),1190 - 90 - 24, 24, 24,self.x,self.y, self.width, self.height)
                 pass
-        elif self.name == "Fighter":
+        elif self.name == MAP_one_Enemy[2]:
+            if not self.invers:
+                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
+            else :
+                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,self.x,self.y, self.width, self.height)
+        elif self.name == MAP_one_Enemy[3]:
+            if not self.invers:
+                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
+            else :
+                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,self.x,self.y, self.width, self.height)
+        elif self.name == MAP_one_Enemy[4]:
+            if not self.invers:
+                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
+            else :
+                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,self.x,self.y, self.width, self.height)
+        elif self.name == MAP_one_Enemy[5]:
             if not self.invers:
                 self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
             else :
@@ -130,52 +147,22 @@ class Enemy:
         self.Hpimage.clip_draw(422, 512-158 -9, 9,9, self.x, self.y + 10, self.Hp/self.MaxHp * 30,4)
         pass
 
-    def chase(self, player_x, player_y):
-        if self.x > player_x:
-            self.invers = True
-            self.x_dir = -1
-        else :
-            self.invers = False
-            self.x_dir = +1
-
-        if self.y > player_y:
-            self.y_dir = -1
-        else:
-            self.y_dir = 1
-
     def get_bb(self):
         return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
 
     def update(self,player_x, player_y):
+        if self.x > player_x:
+            self.invers = False
+        else:
+            self.invers = True
+
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) %6
-        dgree = 0
         if self.Hp <= 0:
             game_world.remove_object(self)
-        self.chase(player_x, player_y)
-        if self.x_dir > 0:
-            if self.y_dir > 0:  # 둘다 dir이 1 -> 45도
-                dgree = 45.0
-            elif self.y_dir < 0:
-                dgree = 315.0
-            else:
-                dgree = 0.0
-            pass
-        elif self.x_dir < 0:
-            if self.y_dir > 0:
-                dgree = 135.0
-            elif self.y_dir < 0:
-                dgree = 225.0
-            else:
-                dgree = 180.0
-            pass
-        elif self.x_dir == 0:
-            if self.y_dir > 0:
-                dgree = 90.0
-            elif self.y_dir < 0:
-                dgree = 270.0
 
-        self.x += math.cos(math.radians(dgree)) * self.speed
-        self.y += math.sin(math.radians(dgree)) * self.speed
+        direction = math.atan2(player_y - self.y, player_x - self.x)
+        self.x += math.cos(direction) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
+        self.y += math.sin(direction) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
         pass
 
     def handle_collision(self, other, group):
@@ -183,17 +170,33 @@ class Enemy:
 
     @staticmethod
     def spawnEnemy(Timer, Enemys):
-        newEnemy = Enemy("Waddle_dee")
+        global createBoss
+        newEnemy = Enemy(MAP_one_Enemy[0])
         game_world.add_object(newEnemy, 1)
         Enemys.append(newEnemy)
-        if Timer > 5.0:
-            newEnemy = Enemy("kinght")
+        if Timer > 5.0 and Timer < 20.0:
+            newEnemy = Enemy(MAP_one_Enemy[1])
             game_world.add_object(newEnemy, 1)
             Enemys.append(newEnemy)
-        if Timer > 12.0:
-            newEnemy = Enemy("Fighter")
+        if Timer > 15.0 and Timer < 30.0:
+            newEnemy = Enemy(MAP_one_Enemy[2])
             game_world.add_object(newEnemy, 1)
             Enemys.append(newEnemy)
+        if Timer > 23.0 and Timer < 40.0:
+            newEnemy = Enemy(MAP_one_Enemy[3])
+            game_world.add_object(newEnemy, 1)
+            Enemys.append(newEnemy)
+        if Timer > 30.0:
+            newEnemy = Enemy(MAP_one_Enemy[4])
+            game_world.add_object(newEnemy, 1)
+            Enemys.append(newEnemy)
+
+        if not createBoss and Timer > 60:
+            createBoss = True
+            newEnemy = Enemy(MAP_one_Enemy[5])
+            game_world.add_object(newEnemy, 1)
+            Enemys.append(newEnemy)
+
         del newEnemy
 
         pass
