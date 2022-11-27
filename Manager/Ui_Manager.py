@@ -5,6 +5,7 @@ class UI_Manager:
     Accessories = []
     UI_Image = None
     kriby_UI_Image = None
+    Item_Image = None
     UI_font = None
     Draw_x = None
     Draw_y = None
@@ -32,6 +33,8 @@ class UI_Manager:
             UI_Manager.UI_Image = load_image("assets/Ui/UI.png")
         if UI_Manager.kriby_UI_Image == None:
             UI_Manager.kriby_UI_Image = load_image("assets/Ui/Kirby_UI.png")
+        if UI_Manager.Item_Image == None:
+            UI_Manager.Item_Image = load_image("assets/Ui/items.png")
         if UI_Manager.UI_font == None:
             UI_Manager.UI_font = load_font("assets/Ui/NEXONFootballGothicL.ttf", 20)
         pass
@@ -73,6 +76,20 @@ class UI_Manager:
                 self.kriby_UI_Image.clip_draw(0, 160 - 32 * 2, 32, 32, 18 + i * 35, 720 - 56, 26, 26)
                 pass
             i +=1
+        for Accessorie in self.Accessories:
+            if self.UI_Image == None:
+                print(weapon)
+                pass
+            if weapon == "HEART":
+                self.Item_Image.clip_draw(0,160 - 32 * 0, 32 , 32, 18+ i * 35, 720 - 56,26,26)
+                pass
+            elif weapon == "GLOVE":
+                self.Item_Image.clip_draw(0, 160 - 32 * 1, 32, 32, 18 + i * 35, 720 - 56, 26, 26)
+                pass
+            elif weapon == "WING":
+                self.Item_Image.clip_draw(0, 160 - 32 * 2, 32, 32, 18 + i * 35, 720 - 56, 26, 26)
+                pass
+
 
 
     def player_UI_update(self, player) :

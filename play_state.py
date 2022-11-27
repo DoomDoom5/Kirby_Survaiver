@@ -37,28 +37,22 @@ def enter():
     item_manager = Item_manager()
 
     game_world.add_object(missile_manager,2)
-    game_world.add_object(ui_Manager, 2)
+    game_world.add_object(ui_Manager, 3)
     game_world.add_object(item_manager, 2)
 
     kirby = Player(CharaterSelect_state.Type)
-    Kirby_init_Test(kirby)
     game_world.add_object(kirby,1)
 
     kirby_partner_1 = Partner(CharaterSelect_state.subType_1,1)
-    newWeapons = Weapon(CharaterSelect_state.subType_1)
-    kirby_partner_1.weapons.add(newWeapons)
-    kirby_partner_1.x = 1280//2 - 30
+    kirby_partner_1.x = 1280//2 - 40
     game_world.add_object(kirby_partner_1, 1)
     del CharaterSelect_state.subType_1
 
     kirby_partner_2 = Partner(CharaterSelect_state.subType_2,2)
-    newWeapons = Weapon(CharaterSelect_state.subType_2)
-    kirby_partner_2.weapons.add(newWeapons)
-    kirby_partner_2.x = 1280//2 + 30
+    kirby_partner_2.x = 1280//2 + 40
     game_world.add_object(kirby_partner_2, 1)
     del CharaterSelect_state.subType_2
 
-    del newWeapons
 
     gameMap = Map(mapSelect_state.Type)
     game_world.add_object(gameMap,0)
@@ -100,6 +94,8 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update(kirby.x, kirby.y) # game_world에서 제너레이터 하였기 때문에
 
+    if kirby_partner_1.target_enemy == kirby_partner_2.target_enemy:
+        kirby_partner_2.target_enemy = None
 def draw():
     clear_canvas()
     draw_world()
@@ -125,12 +121,6 @@ def pause():
     pass
 def resume():
     pass
-def Kirby_init_Test(kirby):
-    newWeapons = Weapon(CharaterSelect_state.Type)
-    kirby.weapons.add(newWeapons)
-    del CharaterSelect_state.Type
-    del newWeapons
-
 
 def collide(a,b):
 

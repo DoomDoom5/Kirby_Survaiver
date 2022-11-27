@@ -5,6 +5,9 @@ import game_world
 import math
 from pico2d import *
 
+import play_state
+
+
 class Item:
     Name = None
     Gained = None
@@ -149,12 +152,13 @@ class ICE(Missile): # 가로로 일직선 공격
             self.x_dir = -1
             pass
 
-        if level == 1:
-            self.DurationTime = 4.0
+        if level == 2:
+            self.width = 60
+            self.height = 60
+            self.BulletSpeed = 6.0  # 투사채 속도
+            self.Attack += 5
             pass
-        elif level == 2:
-            pass
-        elif level == 3:
+        if level == 3:
             pass
     def update(self, player_x, player_y):
         if self.state == 0:
@@ -250,7 +254,6 @@ class FIRE(Missile): # 가로로 일직선 공격
     def get_bb(self):
         return self.x - self.width // 2, self.y - self.height // 2, self.x + self.width // 2, self.y + self.height // 2
 
-
 class PLASMA(Missile):
     coolTimer = 6
     def __init__(self, level=0, invers=False, charater_x = 0,charater_y = 0,charater_Attack = 0, shoter = 0):
@@ -262,9 +265,10 @@ class PLASMA(Missile):
         self.BulletSpeed = 3.0  # 투사채 속도
         self.Attack = (5 + charater_Attack)/5
         self.dgree = random.randint(0,359)
-        self.x = charater_x + math.cos(math.radians(self.dgree)) * self.BulletSpeed
-        self.y = charater_y + math.sin(math.radians(self.dgree)) * self.BulletSpeed
+        self.x = charater_x
+        self.y = charater_y
         self.DurationTime = 3.0
+        self.shoter = shoter
 
         if level == 1:
             pass
@@ -276,58 +280,35 @@ class PLASMA(Missile):
         if self.state == 0:
             self.dgree = self.dgree + self.BulletSpeed
             self.DurationTime -= game_framework.frame_time
-            self.x = player_x + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 40
-            self.y = player_y + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 40
-            if self.DurationTime <= 0:
-                self.state = 1
-                del self
+            if self.shoter == 0:
+                self.x = player_x + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 40
+                self.y = player_y + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 40
+                if self.DurationTime <= 0:
+                    self.state = 1
+                    del self
+
+            elif self.shoter == 1:
+                self.x = play_state.kirby_partner_1.x + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 40
+                self.y = play_state.kirby_partner_1.y + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 40
+                if self.DurationTime <= 0:
+                    self.state = 1
+                    del self
+
+            elif self.shoter == 2:
+                self.x = play_state.kirby_partner_2.x + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 40
+                self.y = play_state.kirby_partner_2.y + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 40
+                if self.DurationTime <= 0:
+                    self.state = 1
+                    del self
 
     def draw(self, image):
         if self.state == 0:
             image.clip_composite_draw(264, 552-44-16, 17, 16, 0, ' ', self.x,self.y, self.width * self.BulletRange, self.height * self.BulletRange)
             draw_rectangle(*self.get_bb())
-
         pass
 
     def get_bb(self):
         return self.x - self.width // 2, self.y - self.height // 2, self.x + self.width // 2, self.y + self.height // 2
-
-
-class HAMMER(Missile): # 해머 공격 == 뱀서의 도끼 공격
-    UpTime = None
-    def __init__(self, level=0, invers=False, charater_x=0, charater_y=0):
-        self.x = charater_x
-        self.y = charater_y
-        self.width = 24
-        self.height = 24
-        self.BulletRange = 1.0
-        self.BulletSpeed = 5.0  # 투사채 속도
-        self.Attack = 13
-        self.UpTime = 5.0
-        if invers:
-            self.x_dir = 1
-        else:
-            self.x_dir = -1
-            pass
-
-        if level == 1:
-            self.DurationTime = 4.0
-            pass
-        elif level == 2:
-            pass
-        elif level == 3:
-            pass
-
-    def update(self, player_x, player_y):
-        if self.UpTime:
-            pass
-
-        self.x += self.x_dir
-        if self.x > 1280:
-            del self
-        elif self.x < 0:
-            del self
-        pass
 
 
 class Missile_manager:
@@ -335,7 +316,6 @@ class Missile_manager:
     ice = ICE()
     fire = FIRE()
     plasma = PLASMA()
-    hammer = HAMMER()
     image = None
 
     def __init__(self):
@@ -399,9 +379,9 @@ class Weapon:
         self.shotOn = False
         pass
 
-    def shot(self, charater_x, charater_y,charater_Attack  ,charater_invers, missile_manager, Timer = 0.03, shoter=0):
+    def shot(self, charater_x, charater_y,charater_Attack  ,charater_invers, missile_manager, shoter=0):
         # shoter = 0:플레이어 , 1 : 파트너1 , 2 : 파트너2
-        self.shotTimer += Timer
+        self.shotTimer += game_framework.frame_time
         if self.name == None:
             return
 

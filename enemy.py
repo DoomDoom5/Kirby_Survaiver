@@ -72,7 +72,7 @@ class Enemy:
             self.crystal = "BLUE"
 
         elif self.name == MAP_one_Enemy[2]:
-            self.MaxHp = 30
+            self.MaxHp = 25
             self.speed = 0.5
             self.width = 35
             self.height = 35
@@ -152,9 +152,9 @@ class Enemy:
 
     def update(self,player_x, player_y):
         if self.x > player_x:
-            self.invers = False
-        else:
             self.invers = True
+        else:
+            self.invers = False
 
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) %6
         if self.Hp <= 0:
@@ -201,3 +201,6 @@ class Enemy:
 
         pass
 
+
+class Boss(Enemy):
+    pass

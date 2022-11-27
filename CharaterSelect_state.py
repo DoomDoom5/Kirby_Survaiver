@@ -77,7 +77,7 @@ def handle_events():
                         subType_2 = "PLASMA"
                     case 1:
                         Type = "ICE"
-                        subType_1 = "FIRE"
+                        subType_1 = "PLASMA"
                         subType_2 = "PLASMA"
                     case 2:
                         Type = "PLASMA"

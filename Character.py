@@ -130,7 +130,7 @@ next_state_table = {
 # 캐릭터가 가져야 할것
 class Player:
     image = None
-    weapons = set()
+    weapons = []
     width = 50
     height = 50
     Attack = 0
@@ -171,8 +171,13 @@ class Player:
         self.event_que = []
         self.cur_state = RUN
         self.cur_state.enter(self, None)
+        self.get_Weapon(element)
+
         pass
 
+    def get_Weapon(self, name):
+        self.weapons.append(Weapon(name))
+        pass
     def get_bb(self):
         return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
 
@@ -193,7 +198,6 @@ class Player:
         if (event.type, event.key) in key_event_table:
             key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
-
 
     def Attack_Weapons(self):
         for weapon in self.weapons:
@@ -227,10 +231,10 @@ class Player:
 
         self.Exp += play_state.item_manager.GainExp(self.x, self.y, self.Magent, self.Exp)
         play_state.ui_Manager.player_UI_update(self)
+
         if (self.levelUP()):
             play_state.ui_Manager.player_level = self.Level
             game_framework.push_state(play_state.levelUp_state)
-
         if self.invisivleTime > 0:
             self.invisivleTime -= game_framework.frame_time
         if self.Hp < self.MaxHp:
@@ -254,6 +258,9 @@ class Player:
 
     @staticmethod
     def select_Ability(AbilityNumber):
+        i = 0
+
+        check_Supplie = None
         if AbilityNumber == 0:
             play_state.kirby.MaxHp += 10
             pass
@@ -266,22 +273,41 @@ class Player:
             pass
 
         elif AbilityNumber == 3:
-            newWeapons = Weapon("ICE")
-            play_state.kirby.weapons.add(newWeapons)
-            play_state.ui_Manager.Weapons.append("ICE")
-            del newWeapons
+            for weapon in play_state.kirby.weapons:
+                if weapon.name == "ICE":
+                    check_Supplie = i
+                else:
+                    i += 1
+            if check_Supplie == None:
+                play_state.kirby.get_Weapon("ICE")
+                play_state.UI_Manager.Weapons.append("ICE")
+            else:
+                play_state.kirby.weapons[i].level += 1
             pass
+
         elif AbilityNumber == 4:
-            newWeapons = Weapon("FIRE")
-            play_state.kirby.weapons.add(newWeapons)
-            play_state.ui_Manager.Weapons.append("FIRE")
-            del newWeapons
+            for weapon in play_state.kirby.weapons:
+                if weapon.name == "FIRE":
+                    check_Supplie = i
+                else:
+                    i += 1
+            if check_Supplie == None:
+                play_state.kirby.get_Weapon("FIRE")
+                play_state.UI_Manager.Weapons.append("FIRE")
+            else:
+                play_state.kirby.weapons[i].level += 1
             pass
         elif AbilityNumber == 5:
-            newWeapons = Weapon("PLASMA")
-            play_state.kirby.weapons.add(newWeapons)
-            play_state.ui_Manager.Weapons.append("PLASMA")
-            del newWeapons
+            for weapon in play_state.kirby.weapons:
+                if weapon.name == "PLASMA":
+                    check_Supplie = i
+                else:
+                    i += 1
+            if check_Supplie == None:
+                play_state.kirby.get_Weapon("PLASMA")
+                play_state.UI_Manager.Weapons.append("PLASMA")
+            else:
+                play_state.kirby.weapons[i].level += 1
             pass
 
 

@@ -3,7 +3,7 @@ import game_framework
 import math
 import play_state
 from enemy import Enemy
-
+from Manager.Item_Manager import Weapon
 import game_world
 
 # Kriby Run Speed
@@ -24,7 +24,7 @@ class Partner:
     width = 40
     height = 40
     Attack = 0
-    weapons = set()
+    weapons = []
 
     Defence = 0.0  # 방어력
     Recovery = 0.05  # 재생력
@@ -47,11 +47,16 @@ class Partner:
         self.dgree = 0
         self.target_enemy = None
         self.helper_num = helper_num
+
+        self.get_Weapon(element)
+
         pass
 
     def get_bb(self):
         return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
-
+    def get_Weapon(self, name):
+        self.weapons.append(Weapon(name))
+        pass
     def draw(self):
         if self.dir == 0:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
@@ -75,7 +80,7 @@ class Partner:
 
     def Attack_Weapons(self):
         for weapon in self.weapons:
-            weapon.shot(self.x, self.y, self.Attack,self.invers, play_state.missile_manager)
+            weapon.shot(self.x, self.y, self.Attack,self.invers, play_state.missile_manager, self.helper_num)
             pass
 
 
@@ -123,7 +128,6 @@ class Partner:
                 if distance < (PIXEL_PER_METER * 10) ** 2 and distance < shortest_distance:
                     self.target_enemy = enemy
                     shortest_distance = distance
-                    print("find Target")
                 pass
         pass
 
