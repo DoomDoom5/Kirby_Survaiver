@@ -3,7 +3,7 @@ from pico2d import *
 import game_framework
 import game_world
 import math
-
+import server
 import play_state
 
 
@@ -15,6 +15,8 @@ class Missile:
     image = None
     x = 0
     y = 0
+    sx = 0
+    sy = 0
     x_dir = 0
 
     level = 1 # 레벨
@@ -28,6 +30,9 @@ class Missile:
     BulletNum = 1  # 추가 투사체 수
 
     DurationTime = 0
+
+    def get_bb(self):
+        return self.sx - self.width // 2, self.sy - self.height // 2, self.sx + self.width // 2, self.sy + self.height // 2
 
 class ICE(Missile): # 가로로 일직선 공격
     coolTimer = 2
@@ -57,11 +62,12 @@ class ICE(Missile): # 가로로 일직선 공격
         if level == 3:
             pass
     def update(self, player_x, player_y):
+        self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
         if self.state == 0:
             self.x += self.x_dir * self.BulletSpeed
-            if self.x > 1280:
+            if self.sx > server.background.w:
                 del self
-            elif self.x < 0:
+            elif self.sx < 0:
                 del self
         elif self.state == 1:
             if self.state >= 8:
@@ -70,24 +76,22 @@ class ICE(Missile): # 가로로 일직선 공격
     def draw(self, image):
         if self.state == 0:
             draw_rectangle(*self.get_bb())
-            image.clip_draw(365, 552-45 - 24, 24,24,self.x,self.y, self.width * self.BulletRange, self.height * self.BulletRange)
+            image.clip_draw(365, 552-45 - 24, 24,24,self.sx, self.sy, self.width * self.BulletRange, self.height * self.BulletRange)
         elif self.state == 1:
             self.frame = self.frame+1
             match self.frame//2:
                 case 0 :
-                    image.clip_draw(245, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(245, 552-19 - 10, 20,20, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 1 :
-                   image.clip_draw(265, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(265, 552-19 - 10, 20,20, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 2 :
-                   image.clip_draw(291, 552-19 - 10, 30,30,self.x,self.y,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(291, 552-19 - 10, 30,30, self.sx, self.sy,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
                 case 3 :
-                    image.clip_draw(335, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(335, 552-19 - 10, 30,30, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 4 :
-                   image.clip_draw(373, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(373, 552-19 - 10, 30,30, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
         pass
 
-    def get_bb(self):
-        return self.x - self.width // 2, self.y - self.height // 2, self.x + self.width // 2, self.y + self.height // 2
 
 
 class FIRE(Missile): # 가로로 일직선 공격
@@ -122,6 +126,7 @@ class FIRE(Missile): # 가로로 일직선 공격
             pass
 
     def update(self, player_x, player_y):
+        self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
         if self.state == 0:
             self.x += (math.cos(self.dgree)) * self.BulletSpeed
             self.y += (math.sin(self.dgree) ) * self.BulletSpeed
@@ -135,24 +140,22 @@ class FIRE(Missile): # 가로로 일직선 공격
         if self.state == 0:
             draw_rectangle(*self.get_bb())
             image.clip_composite_draw(337, 552-424-15, 29, 15,
-                                            self.dgree, ' ', self.x,self.y, self.width * self.BulletRange, self.height * self.BulletRange)
+                                            self.dgree, ' ', self.sx, self.sy, self.width * self.BulletRange, self.height * self.BulletRange)
         elif self.state == 1:
             self.frame = self.frame+1
             match self.frame//2:
                 case 0 :
-                    image.clip_draw(88, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(88, 552-19 - 10, 20,20,self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 1 :
-                   image.clip_draw(88, 552-19 - 10, 20,20,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(88, 552-19 - 10, 20,20,self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 2 :
-                   image.clip_draw(88, 552-19 - 10, 30,30,self.x,self.y,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(88, 552-19 - 10, 30,30,self.sx, self.sy,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
                 case 3 :
-                    image.clip_draw(88, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(88, 552-19 - 10, 30,30,self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 4 :
-                   image.clip_draw(88, 552-19 - 10, 30,30,self.x,self.y,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(88, 552-19 - 10, 30,30,self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
         pass
 
-    def get_bb(self):
-        return self.x - self.width // 2, self.y - self.height // 2, self.x + self.width // 2, self.y + self.height // 2
 
 class PLASMA(Missile):
     coolTimer = 6
@@ -202,13 +205,14 @@ class PLASMA(Missile):
                     del self
 
     def draw(self, image):
+        sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
+
         if self.state == 0:
-            image.clip_composite_draw(264, 552-44-16, 17, 16, 0, ' ', self.x,self.y, self.width * self.BulletRange, self.height * self.BulletRange)
+
+            image.clip_composite_draw(264, 552-44-16, 17, 16, 0, ' ', sx, sy, self.width * self.BulletRange, self.height * self.BulletRange)
             draw_rectangle(*self.get_bb())
         pass
 
-    def get_bb(self):
-        return self.x - self.width // 2, self.y - self.height // 2, self.x + self.width // 2, self.y + self.height // 2
 
 class Missile_manager:
     missiles = []

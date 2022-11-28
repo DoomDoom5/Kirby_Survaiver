@@ -4,6 +4,7 @@ import CharaterSelect_state
 import game_world
 import mapSelect_state
 import levelUp_state
+import server
 
 from map import Map
 from Character import Player
@@ -13,10 +14,8 @@ from Manager.Weapon_Manager import Missile_manager
 from Manager.Item_Manager import Item_manager
 from Manager.Ui_Manager import UI_Manager
 
-filld = None
 missile_manager = None
 item_manager = None
-ui_Manager = None
 
 kirby = None
 kirby_partner_1 = None
@@ -25,18 +24,20 @@ kirby_partner_2 = None
 Enemys = None
 Timer = 0
 enemy_responTimer = 0
-gameMap = None
 
 def enter():
-    global  kirby, Enemys,item_manager,gameMap, missile_manager, ui_Manager, kirby_partner_1,kirby_partner_2
+    global  kirby, Enemys,item_manager, missile_manager, kirby_partner_1,kirby_partner_2
+
+    server.background = Map(mapSelect_state.Type)
+    game_world.add_object(server.background,0)
 
     missile_manager = Missile_manager()
-    ui_Manager = UI_Manager()
-    ui_Manager.Weapons.append(CharaterSelect_state.Type)
+    server.ui_Manager = UI_Manager()
+    server.ui_Manager.Weapons.append(CharaterSelect_state.Type)
     item_manager = Item_manager()
 
     game_world.add_object(missile_manager,2)
-    game_world.add_object(ui_Manager, 3)
+    game_world.add_object(server.ui_Manager, 3)
     game_world.add_object(item_manager, 2)
 
     kirby = Player(CharaterSelect_state.Type)
@@ -53,8 +54,6 @@ def enter():
     del CharaterSelect_state.subType_2
 
 
-    gameMap = Map(mapSelect_state.Type)
-    game_world.add_object(gameMap,0)
 
     Enemys = [Enemy("Waddle_dee") for i in range(0, 10)]
     for s_Enemy in Enemys :
@@ -71,14 +70,14 @@ def exit():
 def update():
     global Timer,enemy_responTimer,s_Enemy
     Timer += game_framework.frame_time
-    ui_Manager.elapsed_time = Timer
+    server.ui_Manager.elapsed_time = Timer
 
     for s_Enemy in Enemys :
         s_Enemy.On_damege(missile_manager.Check_Hit_Enemy(*s_Enemy.get_bb()))
         if s_Enemy.Hp <= 0 :
             item_manager.Create_EXP_Stone(s_Enemy.crystal, s_Enemy.x, s_Enemy.y)
             Enemys.remove(s_Enemy)
-            ui_Manager.kill_Enemy += 1
+            server.ui_Manager.kill_Enemy += 1
 
         if abs(kirby.x - s_Enemy.x) < 80 or abs(kirby.y - s_Enemy.y) < 80:
             if collide(kirby, s_Enemy):

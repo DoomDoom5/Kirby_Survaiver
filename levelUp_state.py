@@ -3,7 +3,7 @@ from pico2d import *
 import game_framework
 import play_state
 import random
-
+import server
 Item_image = None
 select_Number = 0
 Type = None
@@ -12,7 +12,7 @@ anim_height = None
 
 Abilitys = ["체력을 10 얻습니다" ,"공격을 5 얻습니다", "속도를 0.05 얻습니다", "얼음 능력을 획득/강화 합니다", "불 능력을 획득/강화 니다", "번개 능력을 획득/강화 니다"]
 def Menu_Ability(menu_number, AbilityNumber ,level = 0):
-    play_state.ui_Manager.UI_font.draw(550 , anim_height + 550 - menu_number * 120, Abilitys[AbilityNumber], (255, 255, 255))
+    server.ui_Manager.UI_font.draw(550 , anim_height + 550 - menu_number * 120, Abilitys[AbilityNumber], (255, 255, 255))
     pass
 
 a = None

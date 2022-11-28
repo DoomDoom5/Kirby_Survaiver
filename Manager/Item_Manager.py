@@ -3,6 +3,7 @@ import random
 import game_framework
 import game_world
 import math
+import server
 from pico2d import *
 
 
@@ -56,13 +57,15 @@ class ExpStone(Item):
 
 
     def Draw(self, Item_Image):
+        sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
+
         match self.Type:
             case "GREEN":
-                Item_Image.clip_draw(51, 624 - 96 - 12, 9,12,self.x,self.y,self.width, self.height)
+                Item_Image.clip_draw(51, 624 - 96 - 12, 9,12,sx, sy,self.width, self.height)
             case "BLUE":
-                Item_Image.clip_draw(51, 624 - 36 - 12, 9, 12, self.x, self.y,self.width, self.height)
+                Item_Image.clip_draw(51, 624 - 36 - 12, 9, 12, sx, sy,self.width, self.height)
             case "RED":
-                Item_Image.clip_draw(51, 624 - 526 - 12, 9, 12, self.x, self.y,self.width, self.height)
+                Item_Image.clip_draw(51, 624 - 526 - 12, 9, 12, sx, sy,self.width, self.height)
         pass
 
 class Item_manager:

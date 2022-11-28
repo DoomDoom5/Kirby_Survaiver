@@ -2,6 +2,7 @@ from pico2d import *
 import game_framework
 import math
 import play_state
+import server
 from Manager.Weapon_Manager import Weapon
 # Kriby Run Speed
 PIXEL_PER_METER = (10.0/0.4)
@@ -91,31 +92,37 @@ class RUN:
                 dgree = 270.0
 
         Player.x += math.cos(math.radians(dgree)) * RUN_SPEED_PPS * game_framework.frame_time * Player.speed
-        Player.x = clamp(0, Player.x, 1280)
+        Player.x = clamp(Player.height//2, Player.x, server.background.w-1 - Player.width//2)
         Player.y += math.sin(math.radians(dgree)) * RUN_SPEED_PPS * game_framework.frame_time * Player.speed
-        Player.y = clamp(0, Player.y, 720)
+        Player.y = clamp(Player.height//2, Player.y, server.background.h- 1 - Player.height//2)
 
         pass
 
     def draw(self):
+        sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
+
+        # HP 출력
+        server.ui_Manager.UI_Image.clip_draw(280, 512 - 158 - 9, 9, 9, sx, sy - 30, 60, 8)
+        server.ui_Manager.UI_Image.clip_draw(422, 512 - 158 - 9, 9, 9, sx, sy - 30,
+                                round(self.Hp / self.MaxHp, 3) * 60, 8)
         if self.invisivleTime > 0.0 and int(self.frame)%2 == 0:
-            pass
+            return
         elif self.x_dir == 0 and self.y_dir == 0:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
             if self.invers == False:
                 self.image.clip_composite_draw(int(self.frame) * 34, 616 - 80, 33, 37,
-                                               0, '', self.x, self.y, self.width, self.height)
+                                               0, '', sx, sy, self.width, self.height)
             else:
                 self.image.clip_composite_draw(int(self.frame) * 34, 616 - 80, 33, 37,
-                                               0, 'h', self.x, self.y, self.width, self.height)
+                                               0, 'h', sx, sy, self.width, self.height)
         else:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) %7
             if self.invers == False:
                 self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 80, 33, 34,
-                                               0, '', self.x, self.y, self.width, self.height)
+                                               0, '', sx, sy, self.width, self.height)
             elif self.invers == True:
                 self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 80, 33, 34,
-                                               0, 'h', self.x, self.y, self.width, self.height)
+                                               0, 'h', sx, sy, self.width, self.height)
 
 
 #3. 상태 변환 구현
@@ -230,10 +237,10 @@ class Player:
             self.cur_state.enter(self, event)
 
         self.Exp += play_state.item_manager.GainExp(self.x, self.y, self.Magent, self.Exp)
-        play_state.ui_Manager.player_UI_update(self)
+        server.ui_Manager.player_UI_update(self)
 
         if (self.levelUP()):
-            play_state.ui_Manager.player_level = self.Level
+            server.ui_Manager.player_level = self.Level
             game_framework.push_state(play_state.levelUp_state)
         if self.invisivleTime > 0:
             self.invisivleTime -= game_framework.frame_time
@@ -280,7 +287,7 @@ class Player:
                     i += 1
             if check_Supplie == None:
                 play_state.kirby.get_Weapon("ICE")
-                play_state.UI_Manager.Weapons.append("ICE")
+                server.ui_Manager.Weapons.append("ICE")
             else:
                 play_state.kirby.weapons[i].level += 1
             pass
@@ -293,7 +300,7 @@ class Player:
                     i += 1
             if check_Supplie == None:
                 play_state.kirby.get_Weapon("FIRE")
-                play_state.UI_Manager.Weapons.append("FIRE")
+                server.ui_Manager.Weapons.append("FIRE")
             else:
                 play_state.kirby.weapons[i].level += 1
             pass
@@ -305,7 +312,7 @@ class Player:
                     i += 1
             if check_Supplie == None:
                 play_state.kirby.get_Weapon("PLASMA")
-                play_state.UI_Manager.Weapons.append("PLASMA")
+                server.ui_Manager.Weapons.append("PLASMA")
             else:
                 play_state.kirby.weapons[i].level += 1
             pass

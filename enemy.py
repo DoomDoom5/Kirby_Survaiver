@@ -2,7 +2,7 @@ import random
 from pico2d import *
 import game_world
 import game_framework
-
+import server
 # Kriby Run Speed
 PIXEL_PER_METER = (10.0/0.3)
 RUN_SPEED_KMPH = 8.0
@@ -109,42 +109,44 @@ class Enemy:
         self.Hp = self.Hp - charater_Attack
 
     def draw(self):
+        sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
+
         if self.name == MAP_one_Enemy[0]:
             if not self.invers:
-                self.image.clip_draw(40 * int(self.frame),1190 - 24 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 * int(self.frame),1190 - 24 , 24, 24,sx, sy, self.width, self.height)
             else :
-                self.image.clip_draw(40 *  int(self.frame),1190 - 50 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 50 , 24, 24,sx, sy, self.width, self.height)
                 pass
             pass
         elif self.name == MAP_one_Enemy[1]:
             if not self.invers:
-                self.image.clip_draw(40 *  int(self.frame),1190 - 58 - 24 , 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 58 - 24 , 24, 24,sx, sy, self.width, self.height)
             else :
-                self.image.clip_draw(40 *  int(self.frame),1190 - 90 - 24, 24, 24,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 90 - 24, 24, 24,sx, sy, self.width, self.height)
                 pass
         elif self.name == MAP_one_Enemy[2]:
             if not self.invers:
-                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,sx, sy, self.width, self.height)
             else :
-                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
         elif self.name == MAP_one_Enemy[3]:
             if not self.invers:
-                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,sx, sy, self.width, self.height)
             else :
-                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
         elif self.name == MAP_one_Enemy[4]:
             if not self.invers:
-                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,sx, sy, self.width, self.height)
             else :
-                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
         elif self.name == MAP_one_Enemy[5]:
             if not self.invers:
-                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,sx, sy, self.width, self.height)
             else :
-                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,self.x,self.y, self.width, self.height)
+                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
 
-        self.Hpimage.clip_draw(280, 512-158 -9, 9,9, self.x, self.y + 10, 30,4)
-        self.Hpimage.clip_draw(422, 512-158 -9, 9,9, self.x, self.y + 10, self.Hp/self.MaxHp * 30,4)
+        self.Hpimage.clip_draw(280, 512-158 -9, 9,9, sx, sy + 10, 30,4)
+        self.Hpimage.clip_draw(422, 512-158 -9, 9,9,sx, sy + 10, self.Hp/self.MaxHp * 30,4)
         pass
 
     def get_bb(self):

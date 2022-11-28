@@ -9,17 +9,26 @@ class Map:
     dy = None
     def __init__(self, MapType):
         self.image = load_image(Maps[MapType])
-        self.x = self.image.w
-        self.y = self.image.h
+
+        self.canvas_width = get_canvas_width()
+        self.canvas_height = get_canvas_height()
+        self.w = self.image.w
+        self.h = self.image.h
 
 
 
     def draw(self):
-       # self.image.clip_draw(self.dx - 1280//2,self.dy - 720//2, self.x + 1280//2, self.y + 720//2, 1280 // 2, 720 // 2,1280,720)
-       self.image.clip_draw(0, 0, self.x, self.y, 1280 // 2, 720 // 2, 1280, 720)
-       # if dx > 1280//2 and dx < self.x - 1280//2 and dy > 720//2 and dy < self.x - 720//2:
+        self.image.clip_draw_to_origin(
+            self.window_left, self.window_bottom,
+            self.canvas_width, self.canvas_height,
+            0, 0)
 
     def update(self, player_x = 1500, player_y = 1000):
-        self.dx = int(player_x)
-        self.dy = int(player_y)
+
+        self.window_left = clamp(0, int(player_x) - self.canvas_width//2,
+                                 self.w - self.canvas_width - 1)
+        # 0 ~ x ~ 배경의 오른쪽 - 윈도우창 - 1
+        self.window_bottom = clamp(0, int(player_y) - self.canvas_height//2,
+                                 self.h - self.canvas_height - 1)
+        # 0 ~ y ~ 배경의 위쪽 - 윈도우창 - 1
 

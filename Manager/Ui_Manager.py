@@ -39,8 +39,6 @@ class UI_Manager:
             UI_Manager.UI_font = load_font("assets/Ui/NEXONFootballGothicL.ttf", 20)
         pass
     def draw(self):
-        self.UI_Image.clip_draw(280, 512 - 158 - 9, 9, 9, self.player_x, self.player_y - 30, 60, 8)
-        self.UI_Image.clip_draw(422, 512 - 158 - 9, 9, 9, self.player_x, self.player_y - 30,  round(self.player_Hp / self.player_MaxHp, 3) * 60, 8)
     # 아이템 출력
         self.UI_Image.clip_draw(175, 512 - 98 - 32, 96, 32, 100, 720 - 75, 200, 200 // 3)
     # 경험치 창 출력

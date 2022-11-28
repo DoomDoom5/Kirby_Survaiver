@@ -5,6 +5,7 @@ import play_state
 from enemy import Enemy
 from Manager.Weapon_Manager import Weapon
 import game_world
+import server
 
 # Kriby Run Speed
 PIXEL_PER_METER = (10.0/0.3)
@@ -58,28 +59,30 @@ class Partner:
         self.weapons.append(Weapon(name))
         pass
     def draw(self):
+        sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
+
         if self.dir == 0:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
             if self.invers == False:
                 self.image.clip_composite_draw(int(self.frame) * 34, 616 - 79, 33, 37,
-                                               0, '', self.x, self.y, self.width, self.height)
+                                               0, '',sx, sy, self.width, self.height)
             else:
                 self.image.clip_composite_draw(int(self.frame) * 34, 616 - 79, 33, 37,
-                                               0, 'h', self.x, self.y, self.width, self.height)
+                                               0, 'h', sx, sy, self.width, self.height)
             pass
         else:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 7
             if self.invers == False:
                 self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 79, 33, 34,
-                                               0, '', self.x, self.y, self.width, self.height)
+                                               0, '', sx, sy, self.width, self.height)
             elif self.invers == True:
                 self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 79, 33, 34,
-                                               0, 'h', self.x, self.y, self.width, self.height)
-
+                                               0, 'h', sx, sy, self.width, self.height)
         pass
 
     def Attack_Weapons(self):
         for weapon in self.weapons:
+            sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
             weapon.shot(self.x, self.y, self.Attack,self.invers, play_state.missile_manager, self.helper_num)
             pass
 
@@ -111,9 +114,9 @@ class Partner:
                 return
             self.dir = math.atan2(self.target_enemy.y - self.y, self.target_enemy.x - self.x)
             self.x += math.cos(self.dir) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
-            self.x = clamp(0, self.x, 1280)
+            self.x = clamp(self.width//2, self.x, server.background.w- 1 - self.width//2)
             self.y += math.sin(self.dir) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
-            self.y = clamp(0, self.y, 720)
+            self.y = clamp(self.height//2, self.y, server.background.h- 1 - self.height//2)
 
             pass
         pass
