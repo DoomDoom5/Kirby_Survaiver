@@ -9,14 +9,9 @@ class Map:
     dy = None
     def __init__(self, MapType):
         self.image = load_image(Maps[MapType])
-        if MapType == 0:
-            self.x = 1836
-            self.y = 1020
-            pass
-        elif MapType == 1:
-            self.x = 1938
-            self.y = 816
-            pass
+        self.x = self.image.w
+        self.y = self.image.h
+
 
 
     def draw(self):

@@ -3,7 +3,7 @@ import game_framework
 import math
 import play_state
 from enemy import Enemy
-from Manager.Item_Manager import Weapon
+from Manager.Weapon_Manager import Weapon
 import game_world
 
 # Kriby Run Speed

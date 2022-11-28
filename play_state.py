@@ -9,8 +9,7 @@ from map import Map
 from Character import Player
 from enemy import Enemy
 from partner import Partner
-from Manager.Item_Manager import Missile_manager
-from Manager.Item_Manager import Weapon
+from Manager.Weapon_Manager import Missile_manager
 from Manager.Item_Manager import Item_manager
 from Manager.Ui_Manager import UI_Manager
 
@@ -85,7 +84,7 @@ def update():
             if collide(kirby, s_Enemy):
                 kirby.check_Enemy_Coll(s_Enemy.power)
 
-    if enemy_responTimer > 1:
+    if enemy_responTimer > 2:
         enemy_responTimer = 0
         Enemy.spawnEnemy(Timer, Enemys)
     else :

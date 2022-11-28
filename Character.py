@@ -2,9 +2,9 @@ from pico2d import *
 import game_framework
 import math
 import play_state
-from Manager.Item_Manager import Weapon
+from Manager.Weapon_Manager import Weapon
 # Kriby Run Speed
-PIXEL_PER_METER = (10.0/0.3)
+PIXEL_PER_METER = (10.0/0.4)
 RUN_SPEED_KMPH = 20.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000/60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
