@@ -1,8 +1,7 @@
 from pico2d import *
 open_canvas()
 
-grass = load_image('sprite/Background/grass.png')
-character = load_image('sprite/Kirby/Fire_Kirby_empty.png')
+character = load_image('img/Kirby/Fire_Kirby_empty.png')
 
 frame = 0
 
@@ -37,7 +36,6 @@ def Ice_Effect(x = 0,y = 0,frame = 0):
 # 여기를 채우세요.
 while True:
         clear_canvas()
-        grass.draw(400, 30)
 
         Kirby_Walk(50,70, frame)
         Kirby_Dash(50,140, frame)

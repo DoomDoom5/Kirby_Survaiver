@@ -1,8 +1,11 @@
+import random
+
 from pico2d import *
 import game_framework
 import math
 from game_states import play_state
 from game_states import levelUp_state
+from game_states import special_attack_state
 import server
 from Manager.Weapon_Manager import Weapon
 # Kriby Run Speed
@@ -211,6 +214,10 @@ class Player:
         if (event.type, event.key) in key_event_table:
             key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_TAB:
+            if self.gauge >= 100:
+                self.gauge = 0
+                game_framework.push_state(special_attack_state)
 
     def Attack_Weapons(self):
         for weapon in self.weapons:
@@ -254,8 +261,7 @@ class Player:
         if self.Hp < self.MaxHp:
             self.Hp += self.Recovery
         if self.gauge < self.Maxgauge:
-            self.gauge += 1/4
-
+            self.gauge += 1/10
         pass
 
 
@@ -359,3 +365,19 @@ class Player:
             pass
 
 
+    @staticmethod
+    def spacial_draw(player):
+        player.frame = (player.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)*2  % 4
+        player.image.clip_draw(527 + int(player.frame) * 72, 616 - 300, 72, 78, 1280//2,720//2,500,500)
+    @staticmethod
+    def spacial_Attack(player):
+       player.invisivleTime = player.Max_invisivleTime
+       for i in range(0,1):
+           player.weapons[0].shotTimer = 10.0
+           if player.weapons[0].name == "ICE":
+               rand_y = random.randint(-20,20)
+               player.weapons[0].shot(player.x, player.y + rand_y, player.Attack/3, player.invers, play_state.missile_manager, 0)
+           else:
+               player.weapons[0].shot(player.x, player.y + rand_y, player.Attack/3, player.invers, play_state.missile_manager, 0)
+
+       player.weapons[0].shotTimer = 0

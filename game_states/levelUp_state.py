@@ -4,14 +4,14 @@ from game_states import play_state
 import random
 import server
 Item_image = None
-select_Number = 0
+select_Number = None
 Type = None
 box_bg_image = None
 anim_height = None
 
 Abilitys = ["방어력을 1 얻습니다" ,"공격을 5 얻습니다", "속도를 0.05 얻습니다", "얼음 능력을 획득/강화 합니다", "불 능력을 획득/강화 합니다", "번개 능력을 획득/강화 합니다",
             "동료 1의 무기를 강화합니다", "동료 2의 무기를 강화합니다"]
-def Menu_Ability(menu_number, AbilityNumber ,level = 0):
+def Menu_Ability(menu_number, AbilityNumber):
     server.ui_Manager.UI_font.draw(550 , anim_height + 550 - menu_number * 120, Abilitys[AbilityNumber], (255, 255, 255))
     pass
 
@@ -63,7 +63,7 @@ def draw():
     for i in range(0,3):
         # x = 550 , y = 570 - i * 120
         box_bg_image.clip_draw(175,512 - 131 - 48,48,48,1280//2 , anim_height +720//2 + 200 - 120* i,550,100)
-        Menu_Ability(i, a[i], 0)
+        Menu_Ability(i, a[i])
 
     update_canvas()
     pass

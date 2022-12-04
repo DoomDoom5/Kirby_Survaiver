@@ -4,11 +4,10 @@ from game_states import CharaterSelect_state
 
 bg_image = None
 start_button = None
-config_button = None
 close_button = None
 
 def enter():
-    global bg_image, start_button, close_button,config_button
+    global bg_image, start_button, close_button
     bg_image = load_image("assets/title/BackGround.png")
     start_button = load_image("assets/title/bg_Button.png")
     close_button = load_image("assets/title/bg_Button.png")
@@ -30,7 +29,6 @@ def handle_events():
         if event.x > 1000 and event.x < 1000 + 228 and 720 - event.y > 80 + 144 * 1 and  720 - event.y < 80 + 144 * 2:
             if event.type == SDL_MOUSEMOTION:
                 start_button = load_image("assets/title/bg_Check_Button.png")
-                config_button = load_image("assets/title/bg_Button.png")
                 close_button = load_image("assets/title/bg_Button.png")
             elif event.type == SDL_MOUSEBUTTONDOWN:
                 game_framework.change_state(CharaterSelect_state)

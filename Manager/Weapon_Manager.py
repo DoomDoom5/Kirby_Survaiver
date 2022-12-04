@@ -16,7 +16,7 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 # weapon Action Speed
 TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 8
+FRAMES_PER_ACTION = 16
 class Missile:
     # ICE, FIRE, HAMMER 등등등
     name = "None"
@@ -44,7 +44,7 @@ class Missile:
     def get_bb(self):
         return self.sx - self.width // 2, self.sy - self.height // 2, self.sx + self.width // 2, self.sy + self.height // 2
 
-    def Check_Hit_Enemy(self, enemy_left , enemy_bottom , enemy_right , enemy_top):
+    def Check_Hit_Enemy(self):
         if self.state == 0:
             if self.name != "PLASMA":
                 self.state = 1
@@ -87,30 +87,33 @@ class ICE(Missile): # 가로로 일직선 공격
         if self.state == 0:
             self.x += self.x_dir * self.BulletSpeed * RUN_SPEED_PPS * game_framework.frame_time
             if self.sx > server.background.w:
-                del self
+                self.frame = 0
+                self.state = 1
             elif self.sx < 0:
-                del self
-        elif self.state == 1:
-            if self.state >= 8:
+                self.frame = 0
+                self.state = 1
+
+        if self.state == 1:
+            if self.frame > 4:
                 self.state = 2
 
     def draw(self, image):
         if self.state == 0:
             draw_rectangle(*self.get_bb())
             image.clip_draw(365, 552-45 - 24, 24,24,self.sx, self.sy, self.width * self.BulletRange, self.height * self.BulletRange)
-        elif self.state == 1:
-            self.frame = self.frame+1
-            match self.frame//10:
+        if self.state == 1:
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
+            match int(self.frame):
                 case 0 :
                     image.clip_draw(245, 552-19 - 16, 20,20, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 1 :
-                   image.clip_draw(265, 552-19 - 16, 20,20, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(265, 552-19 - 16, 20,20, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 2 :
-                   image.clip_draw(291, 552-19 - 16, 30,30, self.sx, self.sy,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(291, 552-19 - 16, 30,30, self.sx, self.sy,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
                 case 3 :
                     image.clip_draw(335, 552-19 - 16, 30,30, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 4 :
-                   image.clip_draw(373, 552-19 - 16, 30,30, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(373, 552-19 - 16, 30,30, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
         pass
 
 
@@ -141,23 +144,15 @@ class FIRE(Missile): # 무작위 발사
             self.Attack *= 1.3
             pass
 
-        if level == 1:
-            pass
-        elif level == 2:
-            pass
-        elif level == 3:
-            pass
-
     def update(self, player_x, player_y):
         self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
         if self.state == 0:
             self.x += (math.cos(self.dgree)) * self.BulletSpeed * RUN_SPEED_PPS * game_framework.frame_time
             self.y += (math.sin(self.dgree) ) * self.BulletSpeed * RUN_SPEED_PPS * game_framework.frame_time
-            if self.x > 1280 or self.x < 0 or self.y >  720 or self.y < 0:
-                del self
+            if self.x > server.background.w or self.x < 0 or self.y >  server.background.h or self.y < 0:
+                self.state = 1
         elif self.state == 1:
-            if self.state >= 8:
-                print("미사일 삭제됨")
+            if self.frame > 4:
                 self.state = 2
 
     def draw(self, image):
@@ -165,9 +160,9 @@ class FIRE(Missile): # 무작위 발사
             draw_rectangle(*self.get_bb())
             image.clip_composite_draw(337, 552-424-15, 29, 15,
                                             self.dgree, ' ', self.sx, self.sy, self.width , self.height * self.BulletRange)
-        elif self.state == 1:
-            self.frame = self.frame+1
-            match self.frame//5:
+        if self.state == 1:
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
+            match int(self.frame):
                 case 0 :
                     image.clip_draw(88, 552-19 - 20, 20,20,self.sx, self.sy,self.width  ,self.height)
                 case 1 :
@@ -182,7 +177,7 @@ class FIRE(Missile): # 무작위 발사
 
 
 class PLASMA(Missile):
-    coolTimer = 6
+    coolTimer = 3
     def __init__(self, level=0, invers=False, charater_x = 0,charater_y = 0,charater_Attack = 0, shoter = 0):
         self.frame = 0
         self.state = 0
@@ -215,30 +210,30 @@ class PLASMA(Missile):
             self.dgree = self.dgree + self.BulletSpeed * RUN_SPEED_PPS * game_framework.frame_time
             self.DurationTime -= game_framework.frame_time
             if self.shoter == 0:
-                self.x = player_x + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 40
-                self.y = player_y + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 40
+                self.sx = play_state.kirby.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 40
+                self.sy = play_state.kirby.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 40
                 if self.DurationTime <= 0:
-                    self.state = 1
+                    self.state = 2
                     del self
 
             elif self.shoter == 1:
-                self.x = play_state.kirby_partner_1.x + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 10
-                self.y = play_state.kirby_partner_1.y + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 10
+                self.sx = play_state.kirby_partner_1.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 10
+                self.sy = play_state.kirby_partner_1.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 10
                 if self.DurationTime <= 0:
-                    self.state = 1
+                    self.state = 2
                     del self
 
             elif self.shoter == 2:
-                self.x = play_state.kirby_partner_2.x + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 10
-                self.y = play_state.kirby_partner_2.y + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 10
+                self.sx = play_state.kirby_partner_2.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 10
+                self.sy = play_state.kirby_partner_2.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 10
                 if self.DurationTime <= 0:
-                    self.state = 1
+                    self.state = 2
                     del self
 
     def draw(self, image):
+        draw_rectangle(*self.get_bb())
         if self.state == 0:
-            sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
-            image.clip_composite_draw(264, 552-44-16, 17, 16, 0, ' ', sx, sy, self.width * self.BulletRange, self.height * self.BulletRange)
+            image.clip_composite_draw(264, 552-44-16, 17, 16, 0, ' ', self.sx, self.sy, self.width * self.BulletRange, self.height * self.BulletRange)
             draw_rectangle(*self.get_bb())
         pass
 
@@ -273,7 +268,6 @@ class Missile_manager:
         for missile in self.missiles:
             if missile.state == 2:
                 self.missiles.remove(missile)
-                game_world.remove_object(self)
             elif missile.name == "ICE":
                 self.ice = missile
                 self.ice.update(player_x, player_y)
@@ -285,25 +279,15 @@ class Missile_manager:
                 self.plasma.update(player_x, player_y)
         pass
 
-    # def get_bb(self):
-    #     for missile in self.missiles:
-    #         if missile.state == 0:
-    #             return missile.x - missile.width * missile.BulletRange // 2, missile.y - missile.height* missile.BulletRange // 2, \
-    #                    missile.x + missile.width * missile.BulletRange// 2, missile.y + missile.height // 2* missile.BulletRange
-
-
-
-
-
 
 class Weapon:
     name= None
     shotTimer = 0.0
     level = 1
-
+    shotOn = None
     def __init__(self,name):
         self.name = name
-        self.shotOn = False
+        self.shotTimer = 0
         pass
 
     def shot(self, charater_x, charater_y,charater_Attack  ,charater_invers, missile_manager, shoter=0):
@@ -311,8 +295,9 @@ class Weapon:
         self.shotTimer += game_framework.frame_time
         if self.name == None:
             return
-
+        self.shotOn = False
         new_missile = None
+
         if self.name == "ICE":
             if self.shotTimer >= ICE.coolTimer:
                 new_missile = ICE()
@@ -321,6 +306,7 @@ class Weapon:
 
         elif self.name == "FIRE":
             if self.shotTimer >= FIRE.coolTimer:
+                print("발사")
                 new_missile = FIRE()
                 self.shotOn = True
                 self.shotTimer = 0.0
@@ -330,6 +316,7 @@ class Weapon:
                 new_missile = PLASMA()
                 self.shotOn = True
                 self.shotTimer = 0.0
+
             pass
 
         if self.shotOn == True:
@@ -339,11 +326,3 @@ class Weapon:
             missile_manager.missiles.append(new_missile)
             del new_missile
 
-
-
-
-
-
-
-
-    pass

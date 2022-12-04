@@ -19,22 +19,22 @@ select_Button = None
 cancel_Button = None
 
 Type = "Test"
-kirbys = Kirby_UI()
-select_Number = -1
+kirbys = None
+select_Number = None
 
 def enter():
-    global bg_image, box_bg_image, UI_button_image
-    global kirbys
+    global bg_image, box_bg_image, UI_button_image,select_Number,kirbys
+    kirbys = Kirby_UI()
+    kirbys.c_kirby_UI_image = load_image("assets/Ui/Kirby_UI.png")
+    select_Number = -1
     bg_image = load_image("assets/Ui/introBG.png")
     box_bg_image = load_image("assets/Ui/UI.png")
     UI_button_image = load_image("assets/Ui/UI.png")
-    kirbys.c_kirby_UI_image = load_image("assets/Ui/Kirby_UI.png")
-
     # fill here
     pass
 
 def exit():
-    global bg_image,UI_button_image, box_bg_image
+    global bg_image,UI_button_image, box_bg_image,kirbys,select_Number, Type, subType_1 ,subType_2
     del bg_image, UI_button_image,box_bg_image
     # fill here
     pass

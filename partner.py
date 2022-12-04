@@ -45,6 +45,7 @@ class Partner:
             self.image = load_image("assets/img/Kirby/PLASMA_Kirby_empty.png")
 
         self.x, self.y = 1280//2, 720//2
+        self.sx, self.sy = 1280//2, 720//2
         self.frame = 0
         self.dir, self.invers = 0,True
         self.dgree = 0
@@ -61,30 +62,29 @@ class Partner:
         self.weapons.append(Weapon(name))
         pass
     def draw(self):
-        sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
+        self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
 
         if self.dir == 0:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
             if self.invers == False:
                 self.image.clip_composite_draw(int(self.frame) * 34, 616 - 79, 33, 37,
-                                               0, '',sx, sy, self.width, self.height)
+                                               0, '',self.sx, self.sy, self.width, self.height)
             else:
                 self.image.clip_composite_draw(int(self.frame) * 34, 616 - 79, 33, 37,
-                                               0, 'h', sx, sy, self.width, self.height)
+                                               0, 'h', self.sx, self.sy, self.width, self.height)
             pass
         else:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 7
             if self.invers == False:
                 self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 78, 33, 34,
-                                               0, '', sx, sy, self.width, self.height)
+                                               0, '', self.sx, self.sy, self.width, self.height)
             elif self.invers == True:
                 self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 78, 33, 34,
-                                               0, 'h', sx, sy, self.width, self.height)
+                                               0, 'h', self.sx, self.sy, self.width, self.height)
         pass
 
     def Attack_Weapons(self):
         for weapon in self.weapons:
-            sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
             weapon.shot(self.x, self.y, self.Attack, self.invers, play_state.missile_manager, self.helper_num)
             pass
 

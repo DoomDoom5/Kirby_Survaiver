@@ -25,8 +25,8 @@ def enter():
     pass
 
 def exit():
-    global bg_image,UI_button_image, box_bg_image
-    del bg_image, UI_button_image,box_bg_image
+    global bg_image,UI_button_image, box_bg_image, font
+    del bg_image, UI_button_image,box_bg_image, font
     # fill here
     pass
 

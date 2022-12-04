@@ -1,7 +1,7 @@
 from pico2d import *
 import game_framework
 from game_states import play_state
-from game_states import title_state
+from game_states import logo_state
 import server
 Item_image = None
 Type = None
@@ -37,7 +37,7 @@ def enter():
         Timer_score = 0
 
     kill_score = server.ui_Manager.kill_Enemy * 10
-    level_score = server.player.Level * 100
+    level_score = play_state.kirby.Level * 100
     clear_score += level_score + kill_score + Timer_score
 
 
@@ -57,7 +57,7 @@ def handle_events():
     for event in events:
         if event.type == SDL_MOUSEBUTTONDOWN:
             if event.x > 1280 // 2 - 550 // 2 and event.x < 1280 // 2 + 550 // 2:
-                game_framework.change_state(title_state)
+
                 pass
         if event.type == SDL_QUIT:
             game_framework.quit()

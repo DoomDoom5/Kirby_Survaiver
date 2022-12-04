@@ -2,6 +2,7 @@ from pico2d import *
 from game_states import CharaterSelect_state
 from game_states import mapSelect_state
 from game_states import game_end_state
+from game_states import special_attack_state
 import server
 import game_framework
 import game_world
@@ -47,7 +48,6 @@ def enter():
     game_world.add_object(item_manager, 2)
 
     kirby = Player(CharaterSelect_state.Type)
-    server.player = Player(CharaterSelect_state.Type)
     game_world.add_object(kirby,1)
 
     kirby_partner_1 = Partner(CharaterSelect_state.subType_1, 1)
@@ -69,14 +69,11 @@ def enter():
         game_world.add_object(s_Enemy, 1)
         pass
 
-    game_world.add_collision_pairs(kirby, s_Enemy, 'kirby:s_Enemy')
 
-    # 테스트 용
-    kirby.Attack = 100
 
 def exit():
-    global kirby, Enemys, item_manager, missile_manager, createBoss, game_clear, Timer, enemy_responTimer, kirby_partner_1,kirby_partner_2
-    del kirby, Enemys, item_manager, missile_manager, createBoss, game_clear, Timer, enemy_responTimer, kirby_partner_1,kirby_partner_2
+    global kirby, Enemys, item_manager, missile_manager, createBoss, game_clear, Timer, enemy_responTimer, kirby_partner_1,kirby_partner_2, game_world
+    del kirby, Enemys, item_manager, missile_manager, createBoss, game_clear, Timer, enemy_responTimer, kirby_partner_1,kirby_partner_2, game_world
     pass
 
 def update():
@@ -87,14 +84,12 @@ def update():
     for s_Enemy in Enemys :
         for s_missile in missile_manager.missiles:
             if collide(s_Enemy, s_missile) == True and s_missile.state == 0:
-                print("미사일 적 충돌")
                 s_Enemy.On_damege(s_missile.Attack)
                 game_world.add_object(enemy_Demage_Draw(s_Enemy.sx, s_Enemy.sy, s_Enemy.height, s_missile.Attack),3)
-                s_missile.Check_Hit_Enemy(*s_Enemy.get_bb())
-
-
+                s_missile.Check_Hit_Enemy()
         if s_Enemy.Hp <= 0 :
             item_manager.Create_EXP_Stone(s_Enemy.crystal, s_Enemy.x, s_Enemy.y)
+            game_world.remove_object(s_Enemy)
             Enemys.remove(s_Enemy)
             server.ui_Manager.kill_Enemy += 1
 
@@ -132,11 +127,6 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
-        if event == SDLK_q:
-            game_framework.push_state(game_end_state)
-        elif event == SDLK_1:
-            kirby.Exp += 100
-
         kirby.handle_events(event)
 
 def pause():

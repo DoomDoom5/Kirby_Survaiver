@@ -3,21 +3,24 @@ from pico2d import *
 import game_world
 import game_framework
 import server
+
+
+
 from game_states import play_state
-# Kriby Run Speed
+
+# Enemy Run Speed
 PIXEL_PER_METER = (10.0/0.3)
 RUN_SPEED_KMPH = 8.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000/60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
-# Kriby Action Speed
+# Enemy Action Speed
 TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
-
-MAP_one_Enemy = ["Waddle_dee" ,"kinght","Fighter",   "Mike" ,"NinjaCat", "KingDedede" ]
+MAP_one_Enemy = ["Waddle_dee" ,"kinght","Fighter",   "Mike" ,"Stone", "KingDedede" ]
 
 class Enemy:
     name = None
@@ -33,7 +36,7 @@ class Enemy:
         self.frame = 0
         self.invers = False # 캐릭터 오른쪽, 왼쪽
         if Enemy.image == None:
-            Enemy.image = load_image("assets/img/Enemy/Normal_Enemy.png")
+            Enemy.image = load_image("assets/img/Enemy/Normal_game_Enemy.png")
             pass
         if Enemy.Hpimage == None:
             Enemy.Hpimage = load_image("assets/Ui/UI.png")
@@ -60,8 +63,8 @@ class Enemy:
         if self.name == MAP_one_Enemy[0]:
             self.MaxHp = 10
             self.speed = 0.3
-            self.width = 26
-            self.height = 26
+            self.width = 30
+            self.height = 30
             self.power = 2
             self.crystal = "GREEN"
 
@@ -83,41 +86,42 @@ class Enemy:
             self.crystal = "RED"
 
         elif self.name ==MAP_one_Enemy[3]:
-            self.MaxHp = 40
+            self.MaxHp = 100
             self.speed = 0.5
             self.width = 40
             self.height = 40
-            self.power = 10
+            self.power = 6
             self.crystal = "RED"
 
         elif self.name == MAP_one_Enemy[4]:
-            self.MaxHp = 80
-            self.speed = 0.7
+            self.MaxHp = 400
+            self.speed = 0.2
             self.width = 60
-            self.height = 40
+            self.height = 60
             self.power = 8
             self.crystal = "RED"
 
         elif self.name == MAP_one_Enemy[5]:
-            self.MaxHp = 400
+            self.MaxHp = 1000
             self.speed = 0.8
             self.width = 100
             self.height = 100
-            self.power = 20
-            self.crystal = "GOLD"
+            self.power = 10
+            self.crystal = "RED"
 
         self.Hp = self.MaxHp
 
     def On_damege(self, charater_Attack):
         self.Hp = self.Hp - charater_Attack
 
+
     def draw(self):
         draw_rectangle(*self.get_bb())
         sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
 
         if self.name == MAP_one_Enemy[0]:
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
             if not self.invers:
-                self.image.clip_draw(40 * int(self.frame),1190 - 24 , 24, 24,sx, sy, self.width, self.height)
                 self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 24, 24, 24,
                                                0, '', sx, sy, self.width, self.height)
             else :
@@ -126,6 +130,7 @@ class Enemy:
                 pass
             pass
         elif self.name == MAP_one_Enemy[1]:
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
             if not self.invers:
                 self.image.clip_draw(40 *  int(self.frame),1190 - 58 - 24 , 24, 24,sx, sy, self.width, self.height)
             else :
@@ -138,6 +143,7 @@ class Enemy:
                 self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
 
         elif self.name == MAP_one_Enemy[3]:
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
             if not self.invers:
                 self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 202 - 29, 28, 28,
                                                0, '', sx, sy, self.width, self.height)
@@ -146,20 +152,22 @@ class Enemy:
                                                0, 'h', sx, sy, self.width, self.height)
 
         elif self.name == MAP_one_Enemy[4]:
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
             if not self.invers:
-                self.image.clip_composite_draw(int(self.frame) * 50, 1190 - 282 - 35, 50, 35,
+                self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 245 - 24, 24, 24,
                                                0, '', sx, sy, self.width, self.height)
             else :
-                self.image.clip_composite_draw(int(self.frame) * 50, 1190 - 282 - 35, 50, 35,
+                self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 245 - 24, 24, 24,
                                                0, 'h', sx, sy, self.width, self.height)
 
         elif self.name == MAP_one_Enemy[5]:
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
             if not self.invers:
-                self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 202 - 29, 28, 28,
+                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
                                                0, '', sx, sy, self.width, self.height)
             else :
-                self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 202 - 29, 28, 28,
-                                               0, '', sx, sy, self.width, self.height)
+                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+                                               0, 'h', sx, sy, self.width, self.height)
 
         self.Hpimage.clip_draw(280, 512-158 -9, 9,9, sx, sy + 10, 30,4)
         self.Hpimage.clip_draw(422, 512-158 -9, 9,9,sx, sy + 10, self.Hp/self.MaxHp * 30,4)
@@ -176,7 +184,7 @@ class Enemy:
         else:
             self.invers = False
 
-        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) %6
+
         if self.Hp <= 0:
             if self.name == MAP_one_Enemy[5]:
                 play_state.game_clear = True
@@ -225,5 +233,5 @@ class Enemy:
         del newEnemy
 
         pass
-
-
+class Boss(Enemy):
+    pass
