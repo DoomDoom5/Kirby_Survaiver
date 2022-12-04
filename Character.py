@@ -378,6 +378,6 @@ class Player:
                rand_y = random.randint(-20,20)
                player.weapons[0].shot(player.x, player.y + rand_y, player.Attack/3, player.invers, play_state.missile_manager, 0)
            else:
-               player.weapons[0].shot(player.x, player.y + rand_y, player.Attack/3, player.invers, play_state.missile_manager, 0)
+               player.weapons[0].shot(player.x, player.y, player.Attack/3, player.invers, play_state.missile_manager, 0)
 
        player.weapons[0].shotTimer = 0

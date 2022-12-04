@@ -12,21 +12,18 @@ def enter():
     black_alpha_image = load_image("assets/Ui/UI.png")
     black_alpha_image.opacify(0.5)
     skill_time = 2
-    play_state.kirby.x_dir = 0
-    play_state.kirby.y_dir= 0
     pass
 
 
 def exit():
     global black_alpha_image, skill_time
     del black_alpha_image, skill_time
-    play_state.kirby.x_dir = 0
-    play_state.kirby.y_dir= 0
     # fill here
     pass
 
 
 def handle_events():
+    play_state.handle_events()
     pass
 
 

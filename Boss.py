@@ -1,7 +1,6 @@
 import random
 import math
 import game_framework
-import game_world
 import winsound
 
 from BehaviorTree import BehaviorTree, Selector, Sequence, Leaf
@@ -9,17 +8,14 @@ from pico2d import *
 import game_world
 
 from game_states import play_state
-
+import enemy
 
 
 class TargetMarker:
     def __init__(self, x=0, y=0):
         self.x, self.y = x, y
-        self.image = load_image('hand_arrow.png')
     def update(self):
         pass
-    def draw(self):
-        self.image.draw(self.x, self.y, 50, 50)
 
 # Boss Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
@@ -34,10 +30,13 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 4
 
 
-animation_names = ['Attack', 'Dead', 'Idle', 'Walk']
+animation_names = ['Attack', 'Dead', 'Idle', 'Walk', 'Runaway']
 
 
-
+# 보스
+# : IDLE : 랜덤 마커를 설정하고 움직임을 반복
+# : ATTACK : 주변에 플레이어가 있으면 속도가 빨라지고 플레이어를 찾아옴
+# : Runaway : 자신의 HP% 가 플레이어보다 낮으면 도망침 (2회 제한)=> 일정 시간 이후 IDLE 상태로 돌아옴
 class Boss:
     images = None
 
@@ -56,7 +55,6 @@ class Boss:
         self.frame = 0.0
         self.build_behavior_tree()
 
-        self.target_ball = None
         self.hp = 0
 
         self.width = 100.
@@ -145,7 +143,7 @@ class Boss:
 
 
     def get_bb(self):
-        return self.x - self.width//2, self.y - self.width//2, self.x + self.height//2, self.y + self.height//2
+        return self.sx - self.width//2, self.sy - self.width//2, self.sx + self.height//2, self.sy + self.height//2
 
     def update(self):
         # fill here
@@ -156,14 +154,20 @@ class Boss:
         #fill here
         if math.cos(self.dir) < 0:
             if self.speed == 0:
-                Boss.images['Idle'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 100, 100)
+                #Boss.images['Idle'][int(self.frame)].draw(self.x, self.y, 100, 100)
+                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+                                               0, 'h', sx, sy, self.width, self.height)
             else:
-                Boss.images['Walk'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 100, 100)
+                #Boss.images['Walk'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 100, 100)
+                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+                                               0, 'h', sx, sy, self.width, self.height)
         else:
             if self.speed == 0:
-                Boss.images['Idle'][int(self.frame)].draw(self.x, self.y, 100, 100)
+                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+                                               0, '', sx, sy, self.width, self.height)
             else:
-                Boss.images['Walk'][int(self.frame)].draw(self.x, self.y, 100, 100)
+                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+                                               0, '', sx, sy, self.width, self.height)
 
     def handle_event(self, event):
         pass
