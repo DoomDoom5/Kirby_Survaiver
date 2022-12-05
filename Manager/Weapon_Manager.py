@@ -98,7 +98,6 @@ class ICE(Missile): # 가로로 일직선 공격
 
     def draw(self, image):
         if self.state == 0:
-            draw_rectangle(*self.get_bb())
             image.clip_draw(365, 552-45 - 24, 24,24,self.sx, self.sy, self.width * self.BulletRange, self.height * self.BulletRange)
         if self.state == 1:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
@@ -156,7 +155,6 @@ class FIRE(Missile): # 무작위 발사
 
     def draw(self, image):
         if self.state == 0:
-            draw_rectangle(*self.get_bb())
             image.clip_composite_draw(337, 552-424-15, 29, 15,
                                             self.dgree, ' ', self.sx, self.sy, self.width , self.height * self.BulletRange)
         if self.state == 1:
@@ -184,30 +182,24 @@ class PLASMA(Missile):
         self.height = 30
         self.BulletRange = 1.0
         self.BulletSpeed = 3.0  # 투사채 속도
-        self.Attack = (5 + charater_Attack)/5
+        self.Attack = (5 + charater_Attack)/2
         self.dgree = random.randint(0,359)
         self.x = charater_x
         self.y = charater_y
-        self.DurationTime = 4.0
+        self.DurationTime = 2.3
         self.shoter = shoter
 
         self.MaxCoolTime = 0.6
         self.coolTime = self.MaxCoolTime
 
-
         for i in range(0,level):
             self.width *= 1.3
             self.height *= 1.3
             self.BulletSpeed += 0.3  # 투사채 속도
+            self.DurationTime *= 1.3
             self.Attack *= 1.3
             pass
 
-        if level == 1:
-            pass
-        elif level == 2:
-            pass
-        elif level == 3:
-            pass
     def update(self, player_x, player_y):
         if self.state != 2:
             if self.state == 1 :
@@ -228,15 +220,15 @@ class PLASMA(Missile):
                     del self
             else:
                 if self.shoter == 1 and play_state.kirby_partner_1.type == "PLASMA":
-                    self.sx = play_state.kirby_partner_1.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 20
-                    self.sy = play_state.kirby_partner_1.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 20
+                    self.sx = play_state.kirby_partner_1.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 10
+                    self.sy = play_state.kirby_partner_1.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 10
                     if self.DurationTime <= 0:
                         self.state = 2
                         del self
 
                 elif self.shoter == 2 and play_state.kirby_partner_2.type == "PLASMA" :
-                    self.sx = play_state.kirby_partner_2.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 20
-                    self.sy = play_state.kirby_partner_2.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 20
+                    self.sx = play_state.kirby_partner_2.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 10
+                    self.sy = play_state.kirby_partner_2.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 10
                     if self.DurationTime <= 0:
                         self.state = 2
                         del self

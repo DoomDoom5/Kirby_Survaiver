@@ -20,9 +20,9 @@ class TargetMarker:
         pass
 
 # Boss Run Speed
-PIXEL_PER_METER = (10.0 / 0.2)  # 10 pixel 20 cm
+PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 33 cm
 RUN_SPEED_KMPH = 10.0  # Km / Hour
-RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 95.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
@@ -30,10 +30,6 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 TIME_PER_ACTION = 4
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 4
-
-
-animation_names = ['Attack', 'Dead', 'Idle', 'Walk', 'Runaway']
-
 
 # 보스
 # : IDLE : 랜덤 마커를 설정하고 움직임을 반복
@@ -45,8 +41,8 @@ class Boss():
     dead_sound = None
     def __init__(self):
         # self.x, self.y = 1280 / 4 * 3, 1024 / 4 * 3
-        self.x, self.y = random.randint(100, 1180), random.randint(100, 500)
-        self.tx, self.ty = random.randint(100, 1180), random.randint(100, 500)
+        self.x, self.y = random.randint(100, server.background.w - 100), random.randint(50, server.background.h - 50)
+        self.tx, self.ty = random.randint(500, server.background.w - 100), random.randint(300, server.background.h - 50)
         self.sx, self.sy  = self.x - server.background.window_left, self.y - server.background.window_bottom
         if Boss.image == None:
             Boss.image = load_image("assets/img/Enemy/Normal_game_Enemy.png")
@@ -56,17 +52,18 @@ class Boss():
             Boss.dead_sound = load_wav("assets/sounds/VS_EnemyDead.ogg")
 
         self.dir = random.random() * 2 * math.pi  # random moving direction
-        self.speed = 0.7
+        self.speed = 0
         self.frame = 0.0
         self.build_behavior_tree()
-        self.width = 110
+        self.width = 115
         self.height = 110
-        self.Hp = 1000
-        self.MaxHp = 1000
+        self.Hp = 1300
+        self.MaxHp = 1300
         self.name = "KingDedede"
-        self.power = 10
+        self.power = 13
         self.crystal = "RED"
 
+        self.state = "IDLE"
         self.target_marker = TargetMarker(self.tx, self.ty)
         game_world.add_object(self.target_marker, 1)
 
@@ -76,12 +73,12 @@ class Boss():
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
-        self.x = clamp(50, self.x, 1280 - 50)
-        self.y = clamp(50, self.y, 1024 - 50)
+        self.x = clamp(50, self.x, server.background.w - 50)
+        self.y = clamp(50, self.y, server.background.h - 50)
 
 
     def find_random_location(self):
-        self.tx, self.ty = random.randint(50, 1230), random.randint(50, 974)
+        self.tx, self.ty = random.randint(self.width//2, server.background.w - self.width//2), random.randint(self.height//2, server.background.h - self.height//2)
         self.target_marker.x, self.target_marker.y = self.tx, self.ty
         return BehaviorTree.SUCCESS
         # fill here
@@ -96,6 +93,7 @@ class Boss():
             return BehaviorTree.SUCCESS
         else:
             self.speed = RUN_SPEED_PPS
+            self.state = "IDLE"
             return BehaviorTree.RUNNING
 
 
@@ -108,13 +106,14 @@ class Boss():
         if distance > (PIXEL_PER_METER * 10) ** 2:
             self.speed = 0
             return BehaviorTree.FAIL
-        if self.Hp/self.MaxHp > play_state.kirby.Hp/play_state.kirby.MaxHp:
+        if self.Hp/self.MaxHp + 0.4 > play_state.kirby.Hp/play_state.kirby.MaxHp:
             self.dir = math.atan2(play_state.kirby.y - self.y, play_state.kirby.x - self.x)
             if distance < (PIXEL_PER_METER * 0.5) ** 2:
                 self.speed = 0
                 return BehaviorTree.SUCCESS
             else:
-                self.speed = RUN_SPEED_PPS
+                self.speed = RUN_SPEED_PPS * 1.5
+                self.state = "CHASE"
                 return BehaviorTree.RUNNING
         else:
             self.speed = 0
@@ -127,9 +126,10 @@ class Boss():
         if distance > (PIXEL_PER_METER * 10) ** 2:
             self.speed = 0
             return BehaviorTree.FAIL
-        if self.Hp/self.MaxHp <= play_state.kirby.Hp/play_state.kirby.MaxHp:
+        if self.Hp/self.MaxHp <= play_state.kirby.Hp/play_state.kirby.MaxHp and self.Hp/self.MaxHp < 0.2:
             self.dir = math.atan2(self.y - play_state.kirby.y, self.x - play_state.kirby.x)
-            self.speed = RUN_SPEED_PPS
+            self.speed = RUN_SPEED_PPS * 1.4
+            self.state = "RUNAWAY"
             return BehaviorTree.RUNNING
         else:
             self.speed = 0
@@ -159,25 +159,32 @@ class Boss():
         self.calculate_current_position()
 
     def draw(self):
-        draw_rectangle(*self.get_bb())
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         #fill here
         if math.cos(self.dir) < 0:
-            if self.speed == 0:
+            if self.state == "IDLE":
                 #Boss.images['Idle'][int(self.frame)].draw(self.x, self.y, 100, 100)
-                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+                self.image.clip_composite_draw(int(self.frame) * 68, 1190 - 336 - 63, 60, 63,
                                                0, 'h', self.sx, self.sy, self.width, self.height)
-            else:
+            elif self.state == "CHASE":
                 #Boss.images['Walk'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 100, 100)
-                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+                self.image.clip_composite_draw(int(self.frame) * 68, 1190 - 406 - 63, 60, 63,
                                                0, 'h', self.sx, self.sy, self.width, self.height)
+            elif self.state == "RUNAWAY":
+                self.image.clip_composite_draw(int(self.frame) * 68, 1190 - 475 - 63, 60, 63,
+                                               0, 'h', self.sx, self.sy, self.width, self.height)
+
         else:
-            if self.speed == 0:
-                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+            if self.state == "IDLE":
+                self.image.clip_composite_draw(int(self.frame) * 68, 1190 - 336 - 63, 60, 63,
                                                0, '', self.sx, self.sy, self.width, self.height)
-            else:
-                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+            elif self.state == "CHASE":
+                self.image.clip_composite_draw(int(self.frame) * 68, 1190 - 406 - 63, 60, 63,
                                                0, '', self.sx, self.sy, self.width, self.height)
+            elif self.state == "RUNAWAY":
+                self.image.clip_composite_draw(int(self.frame) * 68, 1190 - 475 - 63, 60, 63,
+                                               0, '', self.sx, self.sy, self.width, self.height)
+
 
     def handle_event(self, event):
         pass
@@ -187,7 +194,7 @@ class Boss():
 
     @staticmethod
     def createBoss(Timer, Enemys):
-        if not play_state.createBoss and Timer > 0:
+        if not play_state.createBoss and Timer > 120:
             play_state.createBoss = True
             newEnemy = Boss()
             game_world.add_object(newEnemy, 1)

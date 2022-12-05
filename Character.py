@@ -140,6 +140,7 @@ next_state_table = {
 # 캐릭터가 가져야 할것
 class Player:
     image = None
+    hit_sound = None
     weapons = [] # 무기
     accessories = [] # 방어구
     width = 50
@@ -152,17 +153,17 @@ class Player:
     Maxgauge = 100
     gauge = 0
 
-    MaxExp = 5
+    MaxExp = 6
     Exp = 0
     Level = 0
-    Recovery = 0.05  # 재생력
+    Recovery = 0.07  # 재생력
     BulletSpeed = 1.0  # 투사채 속도
     BulletRange = 1.0  # 투사채 크기
     BulletNum = 1  # 추가 투사체 수
     Magent = 0.0  # 경험치 흡수 범위
 
     invisivleTime = 0.0  # 무적시간
-    Max_invisivleTime = 0.4  # 최대 무적시간
+    Max_invisivleTime = 0.8  # 최대 무적시간
 
     def __init__(self, element):
         self.Magent = 100.0
@@ -174,6 +175,9 @@ class Player:
         elif element == "PLASMA":
             self.image = load_image("assets/img/Kirby/PLASMA_Kirby_empty.png")
 
+        if Player.hit_sound is None:
+            Player.hit_sound = load_wav("assets/sounds/VS_EnemyHit_v06-02.ogg")
+            Player.hit_sound.set_volume(server.masterVolume)
 
         self.Level = 0
         self.speed = 1
@@ -198,6 +202,7 @@ class Player:
     def check_Enemy_Coll(self, enemy_Attack):
         print("충돌!")
         if self.invisivleTime <= 0:
+            self.hit_sound.play(1)
             if enemy_Attack > self.Defence:
                 self.Hp -= enemy_Attack - self.Defence
             else:
@@ -229,7 +234,7 @@ class Player:
     def levelUP(self):
         if self.Exp >= self.MaxExp:
             self.Exp = self.Exp - self.MaxExp
-            self.MaxExp = self.MaxExp * 2
+            self.MaxExp = self.MaxExp * 1.6
             self.Level +=1
             self.cur_state = RUN
             self.cur_state.enter(self, None)
@@ -329,7 +334,7 @@ class Player:
                 play_state.kirby.get_Weapon("ICE")
                 server.ui_Manager.Weapons.append("ICE")
             else:
-                play_state.kirby.weapons[i].level += 1
+                play_state.kirby.weapons[i-1].level += 1
             pass
 
         elif AbilityNumber == 4:
@@ -342,7 +347,7 @@ class Player:
                 play_state.kirby.get_Weapon("FIRE")
                 server.ui_Manager.Weapons.append("FIRE")
             else:
-                play_state.kirby.weapons[i].level += 1
+                play_state.kirby.weapons[i-1].level += 1
             pass
         elif AbilityNumber == 5:
             for weapon in play_state.kirby.weapons:
@@ -354,7 +359,7 @@ class Player:
                 play_state.kirby.get_Weapon("PLASMA")
                 server.ui_Manager.Weapons.append("PLASMA")
             else:
-                play_state.kirby.weapons[i].level += 1
+                play_state.kirby.weapons[i-1].level += 1
             pass
 
         elif AbilityNumber == 6:

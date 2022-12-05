@@ -1,9 +1,11 @@
 from pico2d import *
 import game_framework
+import server
 from game_states import play_state
 
 # fill here
 bg_image = None
+bg_bgm = None
 box_bg_image = None
 UI_button_image = None
 
@@ -15,11 +17,15 @@ Type = None
 select_Number = None
 
 def enter():
-    global bg_image, box_bg_image, UI_button_image,font, Type,select_Number
+    global bg_image, box_bg_image, UI_button_image,font, Type,select_Number, bg_bgm
     bg_image = load_image("assets/Ui/introBG.png")
     box_bg_image = load_image("assets/Ui/UI.png")
     UI_button_image = load_image("assets/Ui/UI.png")
     font  = load_font("assets/Ui/NEXONFootballGothicL.ttf", 20)
+
+    bg_bgm = load_music("assets/sounds/bgm_select.wav")
+    bg_bgm.set_volume(server.masterVolume)
+    bg_bgm.repeat_play()
     Type = "Test"
     select_Number = -1
 
@@ -27,8 +33,8 @@ def enter():
     pass
 
 def exit():
-    global bg_image,UI_button_image, box_bg_image, font
-    del bg_image, UI_button_image,box_bg_image, font
+    global bg_image,UI_button_image, box_bg_image, font,bg_bgm
+    del bg_image, UI_button_image,box_bg_image, font,bg_bgm
     # fill here
     pass
 

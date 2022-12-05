@@ -47,8 +47,10 @@ class Enemy:
             pass
         if Enemy.hit_sound is None:
             Enemy.hit_sound = load_wav("assets/sounds/VS_EnemyHit_v06-02.ogg")
+            Enemy.hit_sound.set_volume(server.masterVolume)
         if Enemy.dead_sound is None:
             Enemy.dead_sound = load_wav("assets/sounds/VS_EnemyDead.ogg")
+            Enemy.dead_sound.set_volume(server.masterVolume)
 
         randp = random.randint(0,4)
 
@@ -94,7 +96,7 @@ class Enemy:
             self.crystal = "RED"
 
         elif self.name ==MAP_one_Enemy[3]:
-            self.MaxHp = 100
+            self.MaxHp = 120
             self.speed = 0.5
             self.width = 40
             self.height = 40
@@ -102,8 +104,8 @@ class Enemy:
             self.crystal = "RED"
 
         elif self.name == MAP_one_Enemy[4]:
-            self.MaxHp = 200
-            self.speed = 0.2
+            self.MaxHp = 190
+            self.speed = 0.24
             self.width = 60
             self.height = 60
             self.power = 8
@@ -121,7 +123,6 @@ class Enemy:
 
 
     def draw(self):
-        draw_rectangle(*self.get_bb())
         sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
 

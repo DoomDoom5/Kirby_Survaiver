@@ -114,7 +114,6 @@ def update():
     elif kirby.Hp <= 0:
         game_framework.push_state(game_end_state)
 
-    kirby.gauge = 100
 
 
 def draw():

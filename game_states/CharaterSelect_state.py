@@ -1,5 +1,6 @@
 from pico2d import *
 import game_framework
+import server
 from game_states import mapSelect_state
 class Kirby_UI:
     kirby_type = None
@@ -34,6 +35,7 @@ def enter():
     UI_button_image = load_image("assets/Ui/UI.png")
 
     Type = "Test"
+    bg_bgm.set_volume(server.masterVolume)
     bg_bgm.repeat_play()
 
     # fill here

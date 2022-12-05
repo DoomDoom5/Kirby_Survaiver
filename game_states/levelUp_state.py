@@ -30,6 +30,7 @@ def enter():
 
     a = random.sample(range(0, len(Abilitys)), 3)  # 1부터 10까지의 범위중에 3개를 중복없이 뽑겠다.
     print(a)
+    levelUp_bgm.set_volume(server.masterVolume)
     levelUp_bgm.play(1)
     pass
 

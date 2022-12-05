@@ -44,6 +44,8 @@ def enter():
     kill_score = server.ui_Manager.kill_Enemy * 10
     level_score = play_state.kirby.Level * 100
     last_score = level_score + kill_score + Timer_score + clear_score
+
+    end_bgm.set_volume(server.masterVolume)
     end_bgm.play(1)
     pass
 
