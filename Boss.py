@@ -126,7 +126,7 @@ class Boss():
         if distance > (PIXEL_PER_METER * 10) ** 2:
             self.speed = 0
             return BehaviorTree.FAIL
-        if self.Hp/self.MaxHp <= play_state.kirby.Hp/play_state.kirby.MaxHp and self.Hp/self.MaxHp < 0.2:
+        if self.Hp/self.MaxHp <= play_state.kirby.Hp/play_state.kirby.MaxHp and self.Hp/self.MaxHp < 0.3:
             self.dir = math.atan2(self.y - play_state.kirby.y, self.x - play_state.kirby.x)
             self.speed = RUN_SPEED_PPS * 1.4
             self.state = "RUNAWAY"
@@ -153,6 +153,8 @@ class Boss():
         self.bt = BehaviorTree(final_selector)
 
     def update(self, player_x, player_y):
+        if self.Hp <self.MaxHp:
+            self.Hp += 2
         self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
         # fill here
         self.bt.run()

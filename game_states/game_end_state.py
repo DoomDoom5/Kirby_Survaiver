@@ -62,7 +62,6 @@ def handle_events():
     for event in events:
         if event.type == SDL_MOUSEBUTTONDOWN:
             if event.x > 800 and event.x < 900 and events.y > 560 and event.y < 600:
-                print(event.x, ", ", event.y)
                 game_framework.quit()
                 pass
         if event.type == SDL_QUIT:
