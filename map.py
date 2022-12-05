@@ -1,7 +1,7 @@
 from pico2d import *
 
 Maps = ['assets/img/tilesets/Map1.jpg', 'assets/img/tilesets/Map2.jpg']
-Bgms = ['assets/sounds/bgm_forest.ogg', 'assets/sounds/bgm_library.ogg.ogg']
+Bgms = ['assets/sounds/bgm_forest.ogg', 'assets/sounds/bgm_library.ogg']
 class Map:
     image = None
     bgm = None

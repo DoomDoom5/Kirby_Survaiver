@@ -25,7 +25,7 @@ class Partner:
     width = 40
     height = 40
     Attack = 0
-    weapons = []
+    weapon = None
 
     Defence = 0.0  # 방어력
     Recovery = 0.05  # 재생력
@@ -34,6 +34,7 @@ class Partner:
     BulletNum = 1  # 추가 투사체 수
 
     def __init__(self, element, shoter_num):
+        self.type = element
         if element == "ICE":
             self.speed = 0.3
             self.image = load_image("assets/img/Kirby/Ice_Kirby_empty.png")
@@ -52,6 +53,7 @@ class Partner:
         self.target_enemy = None
         self.shoter_num = shoter_num
 
+
         self.get_Weapon(element)
 
         pass
@@ -59,7 +61,7 @@ class Partner:
     def get_bb(self):
         return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
     def get_Weapon(self, name):
-        self.weapons.append(Weapon(name))
+        self.weapon = (Weapon(name))
         pass
     def draw(self):
         self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
@@ -84,10 +86,8 @@ class Partner:
         pass
 
     def Attack_Weapons(self):
-        for weapon in self.weapons:
-            print("%d, Attack", self.shoter_num)
-            weapon.shot(self.x, self.y, self.Attack, self.invers, play_state.missile_manager, self.shoter_num)
-            pass
+        self.weapon.shot(self.x, self.y, self.Attack, self.invers, play_state.missile_manager, self.shoter_num)
+        pass
 
 
     def update(self, player_x , player_y):
@@ -113,11 +113,9 @@ class Partner:
             else:
                 self.invers = True
 
-            if abs(self.target_enemy.y - self.y) < 30 and abs(self.target_enemy.x - self.x) < 30:
+            if abs(self.target_enemy.y - self.y) < 40 and abs(self.target_enemy.x - self.x) < 40:
                 return
             self.dir = math.atan2(self.target_enemy.y - self.y, self.target_enemy.x - self.x)
-
-
 
             self.x += math.cos(self.dir) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
             self.x = clamp(self.width//2, self.x, server.background.w- 1 - self.width//2)

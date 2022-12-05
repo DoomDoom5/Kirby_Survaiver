@@ -31,7 +31,12 @@ class UI_Manager:
     player_super_MAX = 0
     elapsed_time = 0
 
-    def __init__(self):
+    def __init__(self, player):
+        self.player_x, self.player_y = int(player.x), int(player.y)
+        self.player_Hp, self.player_MaxHp = int(player.Hp), int(player.MaxHp)
+        self.player_Exp, self.player_MaxExp = int(player.Exp), int(player.MaxExp)
+        self.player_super_gaze = player.gauge
+
         if UI_Manager.UI_Image == None:
             UI_Manager.UI_Image = load_image("assets/Ui/UI.png")
 
@@ -56,10 +61,6 @@ class UI_Manager:
         self.UI_Image.clip_draw(424, 512 - 189 - 4 ,  4,  4,  0, 500, round((self.player_super_gaze /100 ),4) * 100 * 2, 28)
         if self.player_super_gaze >= 100:
             self.UI_font.draw(20, 500, 'READY', (255, 255, 255))
-
-
-
-
 
     # 레벨 출력
         self.UI_font.draw(1280 - 100, 720 - 20, '(LEVEL: %d)' % self.player_level, (255, 255, 255))

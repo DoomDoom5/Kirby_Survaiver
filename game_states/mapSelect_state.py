@@ -11,15 +11,17 @@ start_Button = None
 select_Button = None
 
 font = None
-Type = "Test"
-select_Number = -1
+Type = None
+select_Number = None
 
 def enter():
-    global bg_image, box_bg_image, UI_button_image,font
+    global bg_image, box_bg_image, UI_button_image,font, Type,select_Number
     bg_image = load_image("assets/Ui/introBG.png")
     box_bg_image = load_image("assets/Ui/UI.png")
     UI_button_image = load_image("assets/Ui/UI.png")
     font  = load_font("assets/Ui/NEXONFootballGothicL.ttf", 20)
+    Type = "Test"
+    select_Number = -1
 
     # fill here
     pass

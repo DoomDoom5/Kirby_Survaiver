@@ -46,8 +46,7 @@ class Missile:
 
     def Check_Hit_Enemy(self):
         if self.state == 0:
-            if self.name != "PLASMA":
-                self.state = 1
+            self.state = 1
 
 class ICE(Missile): # 가로로 일직선 공격
     coolTimer = 2
@@ -179,7 +178,7 @@ class FIRE(Missile): # 무작위 발사
 class PLASMA(Missile):
     coolTimer = 3
     def __init__(self, level=0, invers=False, charater_x = 0,charater_y = 0,charater_Attack = 0, shoter = 0):
-        self.frame = 0
+
         self.state = 0
         self.width = 30
         self.height = 30
@@ -191,6 +190,10 @@ class PLASMA(Missile):
         self.y = charater_y
         self.DurationTime = 4.0
         self.shoter = shoter
+
+        self.MaxCoolTime = 0.6
+        self.coolTime = self.MaxCoolTime
+
 
         for i in range(0,level):
             self.width *= 1.3
@@ -206,7 +209,14 @@ class PLASMA(Missile):
         elif level == 3:
             pass
     def update(self, player_x, player_y):
-        if self.state == 0:
+        if self.state != 2:
+            if self.state == 1 :
+                if self.coolTime > 0:
+                    self.coolTime -= game_framework.frame_time
+                else:
+                    self.state = 0
+                    self.coolTime = self.MaxCoolTime
+
             self.dgree = self.dgree + self.BulletSpeed * RUN_SPEED_PPS * game_framework.frame_time
             self.DurationTime -= game_framework.frame_time
 
@@ -217,14 +227,14 @@ class PLASMA(Missile):
                     self.state = 2
                     del self
             else:
-                if play_state.kirby_partner_1.weapons[0].name == "PLASMA":
+                if self.shoter == 1 and play_state.kirby_partner_1.type == "PLASMA":
                     self.sx = play_state.kirby_partner_1.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 20
                     self.sy = play_state.kirby_partner_1.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 20
                     if self.DurationTime <= 0:
                         self.state = 2
                         del self
 
-                if play_state.kirby_partner_2.weapons[0].name == "PLASMA":
+                elif self.shoter == 2 and play_state.kirby_partner_2.type == "PLASMA" :
                     self.sx = play_state.kirby_partner_2.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 20
                     self.sy = play_state.kirby_partner_2.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 20
                     if self.DurationTime <= 0:
@@ -235,10 +245,8 @@ class PLASMA(Missile):
 
 
     def draw(self, image):
-        draw_rectangle(*self.get_bb())
-        if self.state == 0:
+        if self.state != 2:
             image.clip_composite_draw(264, 552-44-16, 17, 16, 0, ' ', self.sx, self.sy, self.width * self.BulletRange, self.height * self.BulletRange)
-            draw_rectangle(*self.get_bb())
         pass
 
 

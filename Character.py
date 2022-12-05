@@ -6,6 +6,7 @@ import math
 from game_states import play_state
 from game_states import levelUp_state
 from game_states import special_attack_state
+
 import server
 from Manager.Weapon_Manager import Weapon
 # Kriby Run Speed
@@ -357,18 +358,18 @@ class Player:
             pass
 
         elif AbilityNumber == 6:
-            play_state.kirby_partner_1.weapons[0].level += 1
+            play_state.kirby_partner_1.weapon.level += 1
             pass
 
         elif AbilityNumber == 7:
-            play_state.kirby_partner_2.weapons[0].level += 1
+            play_state.kirby_partner_2.weapon.level += 1
             pass
 
 
     @staticmethod
-    def spacial_draw(player):
-        player.frame = (player.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)*2  % 4
-        player.image.clip_draw(527 + int(player.frame) * 72, 616 - 300, 72, 78, 1280//2,720//2,500,500)
+    def spacial_draw(player, move_x, backgoround_image):
+        backgoround_image.clip_draw(0, 0, 785, 422, move_x+ 1280//4,720//2,1280,500)
+        player.image.clip_draw(472, 616 - 33, 33, 33, 1280//2  +move_x ,720//2,500,500)
     @staticmethod
     def spacial_Attack(player):
        player.invisivleTime = player.Max_invisivleTime

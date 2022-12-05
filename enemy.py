@@ -3,7 +3,7 @@ from pico2d import *
 import game_world
 import game_framework
 import server
-
+import Boss
 
 
 from game_states import play_state
@@ -109,18 +109,15 @@ class Enemy:
             self.power = 8
             self.crystal = "RED"
 
-        elif self.name == MAP_one_Enemy[5]:
-            self.MaxHp = 800
-            self.speed = 0.8
-            self.width = 100
-            self.height = 100
-            self.power = 10
-            self.crystal = "RED"
+
 
         self.Hp = self.MaxHp
 
-    def On_damege(self, charater_Attack):
-        self.Hp = self.Hp - charater_Attack
+    @staticmethod
+    def On_damege(enemy, charater_Attack):
+        enemy.Hp = enemy.Hp - charater_Attack
+        if enemy.name == "KingDedede" and enemy.Hp <= 0:
+            play_state.game_clear = True
 
 
     def draw(self):
@@ -226,13 +223,6 @@ class Enemy:
             newEnemy = Enemy(MAP_one_Enemy[4])
             game_world.add_object(newEnemy, 1)
             Enemys.append(newEnemy)
-
-        if not play_state.createBoss and Timer > 0:
-            play_state.createBoss = True
-            newEnemy = Enemy(MAP_one_Enemy[5])
-            game_world.add_object(newEnemy, 1)
-            Enemys.append(newEnemy)
-
         del newEnemy
 
         pass
@@ -245,79 +235,79 @@ class TargetMarker:
         pass
 
 
-class Boss(Enemy):
-    def calculate_current_position(self):
-        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
-        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
-        self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
-        self.x = clamp(50, self.x, 1280 - 50)
-        self.y = clamp(50, self.y, 1024 - 50)
-
-    def find_random_location(self):
-        self.tx, self.ty = random.randint(50, 1230), random.randint(50, 974)
-        self.target_marker.x, self.target_marker.y = self.tx, self.ty
-        return BehaviorTree.SUCCESS
-        # fill here
-        pass
-
-    def move_to(self, radius=0.5):
-        distance = (self.tx - self.x) ** 2 + (self.ty - self.y) ** 2
-        self.dir = math.atan2(self.ty - self.y, self.tx - self.x)
-
-        if distance < (PIXEL_PER_METER * radius) ** 2:
-            self.speed = 0
-            return BehaviorTree.SUCCESS
-        else:
-            self.speed = RUN_SPEED_PPS
-            return BehaviorTree.RUNNING
-
-    def calculate_squared_distance(self, a, b):
-        return (a.x - b.x) ** 2 + (a.y - b.y) ** 2
-
-    def move_to_Kirby(self):
-        # fill here
-        distance = self.calculate_squared_distance(self, play_state.kirby)
-        if distance > (PIXEL_PER_METER * 10) ** 2:
-            self.speed = 0
-            return BehaviorTree.FAIL
-        if self.hp > play_state.kirby.hp:
-            self.dir = math.atan2(play_state.kirby.y - self.y, play_state.kirby.x - self.x)
-            if distance < (PIXEL_PER_METER * 0.5) ** 2:
-                self.speed = 0
-                return BehaviorTree.SUCCESS
-            else:
-                self.speed = RUN_SPEED_PPS
-                return BehaviorTree.RUNNING
-        else:
-            self.speed = 0
-            return BehaviorTree.FAIL
-        pass
-
-    def flee_from_boy(self):
-        # fill here
-        distance = self.calculate_squared_distance(self, play_state.kirby)
-        if distance > (PIXEL_PER_METER * 10) ** 2:
-            self.speed = 0
-            return BehaviorTree.FAIL
-        if self.hp <= play_state.kirby.hp:
-            self.dir = math.atan2(self.y - play_state.kirby.y, self.x - play_state.kirby.x)
-            self.speed = RUN_SPEED_PPS
-            return BehaviorTree.RUNNING
-        else:
-            self.speed = 0
-            return BehaviorTree.FAIL
-        pass
-
-    def build_behavior_tree(self):
-        find_random_location_node = Leaf('Find Random Location', self.find_random_location)
-        move_to_node = Leaf('Move To', self.move_to)
-
-        wander_sequence = Sequence('Wander', find_random_location_node, move_to_node)
-
-        move_to_node = Leaf('Move to Boy', self.move_to_boy)
-        flee_from_boy_node = Leaf('Flee from Boy', self.flee_from_boy)
-        chase_or_flee_selector = Selector('Chase or Flee Boy', move_to_node, flee_from_boy_node)
-
-        final_selector = Selector('Final', chase_or_flee_selector, wander_sequence)
-        self.bt = BehaviorTree(final_selector)
-    pass
+# class Boss(Enemy):
+#     def calculate_current_position(self):
+#         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
+#         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
+#         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+#         self.x = clamp(50, self.x, 1280 - 50)
+#         self.y = clamp(50, self.y, 1024 - 50)
+#
+#     def find_random_location(self):
+#         self.tx, self.ty = random.randint(50, 1230), random.randint(50, 974)
+#         self.target_marker.x, self.target_marker.y = self.tx, self.ty
+#         return BehaviorTree.SUCCESS
+#         # fill here
+#         pass
+#
+#     def move_to(self, radius=0.5):
+#         distance = (self.tx - self.x) ** 2 + (self.ty - self.y) ** 2
+#         self.dir = math.atan2(self.ty - self.y, self.tx - self.x)
+#
+#         if distance < (PIXEL_PER_METER * radius) ** 2:
+#             self.speed = 0
+#             return BehaviorTree.SUCCESS
+#         else:
+#             self.speed = RUN_SPEED_PPS
+#             return BehaviorTree.RUNNING
+#
+#     def calculate_squared_distance(self, a, b):
+#         return (a.x - b.x) ** 2 + (a.y - b.y) ** 2
+#
+#     def move_to_Kirby(self):
+#         # fill here
+#         distance = self.calculate_squared_distance(self, play_state.kirby)
+#         if distance > (PIXEL_PER_METER * 10) ** 2:
+#             self.speed = 0
+#             return BehaviorTree.FAIL
+#         if self.hp > play_state.kirby.hp:
+#             self.dir = math.atan2(play_state.kirby.y - self.y, play_state.kirby.x - self.x)
+#             if distance < (PIXEL_PER_METER * 0.5) ** 2:
+#                 self.speed = 0
+#                 return BehaviorTree.SUCCESS
+#             else:
+#                 self.speed = RUN_SPEED_PPS
+#                 return BehaviorTree.RUNNING
+#         else:
+#             self.speed = 0
+#             return BehaviorTree.FAIL
+#         pass
+#
+#     def flee_from_boy(self):
+#         # fill here
+#         distance = self.calculate_squared_distance(self, play_state.kirby)
+#         if distance > (PIXEL_PER_METER * 10) ** 2:
+#             self.speed = 0
+#             return BehaviorTree.FAIL
+#         if self.hp <= play_state.kirby.hp:
+#             self.dir = math.atan2(self.y - play_state.kirby.y, self.x - play_state.kirby.x)
+#             self.speed = RUN_SPEED_PPS
+#             return BehaviorTree.RUNNING
+#         else:
+#             self.speed = 0
+#             return BehaviorTree.FAIL
+#         pass
+#
+#     def build_behavior_tree(self):
+#         find_random_location_node = Leaf('Find Random Location', self.find_random_location)
+#         move_to_node = Leaf('Move To', self.move_to)
+#
+#         wander_sequence = Sequence('Wander', find_random_location_node, move_to_node)
+#
+#         move_to_node = Leaf('Move to Boy', self.move_to_boy)
+#         flee_from_boy_node = Leaf('Flee from Boy', self.flee_from_boy)
+#         chase_or_flee_selector = Selector('Chase or Flee Boy', move_to_node, flee_from_boy_node)
+#
+#         final_selector = Selector('Final', chase_or_flee_selector, wander_sequence)
+#         self.bt = BehaviorTree(final_selector)
+#     pass

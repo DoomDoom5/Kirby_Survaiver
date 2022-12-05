@@ -18,13 +18,12 @@ UI_button_image = None
 start_Button = None
 select_Button = None
 cancel_Button = None
-
-Type = "Test"
+Type = None
 kirbys = None
 select_Number = None
 
 def enter():
-    global bg_image, box_bg_image, UI_button_image,select_Number, kirbys, bg_bgm
+    global bg_image, box_bg_image, UI_button_image,select_Number, kirbys, bg_bgm, Type
     kirbys = Kirby_UI()
     kirbys.c_kirby_UI_image = load_image("assets/Ui/Kirby_UI.png")
     select_Number = -1
@@ -34,6 +33,7 @@ def enter():
     box_bg_image = load_image("assets/Ui/UI.png")
     UI_button_image = load_image("assets/Ui/UI.png")
 
+    Type = "Test"
     bg_bgm.repeat_play()
 
     # fill here
