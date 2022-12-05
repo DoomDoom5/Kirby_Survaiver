@@ -54,13 +54,11 @@ def enter():
     kirby_partner_1.x = 1280//2 - 40
     game_world.add_object(kirby_partner_1, 1)
     del CharaterSelect_state.subType_1
-    server.partner1 = kirby_partner_1
 
     kirby_partner_2 = Partner(CharaterSelect_state.subType_2, 2)
     kirby_partner_2.x = 1280//2 + 40
     game_world.add_object(kirby_partner_2, 1)
     del CharaterSelect_state.subType_2
-    server.partner2 = kirby_partner_2
 
 
 
@@ -84,10 +82,12 @@ def update():
     for s_Enemy in Enemys :
         for s_missile in missile_manager.missiles:
             if collide(s_Enemy, s_missile) == True and s_missile.state == 0:
+                s_Enemy.hit_sound.play(1)
                 s_Enemy.On_damege(s_missile.Attack)
                 game_world.add_object(enemy_Demage_Draw(s_Enemy.sx, s_Enemy.sy, s_Enemy.height, s_missile.Attack),3)
                 s_missile.Check_Hit_Enemy()
         if s_Enemy.Hp <= 0 :
+            s_Enemy.dead_sound.play(1)
             item_manager.Create_EXP_Stone(s_Enemy.crystal, s_Enemy.x, s_Enemy.y)
             game_world.remove_object(s_Enemy)
             Enemys.remove(s_Enemy)

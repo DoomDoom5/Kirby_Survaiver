@@ -189,7 +189,7 @@ class PLASMA(Missile):
         self.dgree = random.randint(0,359)
         self.x = charater_x
         self.y = charater_y
-        self.DurationTime = 3.0
+        self.DurationTime = 4.0
         self.shoter = shoter
 
         for i in range(0,level):
@@ -209,26 +209,30 @@ class PLASMA(Missile):
         if self.state == 0:
             self.dgree = self.dgree + self.BulletSpeed * RUN_SPEED_PPS * game_framework.frame_time
             self.DurationTime -= game_framework.frame_time
+
             if self.shoter == 0:
                 self.sx = play_state.kirby.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 40
                 self.sy = play_state.kirby.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 40
                 if self.DurationTime <= 0:
                     self.state = 2
                     del self
+            else:
+                if play_state.kirby_partner_1.weapons[0].name == "PLASMA":
+                    self.sx = play_state.kirby_partner_1.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 20
+                    self.sy = play_state.kirby_partner_1.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 20
+                    if self.DurationTime <= 0:
+                        self.state = 2
+                        del self
 
-            elif self.shoter == 1:
-                self.sx = play_state.kirby_partner_1.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 10
-                self.sy = play_state.kirby_partner_1.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 10
-                if self.DurationTime <= 0:
-                    self.state = 2
-                    del self
+                if play_state.kirby_partner_2.weapons[0].name == "PLASMA":
+                    self.sx = play_state.kirby_partner_2.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 20
+                    self.sy = play_state.kirby_partner_2.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 20
+                    if self.DurationTime <= 0:
+                        self.state = 2
+                        del self
 
-            elif self.shoter == 2:
-                self.sx = play_state.kirby_partner_2.sx + math.cos(math.radians(self.dgree)) * self.BulletSpeed * 10
-                self.sy = play_state.kirby_partner_2.sy + math.sin(math.radians(self.dgree)) * self.BulletSpeed * 10
-                if self.DurationTime <= 0:
-                    self.state = 2
-                    del self
+
+
 
     def draw(self, image):
         draw_rectangle(*self.get_bb())
@@ -240,14 +244,20 @@ class PLASMA(Missile):
 
 class Missile_manager:
     missiles = []
+
     ice = ICE()
+
     fire = FIRE()
+
     plasma = PLASMA()
+
     image = None
 
     def __init__(self):
         if Missile_manager.image == None:
             Missile_manager.image = load_image("assets/img/Effect/vfx.png")
+
+
 
     def draw(self):
         for missile in self.missiles:
@@ -285,9 +295,24 @@ class Weapon:
     shotTimer = 0.0
     level = 1
     shotOn = None
+
+    iceShot_sound = None
+    fireShot_sound = None
+    plasmaShot_sound = None
+
     def __init__(self,name):
         self.name = name
         self.shotTimer = 0
+
+        if Weapon.iceShot_sound == None:
+            Weapon.iceShot_sound = load_wav("assets/sounds/impact/sfx_frostimpact.ogg")
+
+        if Weapon.fireShot_sound == None:
+            Weapon.fireShot_sound = load_wav("assets/sounds/impact/sfx_fireloop.ogg")
+
+        if Weapon.plasmaShot_sound == None:
+            Weapon.plasmaShot_sound = load_wav("assets/sounds/impact/sfx_lightningimpact.ogg")
+
         pass
 
     def shot(self, charater_x, charater_y,charater_Attack  ,charater_invers, missile_manager, shoter=0):
@@ -303,6 +328,7 @@ class Weapon:
                 new_missile = ICE()
                 self.shotOn = True
                 self.shotTimer = 0.0
+                self.iceShot_sound.play(1)
 
         elif self.name == "FIRE":
             if self.shotTimer >= FIRE.coolTimer:
@@ -310,12 +336,14 @@ class Weapon:
                 new_missile = FIRE()
                 self.shotOn = True
                 self.shotTimer = 0.0
+                self.fireShot_sound.play(1)
 
         elif self.name == "PLASMA":
             if self.shotTimer >= PLASMA.coolTimer:
                 new_missile = PLASMA()
                 self.shotOn = True
                 self.shotTimer = 0.0
+                self.plasmaShot_sound.play(1)
 
             pass
 

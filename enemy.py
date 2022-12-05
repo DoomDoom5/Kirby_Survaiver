@@ -29,6 +29,10 @@ class Enemy:
     MaxHp = 0
     power = 0  # 공격력
     crystal = None
+
+    hit_sound = None
+    dead_sound = None
+
     sx = 0
     sy = 0
 
@@ -41,6 +45,10 @@ class Enemy:
         if Enemy.Hpimage == None:
             Enemy.Hpimage = load_image("assets/Ui/UI.png")
             pass
+        if Enemy.hit_sound is None:
+            Enemy.hit_sound = load_wav("assets/sounds/VS_EnemyHit_v06-02.ogg")
+        if Enemy.dead_sound is None:
+            Enemy.dead_sound = load_wav("assets/sounds/VS_EnemyDead.ogg")
 
         randp = random.randint(0,4)
 
@@ -61,7 +69,7 @@ class Enemy:
 
         # 적 타입을 인덱스화 시켜서 하자 => 나중에 수정
         if self.name == MAP_one_Enemy[0]:
-            self.MaxHp = 10
+            self.MaxHp = 23
             self.speed = 0.3
             self.width = 30
             self.height = 30
@@ -70,7 +78,7 @@ class Enemy:
 
 
         elif self.name == MAP_one_Enemy[1]:
-            self.MaxHp = 20
+            self.MaxHp = 30
             self.speed = 0.3
             self.width = 30
             self.height = 30
@@ -78,7 +86,7 @@ class Enemy:
             self.crystal = "BLUE"
 
         elif self.name == MAP_one_Enemy[2]:
-            self.MaxHp = 25
+            self.MaxHp = 50
             self.speed = 0.5
             self.width = 35
             self.height = 35
@@ -94,7 +102,7 @@ class Enemy:
             self.crystal = "RED"
 
         elif self.name == MAP_one_Enemy[4]:
-            self.MaxHp = 400
+            self.MaxHp = 200
             self.speed = 0.2
             self.width = 60
             self.height = 60
@@ -102,7 +110,7 @@ class Enemy:
             self.crystal = "RED"
 
         elif self.name == MAP_one_Enemy[5]:
-            self.MaxHp = 1000
+            self.MaxHp = 800
             self.speed = 0.8
             self.width = 100
             self.height = 100

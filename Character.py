@@ -357,11 +357,11 @@ class Player:
             pass
 
         elif AbilityNumber == 6:
-            server.partner1.weapons[0].level += 1
+            play_state.kirby_partner_1.weapons[0].level += 1
             pass
 
         elif AbilityNumber == 7:
-            server.partner1.weapons[0].level += 1
+            play_state.kirby_partner_2.weapons[0].level += 1
             pass
 
 

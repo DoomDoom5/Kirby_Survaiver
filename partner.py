@@ -7,14 +7,14 @@ from Manager.Weapon_Manager import Weapon
 import game_world
 import server
 
-# Kriby Run Speed
-PIXEL_PER_METER = (10.0/0.3)
+# Partner Run Speed
+PIXEL_PER_METER = (10.0/0.2)
 RUN_SPEED_KMPH = 20.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000/60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
-# Kriby Action Speed
+# Partner Action Speed
 TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
@@ -33,7 +33,7 @@ class Partner:
     BulletRange = 1.0  # 투사채 크기
     BulletNum = 1  # 추가 투사체 수
 
-    def __init__(self, element, helper_num):
+    def __init__(self, element, shoter_num):
         if element == "ICE":
             self.speed = 0.3
             self.image = load_image("assets/img/Kirby/Ice_Kirby_empty.png")
@@ -50,7 +50,7 @@ class Partner:
         self.dir, self.invers = 0,True
         self.dgree = 0
         self.target_enemy = None
-        self.helper_num = helper_num
+        self.shoter_num = shoter_num
 
         self.get_Weapon(element)
 
@@ -85,17 +85,14 @@ class Partner:
 
     def Attack_Weapons(self):
         for weapon in self.weapons:
-            weapon.shot(self.x, self.y, self.Attack, self.invers, play_state.missile_manager, self.helper_num)
+            print("%d, Attack", self.shoter_num)
+            weapon.shot(self.x, self.y, self.Attack, self.invers, play_state.missile_manager, self.shoter_num)
             pass
 
 
     def update(self, player_x , player_y):
+        self.find_enemy_location()
         self.Attack_Weapons()
-
-        if server.partner1.target_enemy == server.partner2.target_enemy and self.target_enemy != None:
-            self.find_enemy_location()
-            return
-
         if self.target_enemy == None:
             if self.x > player_x:
                 self.invers = False
@@ -137,7 +134,7 @@ class Partner:
             if type(o) is Enemy:
                 enemy = o
                 distance = (enemy.x - self.x) ** 2 + (enemy.y - self.y) ** 2
-                if distance < (PIXEL_PER_METER * 10) ** 2 and distance < shortest_distance:
+                if distance < (PIXEL_PER_METER * 5) ** 2 and distance < shortest_distance:
                     self.target_enemy = enemy
                     shortest_distance = distance
                 pass

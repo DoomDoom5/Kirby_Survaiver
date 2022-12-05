@@ -1,15 +1,18 @@
 from pico2d import *
 
 Maps = ['assets/img/tilesets/Map1.jpg', 'assets/img/tilesets/Map2.jpg']
+Bgms = ['assets/sounds/bgm_forest.ogg', 'assets/sounds/bgm_library.ogg.ogg']
 class Map:
     image = None
+    bgm = None
     x = None
     y = None
     dx = None
     dy = None
     def __init__(self, MapType):
         self.image = load_image(Maps[MapType])
-
+        self.bgm = load_music(Bgms[MapType])
+        self.bgm.repeat_play()
         self.canvas_width = get_canvas_width()
         self.canvas_height = get_canvas_height()
         self.w = self.image.w

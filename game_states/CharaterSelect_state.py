@@ -11,6 +11,7 @@ class Kirby_UI:
 
 # fill here
 bg_image = None
+bg_bgm = None
 box_bg_image = None
 UI_button_image = None
 
@@ -23,19 +24,24 @@ kirbys = None
 select_Number = None
 
 def enter():
-    global bg_image, box_bg_image, UI_button_image,select_Number,kirbys
+    global bg_image, box_bg_image, UI_button_image,select_Number, kirbys, bg_bgm
     kirbys = Kirby_UI()
     kirbys.c_kirby_UI_image = load_image("assets/Ui/Kirby_UI.png")
     select_Number = -1
     bg_image = load_image("assets/Ui/introBG.png")
+    bg_bgm = load_music("assets/sounds/bgm_select.wav")
+
     box_bg_image = load_image("assets/Ui/UI.png")
     UI_button_image = load_image("assets/Ui/UI.png")
+
+    bg_bgm.repeat_play()
+
     # fill here
     pass
 
 def exit():
-    global bg_image,UI_button_image, box_bg_image,kirbys,select_Number, Type, subType_1 ,subType_2
-    del bg_image, UI_button_image,box_bg_image
+    global bg_image,UI_button_image, box_bg_image,kirbys,select_Number,bg_bgm
+    del bg_image, UI_button_image,box_bg_image,kirbys,select_Number,bg_bgm
     # fill here
     pass
 

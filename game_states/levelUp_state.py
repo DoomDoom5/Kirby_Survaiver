@@ -3,11 +3,15 @@ import game_framework
 from game_states import play_state
 import random
 import server
+
+levelUp_bgm = None
 Item_image = None
 select_Number = None
 Type = None
 box_bg_image = None
 anim_height = None
+
+
 
 Abilitys = ["방어력을 1 얻습니다" ,"공격을 5 얻습니다", "속도를 0.05 얻습니다", "얼음 능력을 획득/강화 합니다", "불 능력을 획득/강화 합니다", "번개 능력을 획득/강화 합니다",
             "동료 1의 무기를 강화합니다", "동료 2의 무기를 강화합니다"]
@@ -18,14 +22,15 @@ def Menu_Ability(menu_number, AbilityNumber):
 a = None
 def enter():
     print(play_state.kirby.weapons)
-    global box_bg_image,anim_height , a
+    global box_bg_image,anim_height , a,levelUp_bgm
     anim_height = 600
     box_bg_image = load_image("assets/Ui/UI.png")
+    levelUp_bgm = load_wav("assets/sounds/VS_LevelUp_v02-02.ogg")
     play_state.kirby.x_dir, play_state.kirby.y_dir = 0 , 0
 
     a = random.sample(range(0, len(Abilitys)), 3)  # 1부터 10까지의 범위중에 3개를 중복없이 뽑겠다.
     print(a)
-    
+    levelUp_bgm.play(1)
     pass
 
 def exit():

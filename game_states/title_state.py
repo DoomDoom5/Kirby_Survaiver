@@ -3,21 +3,24 @@ import game_framework
 from game_states import CharaterSelect_state
 
 bg_image = None
+bg_bgm = None
 start_button = None
 close_button = None
 
 def enter():
-    global bg_image, start_button, close_button
+    global bg_image, start_button, close_button, bg_bgm
     bg_image = load_image("assets/title/BackGround.png")
     start_button = load_image("assets/title/bg_Button.png")
     close_button = load_image("assets/title/bg_Button.png")
+    bg_bgm = load_music("assets/sounds/bgm_titleintro.wav")
+    bg_bgm.play(1)
     # fill here
     pass
 
 def exit():
     # fill here
-    global bg_image, start_button, close_button
-    del bg_image, start_button, close_button
+    global bg_image, start_button, close_button ,bg_bgm
+    del bg_image, start_button, close_button, bg_bgm
     pass
 
 def handle_events():
@@ -31,6 +34,7 @@ def handle_events():
                 start_button = load_image("assets/title/bg_Check_Button.png")
                 close_button = load_image("assets/title/bg_Button.png")
             elif event.type == SDL_MOUSEBUTTONDOWN:
+                bg_bgm.stop()
                 game_framework.change_state(CharaterSelect_state)
 
 
