@@ -44,7 +44,7 @@ key_event_table = {
 class RUN:
     @staticmethod
     def enter(Player, event):
-        print('ENTER RUN')
+        #print('ENTER RUN')
         if event == RD:
             Player.x_dir += 1
             Player.invers = True
@@ -67,7 +67,7 @@ class RUN:
 
     @staticmethod
     def exit(Player, event):
-        print('EXIT RUN')
+        pass
 
     @staticmethod
     def do(Player, MapEndLeft = 0, MapEndRight = 1280, MapEndBottom = 720, MapEndTop = 0):
@@ -200,7 +200,6 @@ class Player:
         return self.sx - self.width//2, self.sy - self.height//2, self.sx + self.width//2, self.sy + self.height//2
 
     def check_Enemy_Coll(self, enemy_Attack):
-        print("충돌!")
         if self.invisivleTime <= 0:
             self.hit_sound.play(1)
             if enemy_Attack > self.Defence:
