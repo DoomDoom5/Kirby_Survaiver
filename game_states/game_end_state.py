@@ -6,20 +6,20 @@ import server
 Item_image = None
 Type = None
 box_bg_image = None
+font = None
 anim_height = None
 
 game_clear = None
 
-clear_score = 0
-level_score = 0
-kill_score = 0
-Timer_score = 0
+clear_score = None
+level_score = None
+kill_score = None
+Timer_score = None
 
 def enter():
     global box_bg_image, anim_height,game_clear, clear_score, Timer_score , level_score,kill_score
     anim_height = 600
     box_bg_image = load_image("assets/Ui/UI.png")
-
     Timer_score = 1000
 
     if play_state.game_clear == True:
@@ -57,7 +57,7 @@ def handle_events():
     for event in events:
         if event.type == SDL_MOUSEBUTTONDOWN:
             if event.x > 1280 // 2 - 550 // 2 and event.x < 1280 // 2 + 550 // 2:
-
+                pico2d.clear_canvas()
                 pass
         if event.type == SDL_QUIT:
             game_framework.quit()
@@ -75,6 +75,8 @@ def draw():
     server.ui_Manager.UI_font.draw(550, anim_height + 300, "Timer Score: %3.1f"% Timer_score ,(255, 255, 255))
     server.ui_Manager.UI_font.draw(550, anim_height + 200, "Total Score : %d"% clear_score ,(255, 255, 0))
 
+    box_bg_image.clip_draw(176, 512 - 181 - 33, 48, 33, 850, 150, 100, 60)
+    server.ui_Manager.UI_font.draw(830, 720 - 570, "시작", (255, 255, 255))
 
     update_canvas()
     pass

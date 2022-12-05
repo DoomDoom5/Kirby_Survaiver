@@ -108,6 +108,8 @@ def update():
 
     if game_clear == True:
         game_framework.push_state(game_end_state)
+    elif kirby.HP <= 0:
+        game_framework.push_state(game_end_state)
 
 
 

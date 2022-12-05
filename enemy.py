@@ -126,9 +126,9 @@ class Enemy:
     def draw(self):
         draw_rectangle(*self.get_bb())
         sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
 
         if self.name == MAP_one_Enemy[0]:
-            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
             if not self.invers:
                 self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 24, 24, 24,
                                                0, '', sx, sy, self.width, self.height)
@@ -138,7 +138,6 @@ class Enemy:
                 pass
             pass
         elif self.name == MAP_one_Enemy[1]:
-            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
             if not self.invers:
                 self.image.clip_draw(40 *  int(self.frame),1190 - 58 - 24 , 24, 24,sx, sy, self.width, self.height)
             else :
@@ -151,7 +150,6 @@ class Enemy:
                 self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
 
         elif self.name == MAP_one_Enemy[3]:
-            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
             if not self.invers:
                 self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 202 - 29, 28, 28,
                                                0, '', sx, sy, self.width, self.height)
@@ -160,7 +158,6 @@ class Enemy:
                                                0, 'h', sx, sy, self.width, self.height)
 
         elif self.name == MAP_one_Enemy[4]:
-            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
             if not self.invers:
                 self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 245 - 24, 24, 24,
                                                0, '', sx, sy, self.width, self.height)
@@ -171,10 +168,10 @@ class Enemy:
         elif self.name == MAP_one_Enemy[5]:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
             if not self.invers:
-                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 62, 63,
                                                0, '', sx, sy, self.width, self.height)
             else :
-                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 63, 63,
+                self.image.clip_composite_draw(int(self.frame) * 70, 1190 - 336 - 63, 62, 63,
                                                0, 'h', sx, sy, self.width, self.height)
 
         self.Hpimage.clip_draw(280, 512-158 -9, 9,9, sx, sy + 10, 30,4)
@@ -323,7 +320,4 @@ class Boss(Enemy):
 
         final_selector = Selector('Final', chase_or_flee_selector, wander_sequence)
         self.bt = BehaviorTree(final_selector)
-
-
-
     pass
