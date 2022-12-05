@@ -1,7 +1,7 @@
 from pico2d import *
 import game_framework
 import game_world
-
+from game_states import play_state
 
 class UI_Manager:
     Weapons = []
@@ -70,6 +70,12 @@ class UI_Manager:
 
     # 타이머 출력
         self.UI_font.draw(1280//2 - 60, 720 - 60, '(Time: %3.1f)' % self.elapsed_time, (255, 255, 255))
+
+    # 킬수 출력
+        self.UI_font.draw(play_state.kirby_partner_1.sx, play_state.kirby_partner_1.sy + 25, '1', (255, 255, 0))
+        self.UI_font.draw(play_state.kirby_partner_2.sx, play_state.kirby_partner_2.sy + 25, '2' , (255, 255, 0))
+
+    # 무기와 방어구 출력
         i = 0
         for weapon in self.Weapons:
             if self.UI_Image == None:
