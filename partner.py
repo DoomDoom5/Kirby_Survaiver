@@ -140,6 +140,5 @@ class Partner:
                 if distance < (PIXEL_PER_METER * 10) ** 2 and distance < shortest_distance:
                     self.target_enemy = enemy
                     shortest_distance = distance
-
                 pass
         pass

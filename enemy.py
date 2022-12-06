@@ -3,6 +3,7 @@ from pico2d import *
 import game_world
 import game_framework
 import server
+from game_states import play_state
 # Kriby Run Speed
 PIXEL_PER_METER = (10.0/0.3)
 RUN_SPEED_KMPH = 8.0
@@ -15,7 +16,7 @@ TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
-createBoss = False
+
 MAP_one_Enemy = ["Waddle_dee" ,"kinght","Fighter",   "Mike" ,"NinjaCat", "KingDedede" ]
 
 class Enemy:
@@ -92,13 +93,13 @@ class Enemy:
         elif self.name == MAP_one_Enemy[4]:
             self.MaxHp = 80
             self.speed = 0.7
-            self.width = 33
-            self.height = 30
+            self.width = 60
+            self.height = 40
             self.power = 8
             self.crystal = "RED"
 
         elif self.name == MAP_one_Enemy[5]:
-            self.MaxHp = 200
+            self.MaxHp = 400
             self.speed = 0.8
             self.width = 100
             self.height = 100
@@ -146,15 +147,19 @@ class Enemy:
 
         elif self.name == MAP_one_Enemy[4]:
             if not self.invers:
-                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,sx, sy, self.width, self.height)
+                self.image.clip_composite_draw(int(self.frame) * 50, 1190 - 282 - 35, 50, 35,
+                                               0, '', sx, sy, self.width, self.height)
             else :
-                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
+                self.image.clip_composite_draw(int(self.frame) * 50, 1190 - 282 - 35, 50, 35,
+                                               0, 'h', sx, sy, self.width, self.height)
 
         elif self.name == MAP_one_Enemy[5]:
             if not self.invers:
-                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,sx, sy, self.width, self.height)
+                self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 202 - 29, 28, 28,
+                                               0, '', sx, sy, self.width, self.height)
             else :
-                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
+                self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 202 - 29, 28, 28,
+                                               0, '', sx, sy, self.width, self.height)
 
         self.Hpimage.clip_draw(280, 512-158 -9, 9,9, sx, sy + 10, 30,4)
         self.Hpimage.clip_draw(422, 512-158 -9, 9,9,sx, sy + 10, self.Hp/self.MaxHp * 30,4)
@@ -164,6 +169,7 @@ class Enemy:
         return self.sx - self.width//2, self.sy - self.height//2, self.sx + self.width//2, self.sy + self.height//2
 
     def update(self,player_x, player_y):
+        global clear
         self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
         if self.x > player_x:
             self.invers = True
@@ -172,7 +178,10 @@ class Enemy:
 
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) %6
         if self.Hp <= 0:
+            if self.name == MAP_one_Enemy[5]:
+                play_state.game_clear = True
             game_world.remove_object(self)
+            server.ui_Manager.kill_Enemy += 1
 
         direction = math.atan2(player_y - self.y, player_x - self.x)
         self.x += math.cos(direction) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
@@ -188,25 +197,27 @@ class Enemy:
         newEnemy = Enemy(MAP_one_Enemy[0])
         game_world.add_object(newEnemy, 1)
         Enemys.append(newEnemy)
-        if Timer > 5.0 and Timer < 20.0:
+        if Timer > 10.0 and Timer < 40.0:
             newEnemy = Enemy(MAP_one_Enemy[1])
             game_world.add_object(newEnemy, 1)
             Enemys.append(newEnemy)
-        if Timer > 15.0 and Timer < 30.0:
+
+        if Timer > 30.0 and Timer < 60.0:
             newEnemy = Enemy(MAP_one_Enemy[2])
             game_world.add_object(newEnemy, 1)
             Enemys.append(newEnemy)
-        if Timer > 23.0 and Timer < 40.0:
+
+        if Timer > 40.0 and Timer < 80.0:
             newEnemy = Enemy(MAP_one_Enemy[3])
             game_world.add_object(newEnemy, 1)
             Enemys.append(newEnemy)
-        if Timer > 30.0:
+        if Timer > 60.0:
             newEnemy = Enemy(MAP_one_Enemy[4])
             game_world.add_object(newEnemy, 1)
             Enemys.append(newEnemy)
 
-        if not createBoss and Timer > 0:
-            createBoss = True
+        if not play_state.createBoss and Timer > 0:
+            play_state.createBoss = True
             newEnemy = Enemy(MAP_one_Enemy[5])
             game_world.add_object(newEnemy, 1)
             Enemys.append(newEnemy)

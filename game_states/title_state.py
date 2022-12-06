@@ -11,15 +11,14 @@ def enter():
     global bg_image, start_button, close_button,config_button
     bg_image = load_image("assets/title/BackGround.png")
     start_button = load_image("assets/title/bg_Button.png")
-    config_button = load_image("assets/title/bg_Button.png")
     close_button = load_image("assets/title/bg_Button.png")
     # fill here
     pass
 
 def exit():
     # fill here
-    global bg_image, start_button, close_button,config_button
-    del bg_image, start_button, close_button,config_button
+    global bg_image, start_button, close_button
+    del bg_image, start_button, close_button
     pass
 
 def handle_events():
@@ -28,22 +27,13 @@ def handle_events():
 
     events = get_events()
     for event in events:
-        if event.x > 1000 and event.x < 1000 + 228 and 720 - event.y > 80 + 144 * 2 and  720 - event.y < 80 + 144 * 3:
+        if event.x > 1000 and event.x < 1000 + 228 and 720 - event.y > 80 + 144 * 1 and  720 - event.y < 80 + 144 * 2:
             if event.type == SDL_MOUSEMOTION:
                 start_button = load_image("assets/title/bg_Check_Button.png")
                 config_button = load_image("assets/title/bg_Button.png")
                 close_button = load_image("assets/title/bg_Button.png")
             elif event.type == SDL_MOUSEBUTTONDOWN:
                 game_framework.change_state(CharaterSelect_state)
-
-        elif event.x > 1000 and event.x < 1000 + 228 and 720 - event.y > 80 + 144 * 1  and  720 - event.y < 80 + 144 * 2:
-            if event.type == SDL_MOUSEMOTION:
-                start_button = load_image("assets/title/bg_Button.png")
-                config_button = load_image("assets/title/bg_Check_Button.png")
-                close_button = load_image("assets/title/bg_Button.png")
-
-            elif event.type == SDL_MOUSEBUTTONDOWN:
-                pass
 
 
         elif event.x > 1000 and event.x < 1000 +228 and 720 - event.y > 80 and  720 - event.y < 80 + 144 * 1:
@@ -64,8 +54,7 @@ def draw():
     clear_canvas()
     bg_image.draw(1280//2, 720//2)
 
-    start_button.clip_draw(0, 0,    228, 144,    1100, 144*3)
-    config_button.clip_draw(228, 0, 228, 144,   1100, 144*2)
+    start_button.clip_draw(0, 0,    228, 144,    1100, 144*2)
     close_button.clip_draw(228*2, 0, 228, 144,   1100, 144)
     update_canvas()
 

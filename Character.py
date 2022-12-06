@@ -100,14 +100,13 @@ class RUN:
         pass
 
     def draw(self):
-
         # HP 출력
         server.ui_Manager.UI_Image.clip_draw(280, 512 - 158 - 9, 9, 9, self.sx, self.sy - 30, 60, 8)
         server.ui_Manager.UI_Image.clip_draw(422, 512 - 158 - 9, 9, 9, self.sx, self.sy - 30,
                                 round(self.Hp / self.MaxHp, 3) * 60, 8)
         if self.invisivleTime > 0.0 and int(self.frame)%2 == 0:
             return
-        elif self.x_dir == 0 and self.y_dir == 0:
+        if self.x_dir == 0 and self.y_dir == 0:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
             if self.invers == False:
                 self.image.clip_composite_draw(int(self.frame) * 34, 616 - 80, 33, 37,
@@ -137,7 +136,8 @@ next_state_table = {
 # 캐릭터가 가져야 할것
 class Player:
     image = None
-    weapons = []
+    weapons = [] # 무기
+    accessories = [] # 방어구
     width = 50
     height = 50
     Attack = 0
@@ -151,7 +151,6 @@ class Player:
     MaxExp = 5
     Exp = 0
     Level = 0
-    Defence = 0.0  # 방어력
     Recovery = 0.05  # 재생력
     BulletSpeed = 1.0  # 투사채 속도
     BulletRange = 1.0  # 투사채 크기
@@ -163,6 +162,7 @@ class Player:
 
     def __init__(self, element):
         self.Magent = 100.0
+        self.Defence = 0.0  # 방어력
         if element == "ICE":
             self.image = load_image("assets/img/Kirby/Ice_Kirby_empty.png")
         elif element == "FIRE":
@@ -170,6 +170,8 @@ class Player:
         elif element == "PLASMA":
             self.image = load_image("assets/img/Kirby/PLASMA_Kirby_empty.png")
 
+
+        self.Level = 0
         self.speed = 1
         self.x, self.y = 1280//2, 720//2
         self.frame = 0
@@ -192,7 +194,10 @@ class Player:
     def check_Enemy_Coll(self, enemy_Attack):
         print("충돌!")
         if self.invisivleTime <= 0:
-            self.Hp -= enemy_Attack
+            if enemy_Attack > self.Defence:
+                self.Hp -= enemy_Attack - self.Defence
+            else:
+                self.Hp -= 1
             self.invisivleTime = self.Max_invisivleTime
         pass
     def draw(self):
@@ -268,16 +273,42 @@ class Player:
     @staticmethod
     def select_Ability(AbilityNumber):
         i = 0
-
         check_Supplie = None
+
         if AbilityNumber == 0:
-            play_state.kirby.MaxHp += 10
+            for accessorie in play_state.kirby.accessories:
+                if accessorie == "ARMOR":
+                    check_Supplie = i
+                else:
+                    i += 1
+            if check_Supplie == None:
+                play_state.kirby.accessories.append("ARMOR")
+                server.ui_Manager.accessories.append("ARMOR")
+
+            play_state.kirby.Defence += 1
+
             pass
         elif AbilityNumber == 1:
+            for accessorie in play_state.kirby.accessories:
+                if accessorie == "GLOVE":
+                    check_Supplie = i
+                else:
+                    i += 1
+            if check_Supplie == None:
+                play_state.kirby.accessories.append("GLOVE")
+                server.ui_Manager.accessories.append("GLOVE")
             play_state.kirby.Attack += 5
             pass
 
         elif AbilityNumber == 2:
+            for accessorie in play_state.kirby.accessories:
+                if accessorie == "WING":
+                    check_Supplie = i
+                else:
+                    i += 1
+            if check_Supplie == None:
+                play_state.kirby.accessories.append("WING")
+                server.ui_Manager.accessories.append("WING")
             play_state.kirby.speed += 0.05
             pass
 
@@ -319,5 +350,12 @@ class Player:
                 play_state.kirby.weapons[i].level += 1
             pass
 
+        elif AbilityNumber == 6:
+            server.partner1.weapons[0].level += 1
+            pass
+
+        elif AbilityNumber == 7:
+            server.partner1.weapons[0].level += 1
+            pass
 
 

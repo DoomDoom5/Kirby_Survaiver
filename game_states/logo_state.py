@@ -4,16 +4,17 @@ from game_states import title_state
 
 # fill here
 image = None
-logo_time = 0.0
+logo_time = None
 
 def enter():
-    global image
+    global image, logo_time
     image = load_image("assets/title/tuk_credit.png")
+    logo_time = 0.0
     pass
 
 def exit():
-    global image
-    del image
+    global image, logo_time
+    del image, logo_time
     pass
 
 def update():

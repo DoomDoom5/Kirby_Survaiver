@@ -102,15 +102,15 @@ class ICE(Missile): # 가로로 일직선 공격
             self.frame = self.frame+1
             match self.frame//10:
                 case 0 :
-                    image.clip_draw(245, 552-19 - 10, 20,20, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(245, 552-19 - 16, 20,20, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 1 :
-                   image.clip_draw(265, 552-19 - 10, 20,20, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(265, 552-19 - 16, 20,20, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 2 :
-                   image.clip_draw(291, 552-19 - 10, 30,30, self.sx, self.sy,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(291, 552-19 - 16, 30,30, self.sx, self.sy,self.width  * 2* self.BulletRange,self.height * 2 * self.BulletRange)
                 case 3 :
-                    image.clip_draw(335, 552-19 - 10, 30,30, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                    image.clip_draw(335, 552-19 - 16, 30,30, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
                 case 4 :
-                   image.clip_draw(373, 552-19 - 10, 30,30, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
+                   image.clip_draw(373, 552-19 - 16, 30,30, self.sx, self.sy,self.width * 2 * self.BulletRange,self.height * 2 * self.BulletRange)
         pass
 
 
@@ -167,17 +167,17 @@ class FIRE(Missile): # 무작위 발사
                                             self.dgree, ' ', self.sx, self.sy, self.width , self.height * self.BulletRange)
         elif self.state == 1:
             self.frame = self.frame+1
-            match self.frame//10:
+            match self.frame//5:
                 case 0 :
-                    image.clip_draw(88, 552-19 - 20, 20,20,self.sx, self.sy,self.width * 2 ,self.height * 2 * self.BulletRange)
+                    image.clip_draw(88, 552-19 - 20, 20,20,self.sx, self.sy,self.width  ,self.height)
                 case 1 :
-                   image.clip_draw(88, 552-19 - 20, 20,20,self.sx, self.sy,self.width * 2 ,self.height * 2 * self.BulletRange)
+                   image.clip_draw(88, 552-19 - 20, 20,20,self.sx, self.sy,self.width  ,self.height )
                 case 2 :
-                   image.clip_draw(88, 552-19 - 20, 30,30,self.sx, self.sy,self.width  * 2,self.height * 2 * self.BulletRange)
+                   image.clip_draw(88, 552-19 - 30, 30,30,self.sx, self.sy,self.width,self.height  )
                 case 3 :
-                    image.clip_draw(88, 552-19 - 20, 30,30,self.sx, self.sy,self.width * 2 ,self.height * 2 * self.BulletRange)
+                    image.clip_draw(88, 552-19 - 30, 30,30,self.sx, self.sy,self.width ,self.height )
                 case 4 :
-                   image.clip_draw(88, 552-19 - 20, 30,30,self.sx, self.sy,self.width * 2 ,self.height * 2 * self.BulletRange)
+                   image.clip_draw(88, 552-19 - 30, 30,30,self.sx, self.sy,self.width  ,self.height)
         pass
 
 

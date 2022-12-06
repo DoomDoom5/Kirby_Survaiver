@@ -1,9 +1,10 @@
 from pico2d import *
-import game_framework
 from game_states import CharaterSelect_state
-import game_world
 from game_states import mapSelect_state
+from game_states import game_end_state
 import server
+import game_framework
+import game_world
 
 from map import Map
 from Character import Player
@@ -21,13 +22,18 @@ kirby = None
 kirby_partner_1 = None
 kirby_partner_2 = None
 
+createBoss = False
+game_clear = False
+
 Enemys = None
-Timer = 0
-enemy_responTimer = 0
+Timer = None
+enemy_responTimer = None
 
 def enter():
-    global  kirby, Enemys,item_manager, missile_manager, kirby_partner_1,kirby_partner_2
-
+    global  kirby, Enemys,item_manager, missile_manager, kirby_partner_1,kirby_partner_2,Timer, enemy_responTimer,game_clear
+    Timer = 0
+    enemy_responTimer = 0
+    game_clear = False
     server.background = Map(mapSelect_state.Type)
     game_world.add_object(server.background,0)
 
@@ -41,6 +47,7 @@ def enter():
     game_world.add_object(item_manager, 2)
 
     kirby = Player(CharaterSelect_state.Type)
+    server.player = Player(CharaterSelect_state.Type)
     game_world.add_object(kirby,1)
 
     kirby_partner_1 = Partner(CharaterSelect_state.subType_1, 1)
@@ -64,15 +71,18 @@ def enter():
 
     game_world.add_collision_pairs(kirby, s_Enemy, 'kirby:s_Enemy')
 
+    # 테스트 용
+    kirby.Attack = 100
+
 def exit():
-    global kirby, Enemys, item_manager, gameMap, Enemys, missile_manager, ui_Manager
-    del kirby, Enemys, item_manager, gameMap, Enemys, missile_manager, ui_Manager
+    global kirby, Enemys, item_manager, missile_manager, createBoss, game_clear, Timer, enemy_responTimer, kirby_partner_1,kirby_partner_2
+    del kirby, Enemys, item_manager, missile_manager, createBoss, game_clear, Timer, enemy_responTimer, kirby_partner_1,kirby_partner_2
     pass
 
 def update():
     global Timer,enemy_responTimer,s_Enemy
     Timer += game_framework.frame_time
-    server.ui_Manager.elapsed_time = Timer
+    server.ui_Manager.elapsed_time += game_framework.frame_time
 
     for s_Enemy in Enemys :
         for s_missile in missile_manager.missiles:
@@ -101,6 +111,11 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update(kirby.x, kirby.y) # game_world에서 제너레이터 하였기 때문에
 
+    if game_clear == True:
+        game_framework.push_state(game_end_state)
+
+
+
 def draw():
     clear_canvas()
     draw_world()
@@ -117,6 +132,8 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
+        if event == SDLK_q:
+            game_framework.push_state(game_end_state)
         elif event == SDLK_1:
             kirby.Exp += 100
 
