@@ -1,7 +1,8 @@
 from pico2d import *
 import game_framework
 import math
-import play_state
+from game_states import play_state
+from game_states import levelUp_state
 import server
 from Manager.Weapon_Manager import Weapon
 # Kriby Run Speed
@@ -99,11 +100,10 @@ class RUN:
         pass
 
     def draw(self):
-        sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
 
         # HP 출력
-        server.ui_Manager.UI_Image.clip_draw(280, 512 - 158 - 9, 9, 9, sx, sy - 30, 60, 8)
-        server.ui_Manager.UI_Image.clip_draw(422, 512 - 158 - 9, 9, 9, sx, sy - 30,
+        server.ui_Manager.UI_Image.clip_draw(280, 512 - 158 - 9, 9, 9, self.sx, self.sy - 30, 60, 8)
+        server.ui_Manager.UI_Image.clip_draw(422, 512 - 158 - 9, 9, 9, self.sx, self.sy - 30,
                                 round(self.Hp / self.MaxHp, 3) * 60, 8)
         if self.invisivleTime > 0.0 and int(self.frame)%2 == 0:
             return
@@ -111,18 +111,18 @@ class RUN:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
             if self.invers == False:
                 self.image.clip_composite_draw(int(self.frame) * 34, 616 - 80, 33, 37,
-                                               0, '', sx, sy, self.width, self.height)
+                                               0, '', self.sx, self.sy, self.width, self.height)
             else:
                 self.image.clip_composite_draw(int(self.frame) * 34, 616 - 80, 33, 37,
-                                               0, 'h', sx, sy, self.width, self.height)
+                                               0, 'h', self.sx, self.sy, self.width, self.height)
         else:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) %7
             if self.invers == False:
                 self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 80, 33, 34,
-                                               0, '', sx, sy, self.width, self.height)
+                                               0, '',self.sx, self.sy, self.width, self.height)
             elif self.invers == True:
                 self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 80, 33, 34,
-                                               0, 'h', sx, sy, self.width, self.height)
+                                               0, 'h', self.sx, self.sy, self.width, self.height)
 
 
 #3. 상태 변환 구현
@@ -179,14 +179,15 @@ class Player:
         self.cur_state = RUN
         self.cur_state.enter(self, None)
         self.get_Weapon(element)
-
+        self.sx = 0
+        self.sy = 0
         pass
 
     def get_Weapon(self, name):
         self.weapons.append(Weapon(name))
         pass
     def get_bb(self):
-        return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
+        return self.sx - self.width//2, self.sy - self.height//2, self.sx + self.width//2, self.sy + self.height//2
 
     def check_Enemy_Coll(self, enemy_Attack):
         print("충돌!")
@@ -208,7 +209,7 @@ class Player:
 
     def Attack_Weapons(self):
         for weapon in self.weapons:
-            weapon.shot(self.x, self.y, self.Attack,self.invers, play_state.missile_manager, 0)
+            weapon.shot(self.x, self.y, self.Attack, self.invers, play_state.missile_manager, 0)
             pass
 
 
@@ -223,6 +224,7 @@ class Player:
         return False
 
     def update(self, x = 0,y = 0):
+        self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
         self.Attack_Weapons()
         self.cur_state.do(self)
 
@@ -241,7 +243,7 @@ class Player:
 
         if (self.levelUP()):
             server.ui_Manager.player_level = self.Level
-            game_framework.push_state(play_state.levelUp_state)
+            game_framework.push_state(levelUp_state)
         if self.invisivleTime > 0:
             self.invisivleTime -= game_framework.frame_time
         if self.Hp < self.MaxHp:

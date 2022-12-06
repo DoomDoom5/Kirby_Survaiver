@@ -1,9 +1,8 @@
 from pico2d import *
 import game_framework
-import CharaterSelect_state
+from game_states import CharaterSelect_state
 import game_world
-import mapSelect_state
-import levelUp_state
+from game_states import mapSelect_state
 import server
 
 from map import Map
@@ -13,6 +12,7 @@ from partner import Partner
 from Manager.Weapon_Manager import Missile_manager
 from Manager.Item_Manager import Item_manager
 from Manager.Ui_Manager import UI_Manager
+from Manager.Ui_Manager import enemy_Demage_Draw
 
 missile_manager = None
 item_manager = None
@@ -43,15 +43,17 @@ def enter():
     kirby = Player(CharaterSelect_state.Type)
     game_world.add_object(kirby,1)
 
-    kirby_partner_1 = Partner(CharaterSelect_state.subType_1,1)
+    kirby_partner_1 = Partner(CharaterSelect_state.subType_1, 1)
     kirby_partner_1.x = 1280//2 - 40
     game_world.add_object(kirby_partner_1, 1)
     del CharaterSelect_state.subType_1
+    server.partner1 = kirby_partner_1
 
-    kirby_partner_2 = Partner(CharaterSelect_state.subType_2,2)
+    kirby_partner_2 = Partner(CharaterSelect_state.subType_2, 2)
     kirby_partner_2.x = 1280//2 + 40
     game_world.add_object(kirby_partner_2, 1)
     del CharaterSelect_state.subType_2
+    server.partner2 = kirby_partner_2
 
 
 
@@ -73,7 +75,14 @@ def update():
     server.ui_Manager.elapsed_time = Timer
 
     for s_Enemy in Enemys :
-        s_Enemy.On_damege(missile_manager.Check_Hit_Enemy(*s_Enemy.get_bb()))
+        for s_missile in missile_manager.missiles:
+            if collide(s_Enemy, s_missile) == True and s_missile.state == 0:
+                print("미사일 적 충돌")
+                s_Enemy.On_damege(s_missile.Attack)
+                game_world.add_object(enemy_Demage_Draw(s_Enemy.sx, s_Enemy.sy, s_Enemy.height, s_missile.Attack),3)
+                s_missile.Check_Hit_Enemy(*s_Enemy.get_bb())
+
+
         if s_Enemy.Hp <= 0 :
             item_manager.Create_EXP_Stone(s_Enemy.crystal, s_Enemy.x, s_Enemy.y)
             Enemys.remove(s_Enemy)
@@ -92,8 +101,6 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update(kirby.x, kirby.y) # game_world에서 제너레이터 하였기 때문에
 
-    if kirby_partner_1.target_enemy == kirby_partner_2.target_enemy:
-        kirby_partner_2.target_enemy = None
 def draw():
     clear_canvas()
     draw_world()
@@ -121,10 +128,8 @@ def resume():
     pass
 
 def collide(a,b):
-
     left_a , bottom_a , right_a, top_a = a.get_bb()
     left_b, bottom_b, right_b, top_b = b.get_bb()
-
     if left_a > right_b: return False
     if right_a < left_b: return False
     if top_a < bottom_b: return False

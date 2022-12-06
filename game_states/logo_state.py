@@ -1,6 +1,6 @@
 from pico2d import *
 import game_framework
-import title_state
+from game_states import title_state
 
 # fill here
 image = None

@@ -1,7 +1,6 @@
-import pygame.mouse
 from pico2d import *
 import game_framework
-import CharaterSelect_state
+from game_states import CharaterSelect_state
 
 bg_image = None
 start_button = None

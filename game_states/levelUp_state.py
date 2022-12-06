@@ -1,7 +1,6 @@
-import pygame.mouse
 from pico2d import *
 import game_framework
-import play_state
+from game_states import play_state
 import random
 import server
 Item_image = None
@@ -21,7 +20,7 @@ def enter():
     global box_bg_image,anim_height , a
     anim_height = 600
     box_bg_image = load_image("assets/Ui/UI.png")
-    play_state.kirby.x_dir,play_state.kirby.y_dir = 0 , 0
+    play_state.kirby.x_dir, play_state.kirby.y_dir = 0 , 0
 
     a = random.sample(range(0, 6), 3)  # 1부터 10까지의 범위중에 3개를 중복없이 뽑겠다.
     print(a)

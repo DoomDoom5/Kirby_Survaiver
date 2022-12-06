@@ -25,6 +25,8 @@ class Enemy:
     MaxHp = 0
     power = 0  # 공격력
     crystal = None
+    sx = 0
+    sy = 0
 
     def __init__(self, name):
         self.frame = 0
@@ -40,23 +42,23 @@ class Enemy:
 
         if randp == 0:
             self.x = random.randint(-10,0)
-            self.y = random.randint(0,720)
+            self.y = random.randint(0,server.background.h)
         elif randp == 1:
-            self.x = random.randint(1280,1290)
-            self.y = random.randint(0,720)
+            self.x = random.randint(server.background.w,server.background.w + 10)
+            self.y = random.randint(0,server.background.h)
         elif randp == 2:
-            self.x = random.randint(0,1280)
+            self.x = random.randint(0,server.background.w)
             self.y = random.randint(-10,0)
         else:
-            self.x = random.randint(0,1280)
-            self.y = random.randint(720,730)
+            self.x = random.randint(0,server.background.w)
+            self.y = random.randint(server.background.h,server.background.h+10)
 
         self.name = name
 
         # 적 타입을 인덱스화 시켜서 하자 => 나중에 수정
         if self.name == MAP_one_Enemy[0]:
             self.MaxHp = 10
-            self.speed = 0.1
+            self.speed = 0.3
             self.width = 26
             self.height = 26
             self.power = 2
@@ -96,7 +98,7 @@ class Enemy:
             self.crystal = "RED"
 
         elif self.name == MAP_one_Enemy[5]:
-            self.MaxHp = 500
+            self.MaxHp = 200
             self.speed = 0.8
             self.width = 100
             self.height = 100
@@ -109,13 +111,17 @@ class Enemy:
         self.Hp = self.Hp - charater_Attack
 
     def draw(self):
+        draw_rectangle(*self.get_bb())
         sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
 
         if self.name == MAP_one_Enemy[0]:
             if not self.invers:
                 self.image.clip_draw(40 * int(self.frame),1190 - 24 , 24, 24,sx, sy, self.width, self.height)
+                self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 24, 24, 24,
+                                               0, '', sx, sy, self.width, self.height)
             else :
-                self.image.clip_draw(40 *  int(self.frame),1190 - 50 , 24, 24,sx, sy, self.width, self.height)
+                self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 24, 24, 24,
+                                               0, 'h', sx, sy, self.width, self.height)
                 pass
             pass
         elif self.name == MAP_one_Enemy[1]:
@@ -129,16 +135,21 @@ class Enemy:
                 self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,sx, sy, self.width, self.height)
             else :
                 self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
+
         elif self.name == MAP_one_Enemy[3]:
             if not self.invers:
-                self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,sx, sy, self.width, self.height)
+                self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 202 - 29, 28, 28,
+                                               0, '', sx, sy, self.width, self.height)
             else :
-                self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
+                self.image.clip_composite_draw(int(self.frame) * 40, 1190 - 202 - 29, 28, 28,
+                                               0, 'h', sx, sy, self.width, self.height)
+
         elif self.name == MAP_one_Enemy[4]:
             if not self.invers:
                 self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,sx, sy, self.width, self.height)
             else :
                 self.image.clip_draw(40 *  int(self.frame),1190 - 162 - 29, 33, 29,sx, sy, self.width, self.height)
+
         elif self.name == MAP_one_Enemy[5]:
             if not self.invers:
                 self.image.clip_draw(40 *  int(self.frame),1190 - 128 - 29, 33, 29,sx, sy, self.width, self.height)
@@ -150,9 +161,10 @@ class Enemy:
         pass
 
     def get_bb(self):
-        return self.x - self.width//2, self.y - self.height//2, self.x + self.width//2, self.y + self.height//2
+        return self.sx - self.width//2, self.sy - self.height//2, self.sx + self.width//2, self.sy + self.height//2
 
     def update(self,player_x, player_y):
+        self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
         if self.x > player_x:
             self.invers = True
         else:
@@ -193,7 +205,7 @@ class Enemy:
             game_world.add_object(newEnemy, 1)
             Enemys.append(newEnemy)
 
-        if not createBoss and Timer > 60:
+        if not createBoss and Timer > 0:
             createBoss = True
             newEnemy = Enemy(MAP_one_Enemy[5])
             game_world.add_object(newEnemy, 1)
@@ -204,5 +216,3 @@ class Enemy:
         pass
 
 
-class Boss(Enemy):
-    pass

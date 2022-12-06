@@ -1,6 +1,6 @@
 from pico2d import *
 import game_framework
-import play_state
+from game_states import play_state
 
 # fill here
 bg_image = None

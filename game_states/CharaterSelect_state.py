@@ -1,6 +1,6 @@
 from pico2d import *
 import game_framework
-import mapSelect_state
+from game_states import mapSelect_state
 class Kirby_UI:
     kirby_type = None
     c_kirby_UI_image = None

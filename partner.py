@@ -1,7 +1,7 @@
 from pico2d import *
 import game_framework
 import math
-import play_state
+from game_states import play_state
 from enemy import Enemy
 from Manager.Weapon_Manager import Weapon
 import game_world
@@ -35,13 +35,15 @@ class Partner:
 
     def __init__(self, element, helper_num):
         if element == "ICE":
+            self.speed = 0.3
             self.image = load_image("assets/img/Kirby/Ice_Kirby_empty.png")
         elif element == "FIRE":
+            self.speed = 0.5
             self.image = load_image("assets/img/Kirby/Fire_Kirby_empty.png")
         elif element == "PLASMA":
+            self.speed = 0.6
             self.image = load_image("assets/img/Kirby/PLASMA_Kirby_empty.png")
 
-        self.speed = 0.3
         self.x, self.y = 1280//2, 720//2
         self.frame = 0
         self.dir, self.invers = 0,True
@@ -73,23 +75,27 @@ class Partner:
         else:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 7
             if self.invers == False:
-                self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 79, 33, 34,
+                self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 78, 33, 34,
                                                0, '', sx, sy, self.width, self.height)
             elif self.invers == True:
-                self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 79, 33, 34,
+                self.image.clip_composite_draw(114 + int(self.frame) * 33, 616 - 78, 33, 34,
                                                0, 'h', sx, sy, self.width, self.height)
         pass
 
     def Attack_Weapons(self):
         for weapon in self.weapons:
             sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
-            weapon.shot(self.x, self.y, self.Attack,self.invers, play_state.missile_manager, self.helper_num)
+            weapon.shot(self.x, self.y, self.Attack, self.invers, play_state.missile_manager, self.helper_num)
             pass
 
 
     def update(self, player_x , player_y):
         self.Attack_Weapons()
-        self.find_enemy_location()
+
+        if server.partner1.target_enemy == server.partner2.target_enemy and self.target_enemy != None:
+            self.find_enemy_location()
+            return
+
         if self.target_enemy == None:
             if self.x > player_x:
                 self.invers = False
@@ -113,6 +119,9 @@ class Partner:
             if abs(self.target_enemy.y - self.y) < 30 and abs(self.target_enemy.x - self.x) < 30:
                 return
             self.dir = math.atan2(self.target_enemy.y - self.y, self.target_enemy.x - self.x)
+
+
+
             self.x += math.cos(self.dir) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
             self.x = clamp(self.width//2, self.x, server.background.w- 1 - self.width//2)
             self.y += math.sin(self.dir) * RUN_SPEED_PPS * game_framework.frame_time * self.speed
@@ -131,6 +140,6 @@ class Partner:
                 if distance < (PIXEL_PER_METER * 10) ** 2 and distance < shortest_distance:
                     self.target_enemy = enemy
                     shortest_distance = distance
+
                 pass
         pass
-

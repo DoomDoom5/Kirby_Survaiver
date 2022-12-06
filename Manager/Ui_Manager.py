@@ -1,4 +1,7 @@
 from pico2d import *
+import game_framework
+import game_world
+
 
 class UI_Manager:
     Weapons = []
@@ -118,6 +121,28 @@ class UI_Manager:
         elif number == 6:
             pass
         pass
+
+
+class enemy_Demage_Draw:
+    UI_font = None
+    def __init__(self, enemy_sx ,enemy_sy, enemy_height, enemy_demage):
+        if enemy_Demage_Draw.UI_font == None:
+            enemy_Demage_Draw.UI_font = load_font("assets/Ui/NEXONFootballGothicL.ttf", 20)
+
+        self.durationTimer = 0.5
+        self.x = enemy_sx
+        self.y = enemy_sy + enemy_height//3
+        self.demage = enemy_demage
+
+    def draw(self):
+        self.UI_font.draw(self.x, self.y, ('%d')% self.demage, (255, 255, 255))
+    def update(self,player_x, player_y):
+        self.durationTimer -= game_framework.frame_time
+        self.y += 1
+        if self.durationTimer <= 0:
+            game_world.remove_object(self)
+        pass
+
 
 
 
